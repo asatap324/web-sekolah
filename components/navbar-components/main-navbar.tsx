@@ -18,6 +18,9 @@ import {
 } from "@/components/ui/popover";
 import Image from "next/image";
 import ThemeToggleButton from "../dark-mode/theme-toggle-button";
+import { LogoutButton } from "../auth-ui/logout-button";
+import { useUser } from "@/hooks/use-user";
+import Link from "next/link";
 
 // Navigation links array to be used in both desktop and mobile menus
 const navigationLinks = [
@@ -68,6 +71,7 @@ const navigationLinks = [
 ];
 
 export default function MainNavbar() {
+  const { user, loading } = useUser();
   return (
     <header className="w-full shadow px-4 fixed top-0 md:px-6 z-[9999] bg-white dark:bg-neutral-950">
       <div className="flex max-w-6xl mx-auto h-16 items-center justify-between gap-4">
@@ -182,6 +186,16 @@ export default function MainNavbar() {
         <div className="flex items-center gap-2">
           {/* Mobile menu trigger */}
           <ThemeToggleButton />
+          {user ? (
+            <div>
+              <LogoutButton />
+            </div>
+          ) : (
+            <Button asChild>
+              <Link href="/auth/login">Login</Link>
+            </Button>
+          )}
+
           <Popover>
             <PopoverTrigger asChild>
               <Button

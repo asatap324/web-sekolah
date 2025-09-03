@@ -1,3 +1,4 @@
+import { LogoutButton } from "@/components/auth-ui/logout-button";
 import BlogPage from "@/components/blog/blog-page";
 import SearchBar from "@/components/search/search-bar";
 import Image from "next/image";
