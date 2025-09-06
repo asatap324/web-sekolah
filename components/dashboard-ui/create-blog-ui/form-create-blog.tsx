@@ -19,10 +19,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
-import { AlertCircleIcon, ImageUpIcon, XIcon } from "lucide-react";
-
-import { useFileUpload } from "@/hooks/use-file-upload";
 import UploadThumnails from "./file-upload";
+import { useUser } from "@/hooks/use-user";
 
 const blogSchema = z.object({
   title: z.string().min(3, "Judul minimal 3 karakter"),
@@ -35,8 +33,8 @@ type BlogForm = z.infer<typeof blogSchema>;
 
 export default function CreateBlogForm() {
   const { createBlog } = useBlogs();
+  const { user } = useUser();
   const [loading, setLoading] = useState(false);
-  const [preview, setPreview] = useState<string | null>(null);
 
   const form = useForm<BlogForm>({
     resolver: zodResolver(blogSchema),
@@ -50,8 +48,15 @@ export default function CreateBlogForm() {
 
   const onSubmit = async (values: BlogForm) => {
     try {
+      if (!user) return alert("Harus login");
       setLoading(true);
-      await createBlog(values);
+
+      await createBlog({
+        title: values.title,
+        content: values.content,
+        category: values.category,
+        image: values.image, // { url, path }
+      });
       form.reset();
       toast.success("Blog berhasil dibuat!");
     } catch (error: any) {
@@ -72,7 +77,7 @@ export default function CreateBlogForm() {
           name="image"
           render={({ field }) => (
             <FormItem>
-              <UploadThumnails {...field} />
+              <UploadThumnails value={field.value} onChange={field.onChange} />
             </FormItem>
           )}
         />

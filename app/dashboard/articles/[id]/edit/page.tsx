@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase";
+import { createClient } from "@/utils/supabase/client";
 import EditBlogForm from "@/components/dashboard-ui/create-blog-ui/edit-blog";
 
 export default async function EditBlogPage({
@@ -12,6 +12,8 @@ export default async function EditBlogPage({
     .select("*")
     .eq("id", params.id)
     .single();
+
+  console.log(blog);
 
   if (error || !blog) {
     return <p className="p-4 text-red-500">Blog not found</p>;

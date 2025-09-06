@@ -14,11 +14,13 @@ import {
 } from "@/components/ui/form";
 import { useBlogs } from "@/hooks/use-blogs";
 import { useRouter } from "next/navigation";
+import UploadThumnails from "./file-upload";
 
 const schema = z.object({
   title: z.string().min(3, "Title is required"),
   content: z.string().min(10, "Content is required"),
   category: z.string().min(2, "Category is required"),
+  image: z.any(),
 });
 
 type FormValues = z.infer<typeof schema>;
@@ -34,12 +36,23 @@ export default function EditBlogForm({ blog }: { blog: any }) {
       title: blog?.title || "",
       content: blog?.content || "",
       category: blog?.category || "",
+      image: blog.image_url
+        ? {
+            url: blog.image_url, // public URL
+            path: blog.image_path, // internal path di bucket
+          }
+        : null,
     },
   });
 
   const onSubmit = async (values: FormValues) => {
     try {
-      await updateBlog(blog.id, values);
+      await updateBlog(blog.id, {
+        title: values.title,
+        content: values.content,
+        category: values.category,
+        image: values.image, // { url, path }
+      });
       router.push("/dashboard");
     } catch (err: any) {
       console.error(err);
@@ -49,7 +62,22 @@ export default function EditBlogForm({ blog }: { blog: any }) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-4 max-w-2xl"
+      >
+        <FormField
+          control={form.control}
+          name="image"
+          render={({ field }) => (
+            <FormItem>
+              <UploadThumnails
+                value={form.watch("image")}
+                onChange={(val) => form.setValue("image", val)}
+              />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="title"

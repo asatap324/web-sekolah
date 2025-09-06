@@ -28,10 +28,12 @@ import {
   IconChevronsRight,
   IconCircleCheckFilled,
   IconDotsVertical,
+  IconEdit,
   IconGripVertical,
   IconLayoutColumns,
   IconLoader,
   IconPlus,
+  IconTrash,
   IconTrendingUp,
 } from "@tabler/icons-react";
 import {
@@ -56,23 +58,9 @@ import { z } from "zod";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
+
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
+
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -103,6 +91,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link";
 import { useBlogs } from "@/hooks/use-blogs";
 import { useRouter } from "next/navigation";
+import { TrashIcon } from "lucide-react";
 
 export const schema = z.object({
   id: z.string(),
@@ -249,13 +238,19 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-32">
             <DropdownMenuItem asChild>
-              <Link href={`/dashboard/articles/${blog.id}/edit`}>Edit</Link>
+              <Link
+                className="flex items-center"
+                href={`/dashboard/articles/${blog.id}/edit`}
+              >
+                <IconEdit size={16} aria-hidden="true" />
+                <span>Edit</span>
+              </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem>Make a copy</DropdownMenuItem>
-            <DropdownMenuItem>Favorite</DropdownMenuItem>
+
             <DropdownMenuSeparator />
             <DropdownMenuItem variant="destructive" onClick={handleDelete}>
-              Delete
+              <IconTrash size={16} aria-hidden="true" />
+              <span>Delete</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

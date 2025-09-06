@@ -2,21 +2,21 @@
 
 import { useFileUpload } from "@/hooks/use-file-upload";
 import { useUser } from "@/hooks/use-user";
-import { createClient } from "@/lib/supabase";
+import { createClient } from "@/utils/supabase/client";
 import { AlertCircleIcon, ImageUpIcon } from "lucide-react";
 import { useState } from "react";
 
 type Props = {
-  onChange: (url: string) => void;
+  value?: { url: string; path: string } | null;
+  onChange: (value: { url: string; path: string } | null) => void;
   error?: string;
-  value?: string;
 };
 
 export default function UploadThumnails({ onChange, error, value }: Props) {
   const maxSizeMB = 5;
   const maxSize = maxSizeMB * 1024 * 1024; // 5MB
-  const [uploading, setUploading] = useState(false);
   const supabase = createClient();
+  const [uploading, setUploading] = useState(false);
   const { user } = useUser();
 
   const [
@@ -35,7 +35,10 @@ export default function UploadThumnails({ onChange, error, value }: Props) {
     maxSize,
   });
 
-  const previewUrl = files[0]?.preview || value || null;
+  const previewUrl =
+    (typeof value === "string" ? value : value?.url) ||
+    files[0]?.preview ||
+    null;
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -43,7 +46,8 @@ export default function UploadThumnails({ onChange, error, value }: Props) {
 
     setUploading(true);
     const fileExt = file.name.split(".").pop();
-    const filePath = `${user.id}/${Date.now()}.${fileExt}`;
+    const fileName = `${Date.now()}.${fileExt}`;
+    const filePath = `blogs/${fileName}`; // ✅ simpan path lengkap
 
     const { error: uploadError } = await supabase.storage
       .from("blog-images")
@@ -58,7 +62,18 @@ export default function UploadThumnails({ onChange, error, value }: Props) {
     const { data } = supabase.storage
       .from("blog-images")
       .getPublicUrl(filePath);
-    onChange(data.publicUrl);
+
+    // ✅ kirim ke form dalam bentuk { url, path }
+    onChange({
+      url: data.publicUrl,
+      path: filePath,
+    });
+
+    // ✅ hapus file local supaya preview ambil dari `value`
+    if (files.length > 0) {
+      removeFile(files[0].id);
+    }
+
     setUploading(false);
   };
 
@@ -115,7 +130,7 @@ export default function UploadThumnails({ onChange, error, value }: Props) {
             <button
               type="button"
               onClick={openFileDialog}
-              className="bg-white/80 text-xs px-2 py-1 rounded hover:bg-white shadow"
+              className="text-xs px-2 py-1 rounded bg-black text-white  shadow"
             >
               Change
             </button>
@@ -125,7 +140,7 @@ export default function UploadThumnails({ onChange, error, value }: Props) {
                 if (files.length > 0) {
                   removeFile(files[0].id);
                 }
-                onChange("");
+                onChange(null);
               }}
               className="bg-red-600 text-white text-xs px-2 py-1 rounded hover:bg-red-700 shadow"
             >

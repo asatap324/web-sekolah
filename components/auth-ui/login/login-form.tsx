@@ -1,15 +1,12 @@
 "use client";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase";
+import { createClient } from "@/utils/supabase/client";
 
 import { toast } from "sonner";
-import Link from "next/link";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 
 import * as z from "zod";
@@ -56,7 +53,21 @@ export default function LoginForm({
       });
       if (error) throw error;
       // Update this route to redirect to an authenticated route. The user already has an active session.
-      router.push("/dashboard");
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user?.id)
+        .single();
+
+      if (profile?.role === "admin") {
+        router.push("/dashboard"); // langsung redirect tanpa render dashboard
+      } else {
+        router.push("/");
+      }
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred");
       toast.error(error instanceof Error ? error.message : "An error occurred");
@@ -65,33 +76,33 @@ export default function LoginForm({
     }
   };
 
-  const handleLoginWithGoogle = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: "/", // halaman redirect setelah login
-      },
-    });
+  // const handleLoginWithGoogle = async () => {
+  //   const { error } = await supabase.auth.signInWithOAuth({
+  //     provider: "google",
+  //     options: {
+  //       redirectTo: "/", // halaman redirect setelah login
+  //     },
+  //   });
 
-    if (error) {
-      console.error("Login with Google failed:", error.message);
-    }
-  };
+  //   if (error) {
+  //     console.error("Login with Google failed:", error.message);
+  //   }
+  // };
 
-  const forgotPassword = async (values: FormValues) => {
-    try {
-      const { error } = await supabase.auth.resetPasswordForEmail(
-        values.email,
-        {
-          redirectTo: `${window.location.origin}/auth/reset-password`,
-        },
-      );
-      if (error) throw error;
-      toast.success("Password reset email sent");
-    } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "An error occurred");
-    }
-  };
+  // const forgotPassword = async (values: FormValues) => {
+  //   try {
+  //     const { error } = await supabase.auth.resetPasswordForEmail(
+  //       values.email,
+  //       {
+  //         redirectTo: `${window.location.origin}/auth/reset-password`,
+  //       },
+  //     );
+  //     if (error) throw error;
+  //     toast.success("Password reset email sent");
+  //   } catch (error: unknown) {
+  //     setError(error instanceof Error ? error.message : "An error occurred");
+  //   }
+  // };
 
   const toggleVisible = () => setIsVisible((prevState) => !prevState);
 
@@ -130,19 +141,7 @@ export default function LoginForm({
                   <FormLabel>
                     <div className="flex justify-between items-center">
                       <span>Password</span>
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="link"
-                        onClick={() => {
-                          const email = form.getValues("email");
-                          if (!email) {
-                            toast.error("Please enter your email first");
-                            return;
-                          }
-                          forgotPassword({ email, password: "" });
-                        }}
-                      >
+                      <Button type="button" size="sm" variant="link">
                         Forgot your password?
                       </Button>
                     </div>
@@ -187,11 +186,7 @@ export default function LoginForm({
             Or continue with
           </span>
         </div>
-        <Button
-          onClick={handleLoginWithGoogle}
-          variant="outline"
-          className="w-full"
-        >
+        <Button variant="outline" className="w-full">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             x="0px"
