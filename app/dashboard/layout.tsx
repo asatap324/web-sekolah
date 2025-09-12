@@ -1,15 +1,11 @@
 import ThemeToggleButton from "@/components/dark-mode/theme-toggle-button";
 import { AppSidebar } from "@/components/dashboard-ui/app-sidebar";
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-
-import { CalendarCheck } from "lucide-react";
-import Link from "next/link";
 
 export default async function DashboardLayout({
   children,

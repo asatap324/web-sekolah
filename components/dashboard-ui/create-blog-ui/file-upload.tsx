@@ -1,102 +1,47 @@
 "use client";
 
 import { useFileUpload } from "@/hooks/use-file-upload";
-import { useUser } from "@/hooks/use-user";
-import { createClient } from "@/utils/supabase/client";
+
 import { AlertCircleIcon, ImageUpIcon } from "lucide-react";
 import { useState } from "react";
 
 type Props = {
-  value?: { url: string; path: string } | null;
-  onChange: (value: { url: string; path: string } | null) => void;
-  error?: string;
+  onFileSelect: (file: File | null) => void;
+  initialUrl?: string | null; // 👉 tambah prop ini
 };
 
-export default function UploadThumnails({ onChange, error, value }: Props) {
+export default function UploadThumbnails({ onFileSelect, initialUrl }: Props) {
   const maxSizeMB = 5;
-  const maxSize = maxSizeMB * 1024 * 1024; // 5MB
-  const supabase = createClient();
+  const maxSize = maxSizeMB * 1024 * 1024;
+  const [previewUrl, setPreviewUrl] = useState<string | null>(
+    initialUrl || null,
+  ); // 👈 pakai initialUrl
   const [uploading, setUploading] = useState(false);
-  const { user } = useUser();
 
-  const [
-    { files, isDragging, errors },
-    {
-      handleDragEnter,
-      handleDragLeave,
-      handleDragOver,
-      handleDrop,
-      openFileDialog,
-      removeFile,
-      getInputProps,
-    },
-  ] = useFileUpload({
-    accept: "image/*",
-    maxSize,
-  });
-
-  const previewUrl =
-    (typeof value === "string" ? value : value?.url) ||
-    files[0]?.preview ||
-    null;
-
-  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !user?.id) return;
-
-    setUploading(true);
-    const fileExt = file.name.split(".").pop();
-    const fileName = `${Date.now()}.${fileExt}`;
-    const filePath = `blogs/${fileName}`; // ✅ simpan path lengkap
-
-    const { error: uploadError } = await supabase.storage
-      .from("blog-images")
-      .upload(filePath, file);
-
-    if (uploadError) {
-      alert("Upload gagal: " + uploadError.message);
-      setUploading(false);
-      return;
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    if (file) {
+      setPreviewUrl(URL.createObjectURL(file));
+      onFileSelect(file);
+    } else {
+      setPreviewUrl(initialUrl || null); // fallback ke gambar lama
+      onFileSelect(null);
     }
-
-    const { data } = supabase.storage
-      .from("blog-images")
-      .getPublicUrl(filePath);
-
-    // ✅ kirim ke form dalam bentuk { url, path }
-    onChange({
-      url: data.publicUrl,
-      path: filePath,
-    });
-
-    // ✅ hapus file local supaya preview ambil dari `value`
-    if (files.length > 0) {
-      removeFile(files[0].id);
-    }
-
-    setUploading(false);
   };
 
   return (
     <div className="flex w-full flex-col gap-2">
       <div className="relative">
-        {/* Drop Area */}
         <div
           role="button"
-          onClick={openFileDialog}
-          onDragEnter={handleDragEnter}
-          onDragLeave={handleDragLeave}
-          onDragOver={handleDragOver}
-          onDrop={handleDrop}
-          data-dragging={isDragging || undefined}
-          className="border-input hover:bg-accent/50 data-[dragging=true]:bg-accent/50 has-[input:focus]:border-ring has-[input:focus]:ring-ring/50 relative flex min-h-52 flex-col items-center justify-center overflow-hidden rounded-xl border border-dashed p-4 transition-colors has-disabled:pointer-events-none has-disabled:opacity-50 has-[img]:border-none has-[input:focus]:ring-[3px]"
+          className="border-input hover:bg-accent/50 relative flex min-h-52 flex-col items-center justify-center overflow-hidden rounded-xl border border-dashed p-4 transition-colors"
         >
           <input
-            {...getInputProps()}
             className="sr-only"
             aria-label="Upload file"
             type="file"
-            onChange={handleUpload}
+            accept="image/*"
+            onChange={handleChange}
           />
           {previewUrl ? (
             <div className="absolute inset-0 bg-accent">
@@ -108,12 +53,6 @@ export default function UploadThumnails({ onChange, error, value }: Props) {
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center px-4 py-3 text-center">
-              <div
-                className="bg-background mb-2 flex size-11 shrink-0 items-center justify-center rounded-full border"
-                aria-hidden="true"
-              >
-                <ImageUpIcon className="size-4 opacity-60" />
-              </div>
               <p className="mb-1.5 text-sm font-medium">
                 Drop your image here or click to browse
               </p>
@@ -123,43 +62,7 @@ export default function UploadThumnails({ onChange, error, value }: Props) {
             </div>
           )}
         </div>
-
-        {/* Change & Delete buttons */}
-        {previewUrl && (
-          <div className="absolute top-4 right-4 flex gap-2 z-10">
-            <button
-              type="button"
-              onClick={openFileDialog}
-              className="text-xs px-2 py-1 rounded bg-black text-white  shadow"
-            >
-              Change
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                if (files.length > 0) {
-                  removeFile(files[0].id);
-                }
-                onChange(null);
-              }}
-              className="bg-red-600 text-white text-xs px-2 py-1 rounded hover:bg-red-700 shadow"
-            >
-              Delete
-            </button>
-          </div>
-        )}
       </div>
-
-      {/* Error */}
-      {error && (
-        <div
-          className="text-destructive flex items-center gap-1 text-xs"
-          role="alert"
-        >
-          <AlertCircleIcon className="size-3 shrink-0" />
-          <span>{error}</span>
-        </div>
-      )}
     </div>
   );
 }

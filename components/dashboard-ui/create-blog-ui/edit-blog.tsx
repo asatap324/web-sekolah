@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -7,56 +8,92 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
   Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { useBlogs } from "@/hooks/use-blogs";
-import { useRouter } from "next/navigation";
-import UploadThumnails from "./file-upload";
+import UploadThumbnails from "./file-upload";
+import { useState } from "react";
+import { createClient } from "@/utils/supabase/client";
+import { Editor } from "@/components/blocks/editor-00/editor";
 
-const schema = z.object({
+import { toast } from "sonner";
+import { CheckCircle2, LoaderCircleIcon } from "lucide-react";
+
+const blogSchema = z.object({
   title: z.string().min(3, "Title is required"),
   content: z.string().min(10, "Content is required"),
   category: z.string().min(2, "Category is required"),
   image: z.any(),
 });
 
-type FormValues = z.infer<typeof schema>;
+type FormValues = z.infer<typeof blogSchema>;
 
 export default function EditBlogForm({ blog }: { blog: any }) {
-  const router = useRouter();
-
   const { updateBlog } = useBlogs();
+  const [file, setFile] = useState<File | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const form = useForm<FormValues>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(blogSchema),
     defaultValues: {
-      title: blog?.title || "",
-      content: blog?.content || "",
-      category: blog?.category || "",
-      image: blog.image_url
-        ? {
-            url: blog.image_url, // public URL
-            path: blog.image_path, // internal path di bucket
-          }
-        : null,
+      title: blog?.title ?? "",
+      content: blog?.content ?? "",
+      category: blog?.category ?? "",
+      image: blog?.image_url ?? "",
     },
   });
 
   const onSubmit = async (values: FormValues) => {
     try {
+      setLoading(true);
+      setSuccess(false);
+
+      let image = blog?.image;
+
+      if (file) {
+        const supabase = createClient();
+        const filePath = `blogs/${file.name}`;
+
+        // upload image baru
+        const { error } = await supabase.storage
+          .from("blog-images")
+          .upload(filePath, file);
+        if (error) throw error;
+
+        const { data } = supabase.storage
+          .from("blog-images")
+          .getPublicUrl(filePath);
+
+        image = {
+          url: data.publicUrl,
+          path: filePath,
+        };
+
+        // hapus gambar lama kalau ada
+        if (blog?.image?.path) {
+          await supabase.storage.from("blog-images").remove([blog.image.path]);
+        }
+      }
+
       await updateBlog(blog.id, {
         title: values.title,
         content: values.content,
         category: values.category,
-        image: values.image, // { url, path }
+        image,
       });
-      router.push("/dashboard");
+
+      toast.success("Blog berhasil diupdate!");
+      setSuccess(true);
     } catch (err: any) {
-      console.error(err);
-      alert(err.message);
+      toast.error(err.message || "❌ Gagal update blog");
+    } finally {
+      setLoading(false);
+      setTimeout(() => setSuccess(false), 3000);
     }
   };
 
@@ -64,57 +101,100 @@ export default function EditBlogForm({ blog }: { blog: any }) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-4 max-w-2xl"
+        className="container space-y-6 max-w-full mx-auto h-full"
       >
-        <FormField
-          control={form.control}
-          name="image"
-          render={({ field }) => (
-            <FormItem>
-              <UploadThumnails
-                value={form.watch("image")}
-                onChange={(val) => form.setValue("image", val)}
+        <div className="space-y-3.5">
+          <FormField
+            control={form.control}
+            name="image"
+            render={() => (
+              <FormItem>
+                <UploadThumbnails
+                  onFileSelect={setFile}
+                  initialUrl={blog?.image_url || null} // 👉 thumbnail lama
+                />
+              </FormItem>
+            )}
+          />
+
+          <div className="flex items-start justify-center gap-4">
+            <div className="grid gap-6 flex-1">
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Judul</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Masukkan judul blog..." />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="title"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Title</FormLabel>
-              <Input {...field} />
-              <FormMessage />
-            </FormItem>
-          )}
-        />
 
-        <FormField
-          control={form.control}
-          name="content"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Content</FormLabel>
-              <Input {...field} />
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+              <FormField
+                control={form.control}
+                name="category"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Kategori</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Agenda Sekolah" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
-        <FormField
-          control={form.control}
-          name="category"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Category</FormLabel>
-              <Input {...field} />
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+            <FormField
+              control={form.control}
+              name="content"
+              render={({ field }) => (
+                <FormItem className="flex-1">
+                  <FormLabel>Konten</FormLabel>
+                  <FormControl>
+                    <Editor
+                      initialMarkdown={field.value}
+                      onMarkdownChange={(markdown: any) => {
+                        field.onChange(markdown);
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        </div>
 
-        <Button type="submit">Update Blog</Button>
+        <div className="fixed bottom-10 w-full">
+          <Button
+            type="submit"
+            disabled={loading}
+            className={cn(
+              success && "bg-green-600 hover:bg-green-700 text-white",
+            )}
+          >
+            {loading ? (
+              <>
+                <LoaderCircleIcon
+                  className="mr-2 h-4 w-4 animate-spin"
+                  aria-hidden="true"
+                />
+                Please wait...
+              </>
+            ) : success ? (
+              <>
+                <CheckCircle2 className="mr-2 h-4 w-4" aria-hidden="true" />
+                Success!
+              </>
+            ) : (
+              "Update"
+            )}
+          </Button>
+        </div>
       </form>
     </Form>
   );

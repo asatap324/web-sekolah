@@ -1,6 +1,3 @@
-"use client";
-
-import { GalleryVerticalEnd } from "lucide-react";
 import LoginForm from "@/components/auth-ui/login/login-form";
 import Image from "next/image";
 

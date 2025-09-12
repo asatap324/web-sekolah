@@ -4,6 +4,16 @@ import { createClient } from "@/utils/supabase/client";
 
 const supabase = createClient();
 
+function slugify(title: string): string {
+  return title
+    .toLowerCase()
+    .split(" ")
+    .slice(0, 6) // ambil 6 kata pertama
+    .join(" ")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)+/g, "");
+}
+
 // 🔹 Hook untuk CRUD blogs
 export function useBlogs() {
   const createBlog = async (blog: {
@@ -21,11 +31,14 @@ export function useBlogs() {
       throw new Error("Harus login untuk membuat blog");
     }
 
+    const slug = slugify(blog.title);
+
     const { data, error } = await supabase
       .from("blogs")
       .insert([
         {
           title: blog.title,
+          slug,
           content: blog.content,
           category: blog.category,
           author_id: user.id,
@@ -46,42 +59,38 @@ export function useBlogs() {
       title: string;
       content: string;
       category: string;
-      image?: { url: string; path: string };
+      image?: { url: string; path: string } | null;
     },
   ) => {
-    // ambil blog lama dulu
-    const { data: oldBlog, error: oldError } = await supabase
+    const supabase = createClient();
+
+    // Ambil data blog lama dulu (supaya tau path file lama)
+    const { data: oldBlog, error: fetchError } = await supabase
       .from("blogs")
-      .select("image_path, image_url")
+      .select("image_path")
       .eq("id", id)
       .single();
 
-    if (oldError) throw oldError;
+    if (fetchError) throw fetchError;
 
-    // kalau ada image baru & ada image lama → hapus lama
+    // Kalau ada gambar baru DAN ada gambar lama → hapus file lama
     if (
       blog.image?.path &&
       oldBlog?.image_path &&
       blog.image.path !== oldBlog.image_path
     ) {
-      const { error: removeError } = await supabase.storage
-        .from("blog-images")
-        .remove([oldBlog.image_path]);
-
-      if (removeError) {
-        throw removeError; // bisa diganti return supaya nggak stop
-      }
+      await supabase.storage.from("blog-images").remove([oldBlog.image_path]);
     }
 
-    // update blog dengan image baru / lama
+    // Update blog di DB
     const { data, error } = await supabase
       .from("blogs")
       .update({
         title: blog.title,
         content: blog.content,
         category: blog.category,
-        image_url: blog.image?.url || oldBlog?.image_url,
-        image_path: blog.image?.path || oldBlog?.image_path,
+        image_url: blog.image?.url || null,
+        image_path: blog.image?.path || null,
       })
       .eq("id", id)
       .select()

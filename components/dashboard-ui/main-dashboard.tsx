@@ -1,5 +1,5 @@
-import { SectionCards } from "@/components/section-cards";
-import { DataTable } from "../data-table";
+import { SectionCards } from "@/components/dashboard-ui/section-cards";
+import { DataTable } from "./data-table";
 
 export default function MainDashboard({ blogs }: { blogs: any[] }) {
   return (

@@ -14,15 +14,15 @@ export const getBlogs = cache(async () => {
   return data;
 });
 
-export async function getBlogById(id: string) {
+export const getBlogBySlug = cache(async (slug: string) => {
   const supabase = createClient();
 
   const { data, error } = await supabase
     .from("blogs")
     .select("*")
-    .eq("id", id)
+    .eq("slug", slug)
     .single();
 
   if (error) throw error;
   return data;
-}
+});

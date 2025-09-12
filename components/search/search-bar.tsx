@@ -38,7 +38,7 @@ export default function SearchBar() {
   return (
     <>
       <button
-        className="border-input w-full bg-background text-foreground placeholder:text-muted-foreground/70 focus-visible:border-ring focus-visible:ring-ring/50 inline-flex h-11  rounded-md border px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px]"
+        className="border-input  max-w-xs mx-auto w-full  bg-background text-foreground placeholder:text-muted-foreground/70 focus-visible:border-ring focus-visible:ring-ring/50 inline-flex h-9  rounded-md border px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px]"
         onClick={() => setOpen(true)}
       >
         <span className="flex grow items-center">
@@ -48,7 +48,7 @@ export default function SearchBar() {
             aria-hidden="true"
           />
           <span className="text-muted-foreground/70 font-normal">
-            Apa yang ingin anda cari
+            Search...
           </span>
         </span>
         <kbd className="bg-background text-muted-foreground/70 ms-12 -me-1 inline-flex h-6 max-h-full items-center rounded border px-1 font-[inherit] text-[0.625rem] font-medium">
