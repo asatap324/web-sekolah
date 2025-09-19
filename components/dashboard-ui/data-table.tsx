@@ -21,20 +21,14 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import {
-  IconChevronDown,
   IconChevronLeft,
   IconChevronRight,
   IconChevronsLeft,
   IconChevronsRight,
-  IconCircleCheckFilled,
   IconDotsVertical,
   IconEdit,
   IconGripVertical,
-  IconLayoutColumns,
-  IconLoader,
-  IconPlus,
   IconTrash,
-  IconTrendingUp,
 } from "@tabler/icons-react";
 import {
   ColumnDef,
@@ -51,11 +45,9 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table";
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 import { toast } from "sonner";
 import { z } from "zod";
 
-import { useIsMobile } from "@/hooks/use-mobile";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
@@ -69,7 +61,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -78,7 +69,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
+
 import {
   Table,
   TableBody,
@@ -91,12 +82,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link";
 import { useBlogs } from "@/hooks/use-blogs";
 import { useRouter } from "next/navigation";
-import { TrashIcon } from "lucide-react";
 
 export const schema = z.object({
   id: z.string(),
   title: z.string(),
-  category: z.string(),
+  category: z.array(z.string()),
   created_at: z.preprocess(
     (val) => (val == null ? null : new Date(String(val))),
     z.date().nullable(),
@@ -200,9 +190,17 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     accessorKey: "category",
     header: "Category",
     cell: ({ row }) => (
-      <Badge variant="outline" className="text-muted-foreground px-1.5">
-        {row.original.category}
-      </Badge>
+      <div className="flex items-center gap-2">
+        {row.original.category.map((category: string) => (
+          <Badge
+            key={category}
+            variant="outline"
+            className="text-muted-foreground px-1.5"
+          >
+            {category}
+          </Badge>
+        ))}
+      </div>
     ),
     enableSorting: false,
     enableHiding: false,

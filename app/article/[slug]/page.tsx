@@ -1,13 +1,23 @@
 import { AuthorCard } from "@/components/blog/author-card";
 import { Button } from "@/components/ui/button";
 import MyImage from "@/components/ui/image";
-import { createClient } from "@/utils/supabase/client";
+
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Markdown from "react-markdown";
 
 import ReadMoreArticles from "@/components/blog/read-more-section";
+import { TableOfContents } from "@/components/blog/table-of-content";
+import { MobileTableOfContents } from "@/components/blog/mobile-toc";
+import remarkGfm from "remark-gfm";
+import remarkSlug from "remark-slug";
+import { FlickeringGrid } from "@/components/blocks/flickering-grid";
+
+import { createServer } from "@/utils/supabase/server";
+import { createClient } from "@/utils/supabase/client";
+
+export const revalidate = 3600;
 
 interface BlogPageProps {
   params: { slug: string };
@@ -15,11 +25,11 @@ interface BlogPageProps {
 
 // Ambil data blog untuk halaman ini (SSG)
 async function getBlogBySlug(slug: string) {
-  const supabase = createClient();
+  const supabase = await createServer();
 
   const { data, error } = await supabase
     .from("blogs")
-    .select("*")
+    .select("slug, title, content, created_at, image_url, category")
     .eq("slug", slug)
     .single();
 
@@ -42,22 +52,29 @@ export async function generateStaticParams() {
 // ✅ (Opsional) SEO dinamis per artikel
 export async function generateMetadata({ params }: BlogPageProps) {
   const { slug } = await params;
-  const blog = await getBlogBySlug(slug);
 
-  if (!blog) {
+  const supabase = createClient();
+
+  const { data } = await supabase
+    .from("blogs")
+    .select("title, content")
+    .eq("slug", slug)
+    .single();
+
+  if (!data) {
     return {
       title: "Blog tidak ditemukan",
     };
   }
 
   return {
-    title: blog.title,
-    description: blog.description ?? blog.content.slice(0, 150) + "...",
+    title: data.title,
+    description: data.content.slice(0, 150),
   };
 }
 
 const formatDate = (date: Date): string => {
-  return date.toLocaleDateString("en-US", {
+  return date.toLocaleDateString("id-ID", {
     year: "numeric",
     month: "long",
     day: "numeric",
@@ -78,6 +95,16 @@ export default async function BlogPage({ params }: BlogPageProps) {
 
   return (
     <div className="min-h-screen bg-background relative mt-16  sm:mt-28">
+      <div className="absolute top-0 left-0 z-0 w-full h-[200px] [mask-image:linear-gradient(to_top,transparent_25%,black_95%)]">
+        <FlickeringGrid
+          className="absolute top-0 left-0 size-full"
+          squareSize={4}
+          gridGap={6}
+          color="#6B7280"
+          maxOpacity={0.2}
+          flickerChance={0.05}
+        />
+      </div>
       <div className="space-y-4 border-b border-border relative z-10">
         <div className="max-w-7xl mx-auto flex flex-col gap-6 p-6">
           <div className="flex flex-wrap items-center gap-3 gap-y-5 text-sm text-muted-foreground">
@@ -89,9 +116,14 @@ export default async function BlogPage({ params }: BlogPageProps) {
             </Button>
             {blog.category && (
               <div className="flex flex-wrap gap-3 text-muted-foreground">
-                <span className="h-6 w-fit px-3 text-sm font-medium bg-muted text-muted-foreground rounded-md border flex items-center justify-center">
-                  {blog.category}
-                </span>
+                {blog.category.map((item: string) => (
+                  <span
+                    key={item}
+                    className="h-6 w-fit px-3 text-sm font-medium bg-muted text-muted-foreground rounded-md border flex items-center justify-center"
+                  >
+                    {item}
+                  </span>
+                ))}
               </div>
             )}
             <time className="font-medium text-muted-foreground">
@@ -119,12 +151,30 @@ export default async function BlogPage({ params }: BlogPageProps) {
             </div>
           )}
           <div className="p-6  lg:p-10">
-            <div className="prose dark:prose-invert max-w-none prose-headings:scroll-mt-8 prose-headings:font-semibold prose-a:no-underline prose-headings:tracking-tight prose-headings:text-balance prose-p:tracking-tight prose-p:text-balance prose-lg">
-              <Markdown>{blog.content}</Markdown>
+            <div
+              id="markdown-content"
+              className="prose dark:prose-invert max-w-none prose-headings:scroll-mt-8 prose-headings:font-semibold prose-a:no-underline prose-headings:tracking-tight prose-headings:text-balance prose-p:tracking-tight prose-p:text-balance prose-lg"
+            >
+              <Markdown
+                remarkPlugins={[remarkGfm, remarkSlug]}
+                components={{
+                  img: ({ node, ...props }) => (
+                    <MyImage
+                      src={typeof props.src === "string" ? props.src : ""}
+                      alt={props.alt || ""}
+                      width={800}
+                      height={500}
+                      className="rounded-md md:aspect-video md:object-cover"
+                    />
+                  ),
+                }}
+              >
+                {blog.content}
+              </Markdown>
             </div>
           </div>
           <div className="mt-10">
-            <ReadMoreArticles currentSlug={params.slug} />
+            <ReadMoreArticles currentSlug={slug} />
           </div>
         </main>
 
@@ -132,14 +182,14 @@ export default async function BlogPage({ params }: BlogPageProps) {
           <div className="sticky top-20 space-y-8">
             <AuthorCard />
 
-            {/*<div className="border border-border rounded-lg p-6 bg-card">
+            <div className="border border-border rounded-lg p-6 bg-card">
               <TableOfContents />
-            </div>*/}
+            </div>
           </div>
         </aside>
       </div>
 
-      {/*<MobileTableOfContents />*/}
+      <MobileTableOfContents />
     </div>
   );
 }

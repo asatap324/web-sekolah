@@ -21,20 +21,31 @@ const toBase64 = (str: string) =>
     : window.btoa(str);
 
 type Props = {
-  width: number;
-  height: number;
+  width?: number;
+  height?: number;
   alt?: string | undefined;
   src: string;
   className?: string;
+  fill?: boolean;
+  sizes?: string;
 };
 
-export default function MyImage({ width, height, alt, src, className }: Props) {
+export default function MyImage({
+  width,
+  height,
+  alt,
+  src,
+  className,
+  fill,
+  sizes,
+}: Props) {
   return (
     <>
       <Image
         className={cn("shadow-none", className)}
         src={src}
         alt={alt || "https://placehold.net/400x400.png"}
+        fill={fill}
         width={width}
         height={height}
         placeholder={`data:image/svg+xml;base64,${toBase64(shimmer(700, 475))}`}

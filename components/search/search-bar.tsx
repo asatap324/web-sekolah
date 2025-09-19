@@ -1,13 +1,9 @@
 "use client";
 
 import * as React from "react";
-import {
-  ArrowUpRightIcon,
-  CircleFadingPlusIcon,
-  FileInputIcon,
-  FolderPlusIcon,
-  SearchIcon,
-} from "lucide-react";
+import { ArrowUpRightIcon, SearchIcon } from "lucide-react";
+
+import { useState, useEffect } from "react";
 
 import {
   CommandDialog,
@@ -16,14 +12,19 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-  CommandSeparator,
-  CommandShortcut,
 } from "@/components/ui/command";
 
-export default function SearchBar() {
-  const [open, setOpen] = React.useState(false);
+import { searchBlogs } from "@/app/actions/search-blogs";
+import { useRouter } from "next/navigation";
 
-  React.useEffect(() => {
+export default function SearchBar() {
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState<any[]>([]);
+  const [cache, setCache] = useState<Map<string, any[]>>(new Map());
+  const router = useRouter();
+
+  useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
@@ -34,6 +35,31 @@ export default function SearchBar() {
     document.addEventListener("keydown", down);
     return () => document.removeEventListener("keydown", down);
   }, []);
+
+  // 🔎 Fetch blogs tiap kali query berubah
+  useEffect(() => {
+    const handler = setTimeout(async () => {
+      if (query.trim().length < 2) {
+        setResults([]);
+        return;
+      }
+
+      // cek cache
+      if (cache.has(query)) {
+        setResults(cache.get(query)!);
+        return;
+      }
+
+      // fetch ke Supabase
+      const data = await searchBlogs(query);
+      setResults(data);
+
+      // simpan ke cache
+      setCache((prev) => new Map(prev).set(query, data));
+    }, 500);
+
+    return () => clearTimeout(handler); // cleanup
+  }, [query, cache]);
 
   return (
     <>
@@ -56,39 +82,28 @@ export default function SearchBar() {
         </kbd>
       </button>
       <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder="Type a command or search..." />
+        <CommandInput
+          value={query}
+          onValueChange={setQuery}
+          placeholder="Type a command or search..."
+        />
         <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
-          <CommandGroup heading="Quick start">
-            <CommandItem>
-              <FolderPlusIcon
-                size={16}
-                className="opacity-60"
-                aria-hidden="true"
-              />
-              <span>New folder</span>
-              <CommandShortcut className="justify-center">⌘N</CommandShortcut>
-            </CommandItem>
-            <CommandItem>
-              <FileInputIcon
-                size={16}
-                className="opacity-60"
-                aria-hidden="true"
-              />
-              <span>Import document</span>
-              <CommandShortcut className="justify-center">⌘I</CommandShortcut>
-            </CommandItem>
-            <CommandItem>
-              <CircleFadingPlusIcon
-                size={16}
-                className="opacity-60"
-                aria-hidden="true"
-              />
-              <span>Add block</span>
-              <CommandShortcut className="justify-center">⌘B</CommandShortcut>
-            </CommandItem>
+          {results.length === 0 && query.length >= 2 && (
+            <CommandEmpty>No results found.</CommandEmpty>
+          )}
+          <CommandGroup>
+            {results.map((blog) => (
+              <CommandItem
+                key={blog.id}
+                onSelect={() => {
+                  setOpen(false);
+                  router.push(`/article/${blog.slug}`);
+                }}
+              >
+                {blog.title}
+              </CommandItem>
+            ))}
           </CommandGroup>
-          <CommandSeparator />
           <CommandGroup heading="Navigation">
             <CommandItem>
               <ArrowUpRightIcon
@@ -96,7 +111,7 @@ export default function SearchBar() {
                 className="opacity-60"
                 aria-hidden="true"
               />
-              <span>Go to dashboard</span>
+              <span>Go to Home</span>
             </CommandItem>
             <CommandItem>
               <ArrowUpRightIcon
@@ -104,7 +119,7 @@ export default function SearchBar() {
                 className="opacity-60"
                 aria-hidden="true"
               />
-              <span>Go to apps</span>
+              <span>Go to Article</span>
             </CommandItem>
             <CommandItem>
               <ArrowUpRightIcon
@@ -112,7 +127,7 @@ export default function SearchBar() {
                 className="opacity-60"
                 aria-hidden="true"
               />
-              <span>Go to connections</span>
+              <span>Go to Profile</span>
             </CommandItem>
           </CommandGroup>
         </CommandList>

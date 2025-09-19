@@ -1,4 +1,4 @@
-import CreateBlogForm from "@/components/dashboard-ui/create-blog-ui/form-create-blog";
+import CreateBlogForm from "@/components/dashboard-ui/blog-form-ui/create-blog-ui/form-create-blog";
 
 export default function CreateBlogPage() {
   return (

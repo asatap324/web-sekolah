@@ -21,6 +21,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { loginSchema } from "@/hooks/types";
+import { useUserStore } from "@/store/use-store";
 
 type FormValues = z.infer<typeof loginSchema>;
 
@@ -53,18 +54,17 @@ export default function LoginForm({
       });
       if (error) throw error;
       // Update this route to redirect to an authenticated route. The user already has an active session.
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      // ✅ biarkan Zustand update user via onAuthStateChange
+      const { user } = useUserStore.getState();
 
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", user?.id)
-        .single();
+      // tunggu sebentar kalau user belum langsung keisi
+      if (!user) {
+        // bisa polling dikit / tunggu event dari zustand
+        return;
+      }
 
-      if (profile?.role === "admin") {
-        router.push("/dashboard"); // langsung redirect tanpa render dashboard
+      if (user.role === "admin") {
+        router.push("/dashboard");
       } else {
         router.push("/");
       }

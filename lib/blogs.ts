@@ -1,28 +1,44 @@
 import "server-only";
-import { createClient } from "@/utils/supabase/server";
-import { cache } from "react";
+import { createServer } from "@/utils/supabase/server";
 
-export const getBlogs = cache(async () => {
-  const supabase = createClient();
+//
+// ✅ Ambil semua blogs (tanpa pagination)
+//
+export async function getBlogs() {
+  const supabase = await createServer();
 
-  const { data, error } = await supabase
+  let query = supabase
     .from("blogs")
     .select("*")
     .order("created_at", { ascending: false });
 
-  if (error) throw error;
-  return data;
-});
-
-export const getBlogBySlug = cache(async (slug: string) => {
-  const supabase = createClient();
-
-  const { data, error } = await supabase
-    .from("blogs")
-    .select("*")
-    .eq("slug", slug)
-    .single();
+  const { data, error } = await query;
 
   if (error) throw error;
-  return data;
-});
+  return data ?? [];
+}
+
+//
+// ✅ Ambil blogs dengan pagination
+//
+// export async function getBlogsPaginated(page: number = 1, limit: number = 6) {
+//   const supabase = await createServer();
+
+//   const from = (page - 1) * limit;
+//   const to = from + limit - 1;
+
+//   let query = supabase
+//     .from("blogs")
+//     .select("*", { count: "exact" }) // count untuk totalPages
+//     .order("created_at", { ascending: false })
+//     .range(from, to);
+
+//   const { data, error, count } = await query;
+
+//   if (error) throw error;
+
+//   return {
+//     data: data ?? [],
+//     totalPages: count ? Math.ceil(count / limit) : 1,
+//   };
+// }

@@ -1,12 +1,12 @@
 import MainDashboard from "@/components/dashboard-ui/main-dashboard";
-import { createClient } from "@/utils/supabase/server";
+import { createServer } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { getBlogs } from "@/lib/blogs";
 
 export default async function Page() {
   const blogs = await getBlogs();
 
-  const supabase = createClient();
+  const supabase = await createServer();
 
   // 🔹 cek user login
   const {

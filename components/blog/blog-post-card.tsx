@@ -20,14 +20,16 @@ export function BlogPostCard({
   readTime,
 }: BlogPostCardProps) {
   return (
-    <Card className="bg-card shadow-none flex flex-col p-0 pb-5 text-card-foreground overflow-hidden h-full rounded-lg border">
-      <MyImage
-        src={imageSrc}
-        alt={imageAlt}
-        width={400}
-        height={225}
-        className="h-48 w-full object-cover"
-      />
+    <Card className="bg-card group shadow-none flex flex-col p-0 pb-5 text-card-foreground overflow-hidden h-full rounded-lg border">
+      <div className="relative w-full h-48 overflow-hidden">
+        <MyImage
+          src={imageSrc}
+          alt={imageAlt}
+          fill
+          className="object-cover transition-transform duration-300 group-hover:scale-105"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        />
+      </div>
 
       <CardContent className="px-4 flex-1 space-y-2 ">
         <h3 className="text-lg leading-tight font-semibold">{title}</h3>
