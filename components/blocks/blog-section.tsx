@@ -5,7 +5,7 @@ import MyImage from "@/components/ui/image";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
-import { BlogPostCard } from "./blog-post-card";
+import { BlogPostCard } from "@/components/blog/blog-post-card";
 
 import removeMd from "remove-markdown";
 

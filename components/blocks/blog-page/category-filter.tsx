@@ -13,14 +13,9 @@ import {
 interface CategoryFilterProps {
   tags: string[];
   selectedTag: string;
-  tagCounts?: Record<string, number>;
 }
 
-export function CategoryFilter({
-  tags,
-  selectedTag,
-  tagCounts,
-}: CategoryFilterProps) {
+export function CategoryFilter({ tags, selectedTag }: CategoryFilterProps) {
   const router = useRouter();
   const pathname = usePathname();
 
@@ -38,24 +33,13 @@ export function CategoryFilter({
         <button
           key={tag}
           onClick={() => handleTagClick(tag)}
-          className={`h-8 flex items-center px-1 pl-3 rounded-lg cursor-pointer border text-sm transition-colors ${
+          className={`h-8 flex items-center px-3 rounded-lg cursor-pointer border text-sm transition-colors ${
             selectedTag === tag
               ? "border-primary bg-primary text-primary-foreground"
               : "border-border hover:bg-muted"
           }`}
         >
           <span>{tag}</span>
-          {tagCounts?.[tag] && (
-            <span
-              className={`ml-2 text-xs border rounded-md h-6 min-w-6 font-medium flex items-center justify-center ${
-                selectedTag === tag
-                  ? "border-border/40 dark:border-primary-foreground bg-background text-primary"
-                  : "border-border dark:border-border"
-              }`}
-            >
-              {tagCounts[tag]}
-            </span>
-          )}
         </button>
       ))}
     </div>
@@ -82,7 +66,7 @@ export function CategoryFilter({
                 className="w-full flex items-center justify-between font-medium cursor-pointer text-sm transition-colors"
               >
                 <span
-                  className={`w-full flex items-center justify-between font-medium cursor-pointer text-sm transition-colors ${
+                  className={`w-full flex items-center justify-between font-medium cursor-pointer  text-sm transition-colors ${
                     selectedTag === tag
                       ? "underline underline-offset-4 text-primary"
                       : "text-muted-foreground"
@@ -90,11 +74,6 @@ export function CategoryFilter({
                 >
                   {tag}
                 </span>
-                {tagCounts?.[tag] && (
-                  <span className="flex-shrink-0 ml-2 border border-border rounded-md h-6 min-w-6 flex items-center justify-center">
-                    {tagCounts[tag]}
-                  </span>
-                )}
               </button>
             ))}
           </div>

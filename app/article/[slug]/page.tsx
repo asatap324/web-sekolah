@@ -57,7 +57,7 @@ export async function generateMetadata({ params }: BlogPageProps) {
 
   const { data } = await supabase
     .from("blogs")
-    .select("title, content")
+    .select("title, content, image_url")
     .eq("slug", slug)
     .single();
 
@@ -70,6 +70,17 @@ export async function generateMetadata({ params }: BlogPageProps) {
   return {
     title: data.title,
     description: data.content.slice(0, 150),
+    openGraph: {
+      title: data.title,
+      description: data.content.slice(0, 150) + "...",
+      images: [
+        {
+          url: data.image_url || "https://example.com/default-og.png",
+          width: 1200,
+          height: 630,
+        },
+      ],
+    },
   };
 }
 
@@ -105,7 +116,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
           flickerChance={0.05}
         />
       </div>
-      <div className="space-y-4 border-b border-border relative z-10">
+      <div className="space-y-4 border-b border-border relative z-20">
         <div className="max-w-7xl mx-auto flex flex-col gap-6 p-6">
           <div className="flex flex-wrap items-center gap-3 gap-y-5 text-sm text-muted-foreground">
             <Button variant="outline" asChild className="h-6 w-6">

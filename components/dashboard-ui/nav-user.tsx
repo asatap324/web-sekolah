@@ -25,7 +25,6 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { Skeleton } from "../ui/skeleton";
 import { useUser } from "@/hooks/use-user";
 
 export function NavUser() {

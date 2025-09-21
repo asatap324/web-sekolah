@@ -21,7 +21,7 @@ export function BlogPostCard({
 }: BlogPostCardProps) {
   return (
     <Card className="bg-card group shadow-none flex flex-col p-0 pb-5 text-card-foreground overflow-hidden h-full rounded-lg border">
-      <div className="relative w-full h-48 overflow-hidden">
+      <div className="relative w-full h-40 overflow-hidden">
         <MyImage
           src={imageSrc}
           alt={imageAlt}
@@ -31,7 +31,7 @@ export function BlogPostCard({
         />
       </div>
 
-      <CardContent className="px-4 flex-1 space-y-2 ">
+      <CardContent className="px-4 flex-1 space-y-2 pt-4 ">
         <h3 className="text-lg leading-tight font-semibold">{title}</h3>
         <p className="text-muted-foreground line-clamp-2 text-sm mt-auto">
           {description}

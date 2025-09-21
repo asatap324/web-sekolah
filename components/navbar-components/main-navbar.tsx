@@ -24,10 +24,10 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import Image from "next/image";
-import ThemeToggleButton from "../dark-mode/theme-toggle-button";
-import { LogoutButton } from "../auth-ui/logout-button";
+import ThemeToggleButton from "@/components/dark-mode/theme-toggle-button";
+import { LogoutButton } from "@/components/auth-ui/logout-button";
 import Link from "next/link";
-import SearchBar from "../search/search-bar";
+import SearchBar from "@/components/search/search-bar";
 import { useUser } from "@/hooks/use-user";
 
 // Navigation links array to be used in both desktop and mobile menus
@@ -39,13 +39,13 @@ const navigationLinks = [
     type: "description",
     items: [
       {
-        href: "#",
+        href: "/profile",
         label: "Profile Sekolah",
         description: "Lebih tahu tentang sekolah kami",
         blank: false,
       },
       {
-        href: "#",
+        href: "/profile",
         label: "Visi Misi",
         description: "Liat Visi dan Misi sekolah kami",
         blank: false,
@@ -120,7 +120,7 @@ export default function MainNavbar() {
           <div className="hidden md:flex">
             {user?.role === "admin" ? (
               <div>
-                <LogoutButton />
+                <LogoutButton size="icon" variant="outline" />
               </div>
             ) : (
               <Button asChild>

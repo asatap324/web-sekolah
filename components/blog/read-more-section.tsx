@@ -5,7 +5,7 @@ import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
 import removeMd from "remove-markdown";
 import MyImage from "@/components/ui/image";
-import { Spinner } from "../ui/spinner";
+import { Spinner } from "@/components/ui/spinner";
 
 interface ReadMoreArticlesProps {
   currentSlug: string;

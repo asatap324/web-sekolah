@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import { createClient } from "@/utils/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { LogOut } from "lucide-react";
 
 interface PropsButton {
   size?: any | "default";
@@ -21,12 +22,13 @@ export function LogoutButton({ size, variant, className }: PropsButton) {
 
   return (
     <Button
-      className={cn("", className)}
+      className={cn("cursor-pointer size-8", className)}
       size={size}
       variant={variant}
       onClick={logout}
     >
-      Logout
+      <LogOut className="h-[1.2rem] w-[1.2rem]" />
+      <span className="sr-only">Logout</span>
     </Button>
   );
 }

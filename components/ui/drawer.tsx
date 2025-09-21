@@ -91,7 +91,7 @@ export function DrawerContent({ children, className }: DrawerContentProps) {
               ease: [0.16, 1, 0.3, 1],
             }}
             className={cn(
-              "fixed bottom-3 left-0 right-0 bg-background border-t border-border rounded-lg z-50 max-h-[70vh] overflow-hidden w-[95%] mx-auto flex flex-col",
+              "fixed bottom-0 left-0 right-0 bg-background border-t border-border rounded-lg z-50 max-h-[70vh] overflow-hidden w-full mx-auto flex flex-col",
               className,
             )}
           >
@@ -145,7 +145,7 @@ interface DrawerBodyProps {
 
 export function DrawerBody({ children, className }: DrawerBodyProps) {
   return (
-    <div className={cn("p-4 overflow-y-auto flex-1", className)}>
+    <div className={cn("p-6 overflow-y-auto flex-1", className)}>
       {children}
     </div>
   );

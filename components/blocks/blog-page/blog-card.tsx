@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import MyImage from "../ui/image";
+import MyImage from "@/components/ui/image";
 
 interface BlogCardProps {
   slug: string;

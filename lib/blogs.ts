@@ -18,6 +18,45 @@ export async function getBlogs() {
   return data ?? [];
 }
 
+export async function getGuru(limit?: number) {
+  const supabase = await createServer();
+
+  let query = supabase
+    .from("guru")
+    .select("*")
+    .order("id", { ascending: true });
+
+  if (limit) {
+    query = query.limit(limit);
+  }
+
+  const { data, error } = await query;
+
+  if (error) throw error;
+  return data ?? [];
+}
+
+export async function getLatestAnnouncement() {
+  const supabase = await createServer();
+
+  const { data, error } = await supabase
+    .from("announcements")
+    .select("*")
+    .eq("active", true)
+    .lte("start_date", new Date().toISOString())
+    .or(`end_date.is.null,end_date.gte.${new Date().toISOString()}`)
+    .order("start_date", { ascending: false })
+    .limit(1)
+    .single();
+
+  if (error) {
+    console.error("Error fetching announcement:", error.message);
+    return null;
+  }
+
+  return data;
+}
+
 //
 // ✅ Ambil blogs dengan pagination
 //
