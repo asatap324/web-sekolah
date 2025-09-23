@@ -2,11 +2,16 @@
 
 import { useEffect } from "react";
 import MainNavbar from "@/components/navbar-components/main-navbar";
+import Footer from "@/components/blocks/footer";
+
 import { usePathname } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { useUserStore } from "@/store/use-store";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const supabase = createClient();
+const queryClient = new QueryClient();
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -33,10 +38,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         setLoading(true);
         setError(null);
 
-        // ⛔ kalau user sudah ada di store → skip fetch
+        // kalau user sudah ada di store → skip
         if (user) return;
 
-        // Ambil user dari auth
         const {
           data: { user: authUser },
           error: authError,
@@ -48,20 +52,19 @@ export default function Providers({ children }: { children: React.ReactNode }) {
           return;
         }
 
-        // Ambil profile dari table
         const { data: profile, error: profileError } = await supabase
           .from("profiles")
           .select("username, role")
           .eq("id", authUser.id)
-          .single();
+          .maybeSingle();
 
         if (profileError) throw profileError;
 
         setUser({
           id: authUser.id,
           email: authUser.email ?? "",
-          username: profile?.username,
-          role: profile?.role,
+          username: profile?.username ?? null,
+          role: profile?.role ?? null,
         });
       } catch (e: unknown) {
         setError(e instanceof Error ? e.message : "Gagal ambil user");
@@ -73,15 +76,12 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 
     loadUser();
 
-    // Listener untuk login/logout
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!session) {
-        // logout
         setUser(null);
       } else {
-        // login → fetch ulang
         loadUser();
       }
     });
@@ -89,12 +89,16 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     return () => {
       subscription.unsubscribe();
     };
-  }, [user, setUser, setLoading, setError]);
+  }, [setUser, setLoading, setError]);
 
   return (
     <>
       {showNavbar && <MainNavbar />}
-      {children}
+      <QueryClientProvider client={queryClient}>
+        {children}
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
+      {showNavbar && <Footer />}
     </>
   );
 }

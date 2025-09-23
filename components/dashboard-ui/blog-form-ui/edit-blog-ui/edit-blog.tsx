@@ -1,31 +1,40 @@
+// app/blogs/[id]/edit/EditBlogPageClient.tsx
 "use client";
 
-import { useEffect, useState } from "react";
-import { createClient } from "@/utils/supabase/client";
-import EditBlogForm from "./form-edit-blog"; // kamu sudah punya ini
+import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
+import EditBlogForm from "./form-edit-blog";
+import { useBlogQueryById } from "@/hooks/blogs/queries";
 
-export default function EditBlog({ blogId }: { blogId: string }) {
-  const [blog, setBlog] = useState<any | null>(null);
-  const [loading, setLoading] = useState(true);
+export default function EditBlogPageClient({ id }: { id: string }) {
+  const router = useRouter();
+  const { data: blog, isLoading, isError } = useBlogQueryById(id);
 
-  useEffect(() => {
-    const fetchBlog = async () => {
-      const supabase = createClient();
-      const { data, error } = await supabase
-        .from("blogs")
-        .select("*")
-        .eq("id", blogId)
-        .single();
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Loader2 className="animate-spin h-6 w-6 text-gray-500" />
+      </div>
+    );
+  }
 
-      if (data) setBlog(data);
-      setLoading(false);
-    };
+  if (isError || !blog) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <p className="text-red-500">❌ Blog tidak ditemukan</p>
+      </div>
+    );
+  }
 
-    fetchBlog();
-  }, [blogId]);
-
-  if (loading) return <p>Loading...</p>;
-  if (!blog) return <p className="text-red-500">Blog not found</p>;
-
-  return <EditBlogForm blog={blog} />;
+  return (
+    <div className="container max-w-full py-6">
+      <h1 className="text-2xl font-bold mb-6">Edit Blog</h1>
+      <EditBlogForm
+        blog={blog}
+        onSuccess={() => {
+          router.push(`/blogs/${id}`);
+        }}
+      />
+    </div>
+  );
 }

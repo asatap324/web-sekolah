@@ -5,8 +5,6 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useBlogs } from "@/hooks/use-blogs";
-
 import {
   Form,
   FormField,
@@ -23,10 +21,8 @@ import { toast } from "sonner";
 import UploadThumbnails from "@/components/dashboard-ui/blog-form-ui/file-upload";
 
 import { createClient } from "@/utils/supabase/client";
-import { cn } from "@/lib/utils";
-import { CheckCircle2, LoaderCircleIcon, X, XIcon } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { CategoryInput } from "../input-tag";
+import { useCreateBlog } from "@/hooks/blogs/mutations";
 
 const Editor = dynamic(
   () => import("../../../blocks/editor-00/editor").then((m) => m.Editor),
@@ -44,10 +40,7 @@ const blogSchema = z.object({
 type BlogForm = z.infer<typeof blogSchema>;
 
 export default function CreateBlogForm() {
-  const { createBlog } = useBlogs();
-
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const createBlog = useCreateBlog();
   const [file, setFile] = useState<File | null>(null);
 
   const form = useForm<BlogForm>({
@@ -62,50 +55,47 @@ export default function CreateBlogForm() {
 
   const onSubmit = async (values: BlogForm) => {
     try {
-      setLoading(true);
-      setSuccess(false);
-
       let image: { url: string; path: string } | undefined = undefined;
 
       if (file) {
-        // upload ke Supabase baru pas submit
         const supabase = createClient();
-        // const fileExt = file.name.split(".").pop();
-        const fileName = `${file.name}`;
+        const fileName = `${Date.now()}-${file.name}`;
         const filePath = `blogs/${fileName}`;
 
-        const { error } = await supabase.storage
+        const { error: uploadError } = await supabase.storage
           .from("blog-images")
           .upload(filePath, file);
 
-        if (error) throw error;
+        if (uploadError) throw uploadError;
 
         const { data } = supabase.storage
           .from("blog-images")
           .getPublicUrl(filePath);
 
-        image = {
-          url: data.publicUrl,
-          path: filePath,
-        };
+        image = { url: data.publicUrl, path: filePath };
       }
 
-      await createBlog({
-        title: values.title,
-        content: values.content,
-        category: values.category,
-        image,
-      });
-      form.reset();
-      setFile(null);
-      setSuccess(true);
-      toast.success("Blog berhasil dibuat!");
+      // 🔹 Panggil mutation TanStack
+      createBlog.mutate(
+        {
+          title: values.title,
+          content: values.content,
+          category: values.category,
+          image,
+        },
+        {
+          onSuccess: () => {
+            form.reset();
+            setFile(null);
+            toast.success("✅ Blog berhasil dibuat!");
+          },
+          onError: (err: any) => {
+            toast.error(err.message || "❌ Gagal membuat blog");
+          },
+        },
+      );
     } catch (error: any) {
       toast.error(error.message || "❌ Gagal membuat blog");
-    } finally {
-      setLoading(false);
-      // reset success state biar tombol balik normal setelah beberapa detik
-      setTimeout(() => setSuccess(false), 3000);
     }
   };
 
@@ -175,30 +165,13 @@ export default function CreateBlogForm() {
             />
           </div>
         </div>
-        <div className="fixed bottom-10 w-full">
+        <div className="fixed bottom-10 w-1/4">
           <Button
             type="submit"
-            disabled={loading}
-            className={cn(
-              success && "bg-green-600 hover:bg-green-700 text-white",
-            )}
+            disabled={createBlog.isPending}
+            className="w-full"
           >
-            {loading ? (
-              <>
-                <LoaderCircleIcon
-                  className="mr-2 h-4 w-4 animate-spin"
-                  aria-hidden="true"
-                />
-                Please wait...
-              </>
-            ) : success ? (
-              <>
-                <CheckCircle2 className="mr-2 h-4 w-4" aria-hidden="true" />
-                Success!
-              </>
-            ) : (
-              "Submit"
-            )}
+            {createBlog.isPending ? "⏳ Membuat..." : "Buat Blog"}
           </Button>
         </div>
       </form>

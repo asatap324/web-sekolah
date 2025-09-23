@@ -31,7 +31,7 @@ async function getBlogBySlug(slug: string) {
     .from("blogs")
     .select("slug, title, content, created_at, image_url, category")
     .eq("slug", slug)
-    .single();
+    .maybeSingle();
 
   if (error || !data) return null;
   return data;
@@ -59,7 +59,7 @@ export async function generateMetadata({ params }: BlogPageProps) {
     .from("blogs")
     .select("title, content, image_url")
     .eq("slug", slug)
-    .single();
+    .maybeSingle();
 
   if (!data) {
     return {
@@ -92,7 +92,7 @@ const formatDate = (date: Date): string => {
   });
 };
 
-export default async function BlogPage({ params }: BlogPageProps) {
+export default async function Page({ params }: BlogPageProps) {
   const { slug } = await params;
 
   const blog = await getBlogBySlug(slug);

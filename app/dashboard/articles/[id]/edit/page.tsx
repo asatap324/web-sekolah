@@ -8,8 +8,7 @@ export default async function EditBlogPage({
   const { id } = await params;
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Edit Blog</h1>
-      <EditBlog blogId={id} />
+      <EditBlog id={id} />
     </div>
   );
 }

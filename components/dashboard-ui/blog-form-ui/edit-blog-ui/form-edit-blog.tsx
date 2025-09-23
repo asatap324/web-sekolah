@@ -1,6 +1,5 @@
 "use client";
 import dynamic from "next/dynamic";
-import { cn } from "@/lib/utils";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,17 +13,29 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useBlogs } from "@/hooks/use-blogs";
 import UploadThumbnails from "@/components/dashboard-ui/blog-form-ui/file-upload";
 import { useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
-import { CheckCircle2, LoaderCircleIcon } from "lucide-react";
+import { useUpdateBlog } from "@/hooks/blogs/mutations";
+import { CategoryInput } from "../input-tag";
+
+interface UpdateBlogFormProps {
+  blog: {
+    id: string;
+    title: string;
+    content: string;
+    category: string[];
+    image_url?: string | null;
+    image_path?: string | null;
+  };
+  onSuccess?: () => void;
+}
 
 const blogSchema = z.object({
-  title: z.string().min(3, "Title is required"),
-  content: z.string().min(10, "Content is required"),
-  category: z.string().min(2, "Category is required"),
+  title: z.string().min(3, "Judul minimal 3 karakter"),
+  content: z.string().min(10, "Konten minimal 10 karakter"),
+  category: z.array(z.string()).nonempty("Minimal 1 kategori"),
   image: z.any(),
 });
 
@@ -37,11 +48,9 @@ const Editor = dynamic(
 
 type FormValues = z.infer<typeof blogSchema>;
 
-export default function EditBlogForm({ blog }: { blog: any }) {
-  const { updateBlog } = useBlogs();
+export default function EditBlogForm({ blog, onSuccess }: UpdateBlogFormProps) {
+  const updateBlog = useUpdateBlog();
   const [file, setFile] = useState<File | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(blogSchema),
@@ -55,50 +64,52 @@ export default function EditBlogForm({ blog }: { blog: any }) {
 
   const onSubmit = async (values: FormValues) => {
     try {
-      setLoading(true);
-      setSuccess(false);
-
-      let image = blog?.image;
+      let image: { url: string; path: string } | undefined | null = undefined;
 
       if (file) {
+        // upload file baru ke Supabase Storage
         const supabase = createClient();
-        const filePath = `blogs/${file.name}`;
+        const fileName = `${Date.now()}-${file.name}`;
+        const filePath = `blogs/${fileName}`;
 
-        // upload image baru
-        const { error } = await supabase.storage
+        const { error: uploadError } = await supabase.storage
           .from("blog-images")
-          .upload(filePath, file);
-        if (error) throw error;
+          .upload(filePath, file, { upsert: true });
+
+        if (uploadError) throw uploadError;
 
         const { data } = supabase.storage
           .from("blog-images")
           .getPublicUrl(filePath);
 
-        image = {
-          url: data.publicUrl,
-          path: filePath,
-        };
-
-        // hapus gambar lama kalau ada
-        if (blog?.image?.path) {
-          await supabase.storage.from("blog-images").remove([blog.image.path]);
-        }
+        image = { url: data.publicUrl, path: filePath };
+      } else if (values.image === null) {
+        // kalau user clear gambar
+        image = null;
       }
 
-      await updateBlog(blog.id, {
-        title: values.title,
-        content: values.content,
-        category: values.category,
-        image,
-      });
-
-      toast.success("Blog berhasil diupdate!");
-      setSuccess(true);
-    } catch (err: any) {
-      toast.error(err.message || "❌ Gagal update blog");
-    } finally {
-      setLoading(false);
-      setTimeout(() => setSuccess(false), 3000);
+      // 🔹 Panggil mutation update
+      updateBlog.mutate(
+        {
+          id: blog.id,
+          blog: {
+            title: values.title,
+            content: values.content,
+            category: values.category,
+            image,
+          },
+        },
+        {
+          onSuccess: () => {
+            toast.success("Blog berhasil diupdate!");
+          },
+          onError: (err: any) => {
+            toast.error(err.message || "Gagal mengupdate blog");
+          },
+        },
+      );
+    } catch (error: any) {
+      toast.error(error.message || "Terjadi kesalahan");
     }
   };
 
@@ -109,21 +120,20 @@ export default function EditBlogForm({ blog }: { blog: any }) {
         className="container space-y-6 max-w-full mx-auto h-full"
       >
         <div className="space-y-3.5">
-          <FormField
-            control={form.control}
-            name="image"
-            render={() => (
-              <FormItem>
-                <UploadThumbnails
-                  onFileSelect={setFile}
-                  initialUrl={blog?.image_url || null} // 👉 thumbnail lama
-                />
-              </FormItem>
-            )}
-          />
-
           <div className="flex items-start justify-center gap-4">
             <div className="grid gap-6 flex-1">
+              <FormField
+                control={form.control}
+                name="image"
+                render={() => (
+                  <FormItem>
+                    <UploadThumbnails
+                      onFileSelect={setFile}
+                      initialUrl={blog?.image_url || null} // 👉 thumbnail lama
+                    />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name="title"
@@ -145,7 +155,10 @@ export default function EditBlogForm({ blog }: { blog: any }) {
                   <FormItem>
                     <FormLabel>Kategori</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Agenda Sekolah" />
+                      <CategoryInput
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -174,30 +187,13 @@ export default function EditBlogForm({ blog }: { blog: any }) {
           </div>
         </div>
 
-        <div className="fixed bottom-10 w-full">
+        <div className="fixed bottom-10 w-1/4">
           <Button
             type="submit"
-            disabled={loading}
-            className={cn(
-              success && "bg-green-600 hover:bg-green-700 text-white",
-            )}
+            disabled={updateBlog.isPending}
+            className="w-full"
           >
-            {loading ? (
-              <>
-                <LoaderCircleIcon
-                  className="mr-2 h-4 w-4 animate-spin"
-                  aria-hidden="true"
-                />
-                Please wait...
-              </>
-            ) : success ? (
-              <>
-                <CheckCircle2 className="mr-2 h-4 w-4" aria-hidden="true" />
-                Success!
-              </>
-            ) : (
-              "Update"
-            )}
+            {updateBlog.isPending ? "Menyimpan..." : "Simpan Perubahan"}
           </Button>
         </div>
       </form>

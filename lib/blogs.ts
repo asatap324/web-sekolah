@@ -4,13 +4,17 @@ import { createServer } from "@/utils/supabase/server";
 //
 // ✅ Ambil semua blogs (tanpa pagination)
 //
-export async function getBlogs() {
+export async function getBlogs(limit?: number) {
   const supabase = await createServer();
 
   let query = supabase
     .from("blogs")
     .select("*")
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: true });
+
+  if (limit) {
+    query = query.limit(limit);
+  }
 
   const { data, error } = await query;
 
@@ -36,26 +40,22 @@ export async function getGuru(limit?: number) {
   return data ?? [];
 }
 
-export async function getLatestAnnouncement() {
-  const supabase = await createServer();
+// export async function getLatestAnnouncement() {
+//   const supabase = await createServer();
 
-  const { data, error } = await supabase
-    .from("announcements")
-    .select("*")
-    .eq("active", true)
-    .lte("start_date", new Date().toISOString())
-    .or(`end_date.is.null,end_date.gte.${new Date().toISOString()}`)
-    .order("start_date", { ascending: false })
-    .limit(1)
-    .single();
+//   const { data, error } = await supabase
+//     .from("announcements")
+//     .select("*")
+//     .eq("active", true)
+//     .lte("start_date", new Date().toISOString())
+//     .or(`end_date.is.null,end_date.gte.${new Date().toISOString()}`)
 
-  if (error) {
-    console.error("Error fetching announcement:", error.message);
-    return null;
-  }
+//     console.error("Error fetching announcement:", error.message);
+//     return null;
+//   }
 
-  return data;
-}
+//   return data;
+// }
 
 //
 // ✅ Ambil blogs dengan pagination

@@ -11,9 +11,8 @@ import { Suspense } from "react";
 export const revalidate = 3600;
 
 export default async function Home() {
-  const blogs = await getBlogs();
-
   const dataGuru = await getGuru(7);
+  const dataBlog = await getBlogs(9);
 
   return (
     <>
@@ -33,7 +32,7 @@ export default async function Home() {
                 </div>
               }
             >
-              <BlogPage blogs={blogs ?? []} />
+              <BlogPage blogs={dataBlog} />
             </Suspense>
             <SambutanSection />
             <div className="max-w-7xl mx-auto py-6 md:px-5">

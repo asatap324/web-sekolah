@@ -1,4 +1,5 @@
 import LoginForm from "@/components/auth-ui/login/login-form";
+import MyImage from "@/components/ui/image";
 import Image from "next/image";
 
 export default function LoginPage() {
@@ -23,11 +24,11 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
-      <div className="bg-muted relative hidden lg:block">
-        <Image
-          src="/assets/redaksi/kemenko1.jpg"
+      <div className="bg-muted relative hidden md:block">
+        <MyImage
+          src="https://dvwrfhxzfftjxcpxusfd.supabase.co/storage/v1/object/public/blog-images/blogs/hgn1.webp"
           alt="Image"
-          className="absolute inset-0 h-full w-full grayscale object-cover"
+          className="absolute inset-0 h-full w-full object-cover"
           width={1200}
           height={600}
         />

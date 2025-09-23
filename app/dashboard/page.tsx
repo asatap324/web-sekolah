@@ -17,15 +17,20 @@ export default async function Page() {
     redirect("/auth/login"); // kalau belum login
   }
 
-  // 🔹 cek role dari profiles
-  const { data: profile } = await supabase
+  const { data: profile, error } = await supabase
     .from("profiles")
     .select("role")
-    .eq("id", user.id)
-    .single();
+    .eq("id", user.id) // biasanya pakai user.id atau user.uuid sesuai schema
+    .maybeSingle();
 
-  if (!profile || profile.role !== "admin") {
-    redirect("/"); // langsung redirect tanpa render dashboard
+  if (error) {
+    console.error(error);
+    redirect("/"); // fallback
+  }
+
+  // cek role
+  if (profile?.role !== "admin") {
+    redirect("/");
   }
 
   return (

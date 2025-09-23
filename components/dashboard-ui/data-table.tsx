@@ -80,7 +80,7 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link";
-import { useBlogs } from "@/hooks/use-blogs";
+import { useDeleteBlog } from "@/hooks/blogs/mutations";
 import { useRouter } from "next/navigation";
 
 export const schema = z.object({
@@ -208,14 +208,14 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const { deleteBlog } = useBlogs();
+      const deleteBlog = useDeleteBlog();
       const blog = row.original;
       const router = useRouter();
 
-      const handleDelete = async () => {
+      const handleDelete = () => {
         if (!confirm(`Yakin ingin menghapus blog "${blog.title}"?`)) return;
         try {
-          await deleteBlog(blog.id);
+          deleteBlog.mutate(blog.id);
           router.refresh(); // reload data tabel setelah delete
         } catch (err: any) {
           console.error(err);

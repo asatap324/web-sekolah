@@ -64,7 +64,7 @@ const navigationLinks = [
     type: "icon",
     items: [
       {
-        href: "/article",
+        href: "/articles",
         label: "Berita & Artikel",
         icon: "BookOpenIcon",
         blank: false,

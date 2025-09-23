@@ -6,10 +6,6 @@ import Providers from "./providers";
 import { Toaster } from "@/components/ui/sonner";
 import { siteConfig } from "@/lib/site";
 import { metadataKeywords } from "./metadata";
-import Footer from "@/components/blocks/footer";
-import { createServer } from "@/utils/supabase/server";
-import AnnouncementPopup from "@/components/blocks/announcement-popup";
-import { getLatestAnnouncement } from "@/lib/blogs";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,7 +36,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const latestAnnouncement = await getLatestAnnouncement();
   return (
     <html lang="en" suppressHydrationWarning={true}>
       <body
@@ -49,12 +44,9 @@ export default async function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <main>
             <Toaster richColors />
-            {latestAnnouncement && (
-              <AnnouncementPopup announcement={latestAnnouncement} />
-            )}
+
             <Providers>{children}</Providers>
           </main>
-          <Footer />
         </ThemeProvider>
       </body>
     </html>
