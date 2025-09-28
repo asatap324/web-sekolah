@@ -17,9 +17,7 @@ import remarkSlug from "remark-slug";
 import { FlickeringGrid } from "@/components/blocks/flickering-grid";
 
 import { createServer } from "@/utils/supabase/server";
-import { createClient } from "@/utils/supabase/client";
-
-import PageProps from "next";
+import { createServerClientSimple } from "@/utils/supabase/server-simple";
 
 export const revalidate = 3600;
 
@@ -43,7 +41,7 @@ async function getBlogBySlug(slug: string) {
 
 // ✅ Pre-generate semua slug artikel
 export async function generateStaticParams() {
-  const supabase = createClient();
+  const supabase = createServerClientSimple();
   const { data, error } = await supabase.from("blogs").select("slug");
 
   if (error || !data) return [];
@@ -57,7 +55,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
 
-  const supabase = createClient();
+  const supabase = createServerClientSimple();
 
   const { data } = await supabase
     .from("blogs")
@@ -98,7 +96,6 @@ const formatDate = (date: Date): string => {
 
 export default async function Page({ params }: Props) {
   const { slug } = await params;
-
   const blog = await getBlogBySlug(slug);
 
   if (!blog) {

@@ -27,6 +27,7 @@ type Props = {
   src: string;
   className?: string;
   fill?: boolean;
+  priority?: boolean;
   sizes?: string;
 };
 
@@ -38,6 +39,7 @@ export default function MyImage({
   className,
   fill,
   sizes,
+  priority,
 }: Props) {
   return (
     <>
@@ -48,6 +50,7 @@ export default function MyImage({
         fill={fill}
         width={width}
         height={height}
+        priority={priority}
         placeholder={`data:image/svg+xml;base64,${toBase64(shimmer(700, 475))}`}
       />
     </>

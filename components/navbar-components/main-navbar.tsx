@@ -84,6 +84,7 @@ export default function MainNavbar() {
                 className="group size-8 md:hidden"
                 variant="outline"
                 size="icon"
+                aria-label="toggle-navigation"
               >
                 <svg
                   className="pointer-events-none"

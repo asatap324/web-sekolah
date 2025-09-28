@@ -22,9 +22,10 @@ export default function BlogPage({ blogs }: { blogs?: any[] }) {
             >
               <MyImage
                 src={item.image_url}
-                alt={item.title}
+                alt={item.title.slice(0, 20)}
                 width={700}
                 height={475}
+                priority={true}
                 className="aspect-square rounded-md object-cover w-full h-full"
               />
               <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/70 to-transparent p-6 text-white">
@@ -58,7 +59,7 @@ export default function BlogPage({ blogs }: { blogs?: any[] }) {
                 >
                   <MyImage
                     src={item.image_url}
-                    alt={item.title}
+                    alt={item.title.slice(0, 20)}
                     width={700}
                     height={475}
                     className="aspect-square rounded-md object-cover w-24"

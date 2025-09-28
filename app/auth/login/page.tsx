@@ -1,7 +1,6 @@
 import LoginForm from "@/components/auth-ui/login/login-form";
 import ThemeToggle from "@/components/dark-mode/theme-toggle-button";
 import { GridPattern } from "@/components/ui/grid-pattern";
-import MyImage from "@/components/ui/image";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
@@ -27,7 +26,7 @@ export default function LoginPage() {
           ]}
           className={cn(
             "[mask-image:radial-gradient(400px_circle_at_center,white,transparent)]",
-            "inset-x-0 inset-y-[-30%] h-[200%] skew-y-12",
+            "inset-x-0 inset-y-[-0%] h-[80%] skew-y-12",
           )}
         />
         <div className="flex flex-col justify-center h-screen items-start max-w-xl mx-auto gap-4">

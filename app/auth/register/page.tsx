@@ -48,7 +48,7 @@ export default function RegisterPage() {
           ]}
           className={cn(
             "[mask-image:radial-gradient(400px_circle_at_center,white,transparent)]",
-            "inset-x-0 inset-y-[-30%] h-[200%] skew-y-12",
+            "inset-x-0 inset-y-[-0%] h-[80%] skew-y-12",
           )}
         />
         <div className="flex flex-col justify-center h-screen items-start max-w-xl mx-auto gap-4">

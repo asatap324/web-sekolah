@@ -62,10 +62,10 @@ const TemplateCarousel = ({ items, nameSection }: Gallery4Props) => {
               variant="ghost"
               onClick={() => {
                 carouselApi?.scrollPrev();
-                console.log("click");
               }}
               disabled={!canScrollPrev}
               className="disabled:pointer-events-auto"
+              aria-label="previous-btn"
             >
               <ArrowLeft className="size-5" />
             </Button>
@@ -74,10 +74,10 @@ const TemplateCarousel = ({ items, nameSection }: Gallery4Props) => {
               variant="ghost"
               onClick={() => {
                 carouselApi?.scrollNext();
-                console.log("click");
               }}
               disabled={!canScrollNext}
               className="disabled:pointer-events-auto"
+              aria-label="next-btn"
             >
               <ArrowRight className="size-5" />
             </Button>
@@ -130,7 +130,7 @@ const TemplateCarousel = ({ items, nameSection }: Gallery4Props) => {
           {items.map((_, index) => (
             <button
               key={index}
-              className={`h-2 w-2 rounded-full transition-colors ${
+              className={`h-2 w-2 mx-1 rounded-full transition-colors ${
                 currentSlide === index ? "bg-primary" : "bg-primary/20"
               }`}
               onClick={() => carouselApi?.scrollTo(index)}
