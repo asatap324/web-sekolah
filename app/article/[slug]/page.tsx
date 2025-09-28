@@ -1,3 +1,5 @@
+import type { Metadata, ResolvingMetadata } from "next";
+
 import { AuthorCard } from "@/components/blog/author-card";
 import { Button } from "@/components/ui/button";
 import MyImage from "@/components/ui/image";
@@ -17,11 +19,13 @@ import { FlickeringGrid } from "@/components/blocks/flickering-grid";
 import { createServer } from "@/utils/supabase/server";
 import { createClient } from "@/utils/supabase/client";
 
+import PageProps from "next";
+
 export const revalidate = 3600;
 
-interface BlogPageProps {
-  params: { slug: string };
-}
+type Props = {
+  params: Promise<{ slug: string }>;
+};
 
 // Ambil data blog untuk halaman ini (SSG)
 async function getBlogBySlug(slug: string) {
@@ -50,7 +54,7 @@ export async function generateStaticParams() {
 }
 
 // ✅ (Opsional) SEO dinamis per artikel
-export async function generateMetadata({ params }: BlogPageProps) {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
 
   const supabase = createClient();
@@ -92,7 +96,7 @@ const formatDate = (date: Date): string => {
   });
 };
 
-export default async function Page({ params }: BlogPageProps) {
+export default async function Page({ params }: Props) {
   const { slug } = await params;
 
   const blog = await getBlogBySlug(slug);
@@ -119,7 +123,7 @@ export default async function Page({ params }: BlogPageProps) {
       <div className="space-y-4 border-b border-border relative z-20">
         <div className="max-w-7xl mx-auto flex flex-col gap-6 p-6">
           <div className="flex flex-wrap items-center gap-3 gap-y-5 text-sm text-muted-foreground">
-            <Button variant="outline" asChild className="h-6 w-6">
+            <Button size="icon" variant="outline" asChild className="h-6 w-6">
               <Link href="/">
                 <ArrowLeft className="w-4 h-4" />
                 <span className="sr-only">Back to all articles</span>

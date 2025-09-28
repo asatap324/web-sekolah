@@ -1,4 +1,3 @@
-import CarouselGuru from "@/components/blocks/guru-section";
 import HeroSection from "@/components/blocks/hero-section";
 import SambutanSection from "@/components/blocks/sambutan-section";
 import BlogPage from "@/components/blocks/blog-section";
@@ -7,8 +6,47 @@ import { Spinner } from "@/components/ui/spinner";
 import { getBlogs, getGuru } from "@/lib/blogs";
 
 import { Suspense } from "react";
+import TemplateCarousel from "@/components/blocks/template-carousel";
 
 export const revalidate = 3600;
+
+const ekstrakulikuler = [
+  {
+    id: "1",
+    nama: "PMR",
+    image_url: "/assets/PMR.webp",
+  },
+  {
+    id: "2",
+    nama: "Qiroah",
+    image_url: "/assets/Qiroah.webp",
+  },
+  {
+    id: "3",
+    nama: "Sepak Bola",
+    image_url: "/assets/sepakbola.webp",
+  },
+  {
+    id: "4",
+    nama: "Pencak Silat",
+    image_url: "/assets/silat.webp",
+  },
+  {
+    id: "6",
+    nama: "Taekwondo",
+    image_url: "/assets/Taekwondo.webp",
+  },
+  {
+    id: "7",
+    nama: "Tari",
+    image_url: "/assets/Tari.webp",
+  },
+  {
+    id: "8",
+    nama: "Volleyball",
+    image_url: "/assets/Volly.webp",
+  },
+];
 
 export default async function Home() {
   const dataGuru = await getGuru(7);
@@ -36,7 +74,13 @@ export default async function Home() {
             </Suspense>
             <SambutanSection />
             <div className="max-w-7xl mx-auto py-6 md:px-5">
-              <CarouselGuru items={dataGuru} />
+              <TemplateCarousel nameSection="Daftar Guru" items={dataGuru} />
+            </div>
+            <div className="max-w-7xl mx-auto py-6 md:px-5">
+              <TemplateCarousel
+                nameSection="Ekstrakulikuler"
+                items={ekstrakulikuler}
+              />
             </div>
           </div>
         </div>

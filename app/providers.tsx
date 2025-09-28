@@ -89,15 +89,12 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     return () => {
       subscription.unsubscribe();
     };
-  }, [setUser, setLoading, setError]);
+  }, [user, setUser, setLoading, setError]);
 
   return (
     <>
       {showNavbar && <MainNavbar />}
-      <QueryClientProvider client={queryClient}>
-        {children}
-        <ReactQueryDevtools initialIsOpen={false} />
-      </QueryClientProvider>
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
       {showNavbar && <Footer />}
     </>
   );

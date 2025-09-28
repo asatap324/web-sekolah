@@ -22,13 +22,12 @@ export function LogoutButton({ size, variant, className }: PropsButton) {
 
   return (
     <Button
-      className={cn("cursor-pointer size-8", className)}
+      className={cn("cursor-pointer h-8 space-x-2", className)}
       size={size}
       variant={variant}
       onClick={logout}
     >
-      <LogOut className="h-[1.2rem] w-[1.2rem]" />
-      <span className="sr-only">Logout</span>
+      <span>Logout</span>
     </Button>
   );
 }

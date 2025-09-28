@@ -6,6 +6,7 @@ import Providers from "./providers";
 import { Toaster } from "@/components/ui/sonner";
 import { siteConfig } from "@/lib/site";
 import { metadataKeywords } from "./metadata";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -45,7 +46,9 @@ export default async function RootLayout({
           <main>
             <Toaster richColors />
 
-            <Providers>{children}</Providers>
+            <Providers>
+              <TooltipProvider delayDuration={0}>{children}</TooltipProvider>
+            </Providers>
           </main>
         </ThemeProvider>
       </body>

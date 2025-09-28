@@ -114,7 +114,7 @@ export function Plugins() {
           contentEditable={
             <div>
               <div aria-hidden="true" ref={onRef}>
-                <ContentEditable placeholder={"Start typing ..."} />
+                <ContentEditable placeholder={"Press / to command"} />
               </div>
             </div>
           }

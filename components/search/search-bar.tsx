@@ -1,9 +1,9 @@
 "use client";
 
 import * as React from "react";
-import { ArrowUpRightIcon, SearchIcon } from "lucide-react";
+import { ArrowUpRightIcon, History, SearchIcon } from "lucide-react";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import {
   CommandDialog,
@@ -16,13 +16,29 @@ import {
 
 import { searchBlogs } from "@/app/actions/search-blogs";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+
+type BlogResult = {
+  id: string;
+  title: string;
+  slug: string;
+};
 
 export default function SearchBar() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<any[]>([]);
-  const [cache, setCache] = useState<Map<string, any[]>>(new Map());
+  const [cache, setCache] = useState<Map<string, BlogResult[]>>(new Map());
+  const [history, setHistory] = useState<string[]>([]);
+  const abortControllerRef = useRef<AbortController | null>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    const stored = localStorage.getItem("search-history");
+    if (stored) {
+      setHistory(JSON.parse(stored));
+    }
+  }, []);
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -39,32 +55,60 @@ export default function SearchBar() {
   // 🔎 Fetch blogs tiap kali query berubah
   useEffect(() => {
     const handler = setTimeout(async () => {
-      if (query.trim().length < 2) {
+      const q = query.trim();
+      if (q.length < 2) {
         setResults([]);
         return;
       }
 
-      // cek cache
-      if (cache.has(query)) {
-        setResults(cache.get(query)!);
+      // 🔹 cek cache dulu
+      if (cache.has(q)) {
+        setResults(cache.get(q)!);
         return;
       }
 
-      // fetch ke Supabase
-      const data = await searchBlogs(query);
-      setResults(data);
+      // 🔹 abort request sebelumnya kalau ada
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+      const controller = new AbortController();
+      abortControllerRef.current = controller;
 
-      // simpan ke cache
-      setCache((prev) => new Map(prev).set(query, data));
+      try {
+        const data = await searchBlogs(q, { signal: controller.signal });
+        setResults(data);
+
+        // simpan ke cache
+        setCache((prev) => {
+          const newCache = new Map(prev);
+          newCache.set(q, data);
+          return newCache;
+        });
+      } catch (err: any) {
+        if (err.name === "AbortError") {
+          // request dibatalkan → aman diabaikan
+          return;
+        }
+        console.error("Search error:", err.message);
+      }
     }, 500);
 
-    return () => clearTimeout(handler); // cleanup
+    return () => clearTimeout(handler);
   }, [query, cache]);
+
+  const addToHistory = (q: string) => {
+    if (!q.trim()) return;
+    setHistory((prev) => {
+      const updated = [q, ...prev.filter((h) => h !== q)].slice(0, 5); // max 5
+      localStorage.setItem("search-history", JSON.stringify(updated));
+      return updated;
+    });
+  };
 
   return (
     <>
       <button
-        className="border-input  max-w-xs mx-auto w-full  bg-background text-foreground placeholder:text-muted-foreground/70 focus-visible:border-ring focus-visible:ring-ring/50 inline-flex h-9  rounded-md border px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px]"
+        className="border-input  max-w-xs mx-auto w-full  bg-background text-foreground placeholder:text-muted-foreground/70 focus-visible:border-ring focus-visible:ring-ring/50 inline-flex h-8  rounded-md border px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px]"
         onClick={() => setOpen(true)}
       >
         <span className="flex grow items-center">
@@ -97,6 +141,7 @@ export default function SearchBar() {
                 key={blog.id}
                 onSelect={() => {
                   setOpen(false);
+                  addToHistory(query);
                   router.push(`/article/${blog.slug}`);
                 }}
               >
@@ -104,30 +149,51 @@ export default function SearchBar() {
               </CommandItem>
             ))}
           </CommandGroup>
+          {history.length > 0 && query.length < 2 && (
+            <CommandGroup heading="Recent Searches">
+              {history.map((h) => (
+                <CommandItem
+                  key={h}
+                  onSelect={() => {
+                    setQuery(h);
+                  }}
+                >
+                  <History size={16} className="opacity-60 me-2" />
+                  {h}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          )}
           <CommandGroup heading="Navigation">
-            <CommandItem>
-              <ArrowUpRightIcon
-                size={16}
-                className="opacity-60"
-                aria-hidden="true"
-              />
-              <span>Go to Home</span>
+            <CommandItem asChild>
+              <Link className="flex items-center" href="/">
+                <ArrowUpRightIcon
+                  size={16}
+                  className="opacity-60"
+                  aria-hidden="true"
+                />
+                <span>Go to Home</span>
+              </Link>
             </CommandItem>
-            <CommandItem>
-              <ArrowUpRightIcon
-                size={16}
-                className="opacity-60"
-                aria-hidden="true"
-              />
-              <span>Go to Article</span>
+            <CommandItem asChild>
+              <Link className="flex items-center" href="/articles">
+                <ArrowUpRightIcon
+                  size={16}
+                  className="opacity-60"
+                  aria-hidden="true"
+                />
+                <span>Go to Article</span>
+              </Link>
             </CommandItem>
-            <CommandItem>
-              <ArrowUpRightIcon
-                size={16}
-                className="opacity-60"
-                aria-hidden="true"
-              />
-              <span>Go to Profile</span>
+            <CommandItem asChild>
+              <Link className="flex items-center" href="/profile">
+                <ArrowUpRightIcon
+                  size={16}
+                  className="opacity-60"
+                  aria-hidden="true"
+                />
+                <span>Go to Profile</span>
+              </Link>
             </CommandItem>
           </CommandGroup>
         </CommandList>

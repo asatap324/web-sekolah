@@ -1,9 +1,11 @@
-// app/actions/searchBlogs.ts
+// app/actions/search-blogs.ts
 "use server";
-
 import { createServer } from "@/utils/supabase/server";
 
-export async function searchBlogs(query: string) {
+export async function searchBlogs(
+  query: string,
+  opts?: { signal?: AbortSignal },
+) {
   const supabase = await createServer();
 
   if (!query || query.trim() === "") return [];

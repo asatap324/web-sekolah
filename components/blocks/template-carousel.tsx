@@ -20,12 +20,12 @@ export interface Gallery4Item {
 }
 
 export interface Gallery4Props {
-  title?: string;
+  nameSection?: string;
   description?: string;
   items: Gallery4Item[];
 }
 
-const GuruSection = ({ items }: Gallery4Props) => {
+const TemplateCarousel = ({ items, nameSection }: Gallery4Props) => {
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(false);
@@ -48,12 +48,12 @@ const GuruSection = ({ items }: Gallery4Props) => {
   }, [carouselApi]);
 
   return (
-    <section className="border-b pb-4 ">
+    <section className="border-b border-border pb-4">
       <div className="container mx-auto">
         <div className="mb-8 flex items-end justify-between md:mb-14 lg:mb-16 px-4">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight">Daftar Guru</h2>
-            <p>Daftar Guru SMP Negeri 04 Muncar Satu Atap</p>
+            <h2 className="text-2xl font-bold tracking-tight">{nameSection}</h2>
+            <p>{nameSection} SMP Negeri 04 Muncar Satu Atap</p>
           </div>
 
           <div className="hidden shrink-0 gap-2 md:flex">
@@ -143,4 +143,4 @@ const GuruSection = ({ items }: Gallery4Props) => {
   );
 };
 
-export default GuruSection;
+export default TemplateCarousel;

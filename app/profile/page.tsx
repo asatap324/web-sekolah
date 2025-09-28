@@ -47,8 +47,9 @@ export default function Page() {
             <h1 className="font-medium text-4xl md:text-5xl tracking-tighter">
               Profile SMP Negeri 04 Muncar Satu Atap
             </h1>
-            <p className="text-muted-foreground text-sm md:text-base lg:text-lg">
-              Our school.
+            <p className="text-muted-foreground max-w-2xl text-sm md:text-base lg:text-lg">
+              Mewujudkan pengembangan bakat minat peserta didik sesuai dengan
+              kemampuan dasarnya dalam bidang kegiatan ekstrakurikuler.
             </p>
           </div>
         </div>

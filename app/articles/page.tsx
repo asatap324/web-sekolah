@@ -19,10 +19,10 @@ export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Artikel",
-  description: "Latest news and updates from Our School.",
+  description: "Artikel SMP Negeri 04 Muncar Satu Atap",
   openGraph: {
     title: "Artikel",
-    description: "Latest news and updates from Our School.",
+    description: "Artikel SMP Negeri 04 Muncar Satu Atap",
     url: "https://smpn4muncarsatuatap.sch.id/article",
     siteName: "SMP Negeri 04 Muncar Satu Atap",
     images: [
@@ -37,14 +37,14 @@ export const metadata: Metadata = {
   },
 };
 
-interface ArticlePageProps {
-  searchParams: {
+type Props = {
+  searchParams: Promise<{
     page?: string;
     tag?: string;
-  };
-}
+  }>;
+};
 
-export default async function ArticlePage({ searchParams }: ArticlePageProps) {
+export default async function ArticlePage({ searchParams }: Props) {
   const supabase = await createServer();
   const search = await searchParams;
 

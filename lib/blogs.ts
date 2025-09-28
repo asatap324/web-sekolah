@@ -10,7 +10,7 @@ export async function getBlogs(limit?: number) {
   let query = supabase
     .from("blogs")
     .select("*")
-    .order("created_at", { ascending: true });
+    .order("created_at", { ascending: false });
 
   if (limit) {
     query = query.limit(limit);

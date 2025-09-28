@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import { cn } from "@/lib/utils";
 import MyImage from "@/components/ui/image";
 
@@ -22,7 +21,7 @@ export function BlogCard({
 }: BlogCardProps) {
   return (
     <Link
-      href={`/articles/${slug}`}
+      href={`/article/${slug}`}
       className={cn(
         "group block relative before:absolute before:-left-0.5 before:top-0 before:z-10 before:h-screen before:w-px before:bg-border before:content-[''] after:absolute after:-top-0.5 after:left-0 after:z-0 after:h-px after:w-screen after:bg-border after:content-['']",
         showRightBorder && "md:border-r border-border border-b-0",

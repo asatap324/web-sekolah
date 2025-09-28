@@ -29,63 +29,11 @@ import { LogoutButton } from "@/components/auth-ui/logout-button";
 import Link from "next/link";
 import SearchBar from "@/components/search/search-bar";
 import { useUser } from "@/hooks/use-user";
+import { Badge } from "../ui/badge";
 
-// Navigation links array to be used in both desktop and mobile menus
-const navigationLinks = [
-  { href: "/", label: "Home" },
-  {
-    label: "Tentang Sekolah Kami",
-    submenu: true,
-    type: "description",
-    items: [
-      {
-        href: "/profile",
-        label: "Profile Sekolah",
-        description: "Lebih tahu tentang sekolah kami",
-        blank: false,
-      },
-      {
-        href: "/profile",
-        label: "Visi Misi",
-        description: "Liat Visi dan Misi sekolah kami",
-        blank: false,
-      },
-      {
-        href: "#",
-        label: "PPDB Online",
-        blank: true,
-        description: "Daftarkan anak anda di sekolah kami",
-      },
-    ],
-  },
-  {
-    label: "Informasi Sekolah",
-    submenu: true,
-    type: "icon",
-    items: [
-      {
-        href: "/articles",
-        label: "Berita & Artikel",
-        icon: "BookOpenIcon",
-        blank: false,
-      },
-      { href: "#", label: "Daftar Guru", icon: "IconUsers", blank: false },
-      { href: "#", label: "Gallery", icon: "IconLibraryPhoto", blank: false },
-      {
-        href: "#",
-        label: "Ekstrakulikuler",
-        icon: "IconPlayHandball",
-        blank: false,
-      },
-    ],
-  },
-  {
-    label: "Lainnya",
-    submenu: true,
-    type: "icon",
-    items: [{ href: "#", label: "Pengumuman", icon: "InfoIcon", blank: false }],
-  },
-];
+import { navigationLinks } from "@/types/navigation";
+import type { SimpleLink, NavGroup } from "@/types/navigation";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 export default function MainNavbar() {
   const { user } = useUser();
@@ -120,10 +68,10 @@ export default function MainNavbar() {
           <div className="hidden md:flex">
             {user?.role === "admin" ? (
               <div>
-                <LogoutButton size="icon" variant="outline" />
+                <LogoutButton variant="outline" />
               </div>
             ) : (
-              <Button asChild>
+              <Button variant="outline" className="cursor-pointer h-8" asChild>
                 <Link href="/auth/login">Login</Link>
               </Button>
             )}
@@ -172,7 +120,7 @@ export default function MainNavbar() {
                 <NavigationMenuList className="flex-col items-start gap-0 md:gap-2">
                   {navigationLinks.map((link, index) => (
                     <NavigationMenuItem key={index} className="w-full">
-                      {link.submenu ? (
+                      {"submenu" in link && link.submenu ? (
                         <>
                           <div className="text-muted-foreground px-2 py-1.5 text-xs font-medium">
                             {link.label}
@@ -183,8 +131,21 @@ export default function MainNavbar() {
                                 <NavigationMenuLink
                                   href={item.href}
                                   className="py-1.5"
+                                  target={item.blank ? "_blank" : undefined}
+                                  rel={
+                                    item.blank
+                                      ? "noopener noreferrer"
+                                      : undefined
+                                  }
                                 >
-                                  {item.label}
+                                  <div className="flex gap-2 items-center">
+                                    {item.label}
+                                    {item.comingSoon && (
+                                      <span className="h-4 w-fit px-3 text-xs font-medium bg-muted text-muted-foreground rounded-md border flex items-center justify-center">
+                                        Coming Soon
+                                      </span>
+                                    )}
+                                  </div>
                                 </NavigationMenuLink>
                               </li>
                             ))}
@@ -193,10 +154,10 @@ export default function MainNavbar() {
                       ) : (
                         <>
                           <NavigationMenuLink
-                            href={link.href}
+                            href={(link as SimpleLink).href}
                             className="py-1.5"
                           >
-                            {link.label}
+                            {(link as SimpleLink).label}
                           </NavigationMenuLink>
                           {user?.role === "admin" && (
                             <NavigationMenuLink
@@ -210,16 +171,19 @@ export default function MainNavbar() {
                       )}
                       {/* Add separator between different types of items */}
                       {index < navigationLinks.length - 1 &&
-                        // Show separator if:
-                        // 1. One is submenu and one is simple link OR
-                        // 2. Both are submenus but with different types
-                        ((!link.submenu &&
-                          navigationLinks[index + 1].submenu) ||
-                          (link.submenu &&
-                            !navigationLinks[index + 1].submenu) ||
-                          (link.submenu &&
-                            navigationLinks[index + 1].submenu &&
-                            link.type !== navigationLinks[index + 1].type)) && (
+                        // Separator rules
+                        // case 1: current = simple, next = submenu
+                        ((!("submenu" in link) &&
+                          "submenu" in navigationLinks[index + 1]) ||
+                          // case 2: current = submenu, next = simple
+                          ("submenu" in link &&
+                            !("submenu" in navigationLinks[index + 1])) ||
+                          // case 3: both are submenu, but different type
+                          ("submenu" in link &&
+                            "submenu" in navigationLinks[index + 1] &&
+                            (link as NavGroup).type !==
+                              (navigationLinks[index + 1] as NavGroup)
+                                .type)) && (
                           <div
                             role="separator"
                             aria-orientation="horizontal"
@@ -235,9 +199,13 @@ export default function MainNavbar() {
                   />
                   <NavigationMenuItem className="w-full px-1">
                     {user ? (
-                      <LogoutButton className="w-full" variant="destructive" />
+                      <LogoutButton className="w-full" />
                     ) : (
-                      <Button className="w-full" asChild>
+                      <Button
+                        variant={"outline"}
+                        className="w-full cursor-pointer h-8 "
+                        asChild
+                      >
                         <Link href="/auth/login">Login</Link>
                       </Button>
                     )}
@@ -258,7 +226,7 @@ export default function MainNavbar() {
               <NavigationMenuList className="gap-2">
                 {navigationLinks.map((link, index) => (
                   <NavigationMenuItem key={index}>
-                    {link.submenu ? (
+                    {"submenu" in link && link.submenu ? (
                       <>
                         <NavigationMenuTrigger className="text-muted-foreground dark:bg-neutral-950 px-2 py-1.5 font-medium *:[svg]:-me-0.5 *:[svg]:size-3.5">
                           {link.label}
@@ -275,9 +243,15 @@ export default function MainNavbar() {
                               <li key={itemIndex}>
                                 <NavigationMenuLink
                                   href={item.href}
+                                  target={item.blank ? "_blank" : undefined}
+                                  rel={
+                                    item.blank
+                                      ? "noopener noreferrer"
+                                      : undefined
+                                  }
                                   className="py-1.5"
                                 >
-                                  {/* Display icon if present */}
+                                  {/* Icon style */}
                                   {link.type === "icon" && "icon" in item && (
                                     <div className="flex items-center gap-2">
                                       {item.icon === "BookOpenIcon" && (
@@ -315,27 +289,46 @@ export default function MainNavbar() {
                                           aria-hidden="true"
                                         />
                                       )}
-                                      <span>{item.label}</span>
+                                      <div className="flex items-center gap-2">
+                                        <div>{item.label}</div>
+                                        {item.comingSoon && (
+                                          <span className="h-4 w-28 flex items-center justify-center px-3 text-xs font-medium bg-muted text-muted-foreground rounded-md border">
+                                            Coming Soon
+                                          </span>
+                                        )}
+                                      </div>
                                     </div>
                                   )}
 
-                                  {/* Display label with description if present */}
+                                  {/* Description style */}
                                   {link.type === "description" &&
                                   "description" in item ? (
                                     <div className="space-y-1">
-                                      <div className="font-medium">
+                                      <div className="font-medium flex items-center gap-2">
                                         {item.label}
+                                        {item.comingSoon && (
+                                          <span className="h-4 w-28 flex items-center justify-center px-3 text-xs font-medium bg-muted text-muted-foreground rounded-md border">
+                                            Coming Soon
+                                          </span>
+                                        )}
                                       </div>
                                       <p className="text-muted-foreground line-clamp-2 text-xs">
                                         {item.description}
                                       </p>
                                     </div>
                                   ) : (
-                                    // Display simple label if not icon or description type
+                                    // Simple label
                                     !link.type ||
                                     (link.type !== "icon" &&
                                       link.type !== "description" && (
-                                        <span>{item.label}</span>
+                                        <span className="flex items-center gap-2">
+                                          {item.label}
+                                          {item.comingSoon && (
+                                            <span className="h-4 w-28 flex items-center justify-center px-3 text-xs font-medium bg-muted text-muted-foreground rounded-md border">
+                                              Coming Soon
+                                            </span>
+                                          )}
+                                        </span>
                                       ))
                                   )}
                                 </NavigationMenuLink>
@@ -347,11 +340,12 @@ export default function MainNavbar() {
                     ) : (
                       <div className="flex items-center">
                         <NavigationMenuLink
-                          href={link.href}
+                          href={(link as SimpleLink).href}
                           className="text-muted-foreground hover:text-primary py-1.5 font-medium"
                         >
                           {link.label}
                         </NavigationMenuLink>
+
                         {user?.role === "admin" && (
                           <NavigationMenuLink
                             href="/dashboard"

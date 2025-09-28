@@ -49,7 +49,7 @@ export default function SambutanSection() {
           </div>
 
           <MyImage
-            src="/assets/guru/kepalasekolah.jpg"
+            src="https://dvwrfhxzfftjxcpxusfd.supabase.co/storage/v1/object/public/blog-images/guru/kepalasekolah.webp"
             alt="Foto Kepala Sekolah"
             width={400}
             height={600}
@@ -59,7 +59,7 @@ export default function SambutanSection() {
         <div className="w-full h-full border-b">
           <div className="p-3 md:p-6 w-full h-full ">
             <h2 className="text-2xl font-bold tracking-tight mb-3.5">
-              Profile Sekolah
+              Video Profile Sekolah
             </h2>
             <LiteYouTubeEmbed
               aspectHeight={9}
