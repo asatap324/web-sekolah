@@ -10,7 +10,7 @@ interface BlogPost {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://example.com";
+  const baseUrl = "https://smpn4muncarsatuatap.sch.id";
   const supabase = await createServer();
 
   try {
@@ -75,6 +75,12 @@ function getStaticPages(baseUrl: string): MetadataRoute.Sitemap {
     },
     {
       url: `${baseUrl}/daftar-guru`,
+      lastModified: new Date(),
+      changeFrequency: "yearly",
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/gallery`,
       lastModified: new Date(),
       changeFrequency: "yearly",
       priority: 0.7,

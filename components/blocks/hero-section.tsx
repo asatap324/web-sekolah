@@ -1,4 +1,6 @@
 import { Badge } from "@/components/ui/badge";
+import { Button } from "../ui/button";
+import Link from "next/link";
 
 export default function HeroSection() {
   return (
@@ -23,9 +25,14 @@ export default function HeroSection() {
             Banyuwangi. Daftar sekarang untuk masa depan gemilang anak Anda!
           </p>
 
-          <button className="bg-blue-500 text-white font-medium py-2 px-4 rounded transition-all hover:bg-blue-600 active:scale-95">
-            Get started today!
-          </button>
+          <Button
+            className=" font-medium py-2 px-4 rounded transition-all  active:scale-95"
+            asChild
+          >
+            <Link href="https://spmb.id/" target="_blank">
+              Ayo Daftar Sekarang!
+            </Link>
+          </Button>
         </div>
         <div>
           <video

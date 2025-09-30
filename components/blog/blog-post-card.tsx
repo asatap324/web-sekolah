@@ -43,6 +43,8 @@ export function BlogPostCard({
             <AvatarImage
               alt="avatar-admin"
               src="https://avatar.iran.liara.run/public/45"
+              width={24}
+              height={24}
             />
             <AvatarFallback>
               {authorName

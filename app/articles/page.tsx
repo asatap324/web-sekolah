@@ -18,22 +18,46 @@ import { FlickeringGrid } from "@/components/blocks/flickering-grid";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Artikel",
-  description: "Artikel SMP Negeri 04 Muncar Satu Atap",
+  title: "Berita & Artikel",
+  description:
+    "Kumpulan berita terbaru, artikel pendidikan, dan informasi terkini dari SMP Negeri 04 Muncar Satu Atap Banyuwangi.",
+  keywords: [
+    "berita sekolah",
+    "artikel pendidikan",
+    "informasi terbaru",
+    "kegiatan sekolah",
+  ],
   openGraph: {
-    title: "Artikel",
-    description: "Artikel SMP Negeri 04 Muncar Satu Atap",
-    url: "https://smpn4muncarsatuatap.sch.id/article",
+    title: "Berita & Artikel",
+    description:
+      "Informasi terbaru dan artikel pendidikan dari SMP Negeri 04 Muncar Satu Atap",
+    url: "https://smpn4muncarsatuatap.sch.id/articles",
     siteName: "SMP Negeri 04 Muncar Satu Atap",
     images: [
       {
-        url: "https://example.com/og-article.png",
+        url: "https://smpn4muncarsatuatap.sch.id/og-image-articles.png",
         width: 1200,
         height: 630,
+        alt: "Berita & Artikel SMP Negeri 04 Muncar Satu Atap",
       },
     ],
-    locale: "id_ID",
-    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Berita & Artikel",
+    description:
+      "Informasi terbaru dan artikel pendidikan dari SMP Negeri 04 Muncar Satu Atap",
+    images: [
+      {
+        url: "https://smpn4muncarsatuatap.sch.id/og-image-articles.png",
+        width: 1200,
+        height: 630,
+        alt: "Berita & Artikel SMP Negeri 04 Muncar Satu Atap",
+      },
+    ],
+  },
+  alternates: {
+    canonical: "https://smpn4muncarsatuatap.sch.id/articles",
   },
 };
 

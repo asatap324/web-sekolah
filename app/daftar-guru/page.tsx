@@ -22,21 +22,43 @@ type Props = {
 
 export const metadata: Metadata = {
   title: "Daftar Guru",
-  description: "Daftar guru SMP Negeri 04 Muncar Satu Atap",
+  description:
+    "Lihat koleksi foto guru, dan staff SMP Negeri 04 Muncar Satu Atap Banyuwangi.",
+  keywords: [
+    "galeri foto sekolah",
+    "kegiatan sekolah",
+    "foto fasilitas",
+    "prestasi siswa",
+  ],
+
   openGraph: {
     title: "Daftar Guru",
-    description: "Daftar guru SMP Negeri 04 Muncar Satu Atap",
-    url: "https://smpn4muncarsatuatap.sch.id/article",
-    siteName: "SMP Negeri 04 Muncar Satu Atap",
+    description: "Kumpulan foto guru dan staff SMP Negeri 04 Muncar Satu Atap",
+    url: "https://smpn4muncarsatuatap.sch.id/daftar-guru",
     images: [
       {
-        url: "https://example.com/og-article.png",
+        url: "https://smpn4muncarsatuatap.sch.id/og-image-guru.png",
         width: 1200,
         height: 630,
+        alt: "Galeri Guru SMP Negeri 04 Muncar",
       },
     ],
-    locale: "id_ID",
-    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Daftar Guru",
+    description: "Kumpulan foto guru dan staff SMP Negeri 04 Muncar Satu Atap",
+    images: [
+      {
+        url: "https://smpn4muncarsatuatap.sch.id/og-image-guru.png",
+        width: 1200,
+        height: 630,
+        alt: "Galeri Guru SMP Negeri 04 Muncar",
+      },
+    ],
+  },
+  alternates: {
+    canonical: "https://smpn4muncarsatuatap.sch.i/daftar-guru",
   },
 };
 
@@ -83,11 +105,12 @@ export default async function Page({ searchParams }: Props) {
         {/* Header */}
         <div className="p-6 border-b border-border flex flex-col gap-6 min-h-[250px] justify-center relative z-10">
           <div className="max-w-7xl mx-auto w-full">
-            <h1 className="font-medium text-4xl md:text-5xl tracking-tighter max-w-4xl">
+            <h1 className="font-medium text-4xl md:text-5xl tracking-tighter max-w-4xl mb-2">
               Daftar Guru dan Staff SMP Negeri 04 Muncar Satu Atap
             </h1>
-            <p className="text-muted-foreground text-sm md:text-base lg:text-lg">
-              Our school.
+            <p className="text-muted-foreground max-w-2xl text-sm md:text-base lg:text-lg">
+              Mewujudkan pengembangan bakat minat peserta didik sesuai dengan
+              kemampuan dasarnya dalam bidang kegiatan ekstrakurikuler.
             </p>
           </div>
         </div>

@@ -5,25 +5,48 @@ import VisiMisiCard from "@/components/blocks/profile-sekolah/visi-misi-card";
 import MyImage from "@/components/ui/image";
 
 import { Metadata } from "next";
-import Image from "next/image";
 
 export const metadata: Metadata = {
-  title: "Profile",
-  description: "Latest news and updates from Our School.",
+  title: "Tentang Kami",
+  description:
+    "Selamat datang di SMP Negeri 04 Muncar Satu Atap, sekolah berkualitas di Banyuwangi yang berkomitmen memberikan pendidikan terbaik.",
+  keywords: [
+    "tentang smp negeri 4 muncar",
+    "sejarah sekolah",
+    "visi misi",
+    "profil sekolah",
+  ],
+
   openGraph: {
-    title: "Profile",
-    description: "Latest news and updates from Our School.",
+    title: "Tentang Kami",
+    description:
+      "Kenali lebih dekat SMP Negeri 04 Muncar Satu Atap, sejarah, visi misi, dan program unggulan kami.",
     url: "https://smpn4muncarsatuatap.sch.id/profile",
-    siteName: "SMP Negeri 04 Muncar Satu Atap",
     images: [
       {
-        url: "https://example.com/og-article.png",
+        url: "https://smpn4muncarsatuatap.sch.id/og-image-profile.png",
         width: 1200,
         height: 630,
+        alt: "Tentang SMP Negeri 04 Muncar",
       },
     ],
-    locale: "id_ID",
-    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Tentang Kami",
+    description:
+      "Kenali lebih dekat SMP Negeri 04 Muncar Satu Atap, sejarah, visi misi, dan program unggulan kami.",
+    images: [
+      {
+        url: "https://smpn4muncarsatuatap.sch.id/og-image-profile.png",
+        width: 1200,
+        height: 630,
+        alt: "Tentang Kami SMP Negeri 04 Muncar Satu Atap",
+      },
+    ],
+  },
+  alternates: {
+    canonical: "https://smpn4muncarsatuatap.sch.i/profile",
   },
 };
 

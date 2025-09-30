@@ -27,6 +27,7 @@ export default function BlogPage({ blogs }: { blogs?: any[] }) {
                 height={475}
                 priority={true}
                 className="aspect-square rounded-md object-cover w-full h-full"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 66vw, 66vw"
               />
               <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/70 to-transparent p-6 text-white">
                 <div className="flex items-center gap-2">
@@ -63,6 +64,7 @@ export default function BlogPage({ blogs }: { blogs?: any[] }) {
                     width={700}
                     height={475}
                     className="aspect-square rounded-md object-cover w-24"
+                    sizes="(max-width: 768px) 20vw, (max-width: 1200px) 15vw, 10vw"
                   />
                   <h4 className="text-sm leading-snug line-clamp-3 font-medium">
                     {item.title}

@@ -1,4 +1,4 @@
-import type { Metadata, ResolvingMetadata } from "next";
+import type { Metadata } from "next";
 
 import { AuthorCard } from "@/components/blog/author-card";
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,7 @@ import { FlickeringGrid } from "@/components/blocks/flickering-grid";
 
 import { createServer } from "@/utils/supabase/server";
 import { createServerClientSimple } from "@/utils/supabase/server-simple";
+import { ArticleStructuredData } from "@/components/structured-data";
 
 export const revalidate = 3600;
 
@@ -59,29 +60,59 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const { data } = await supabase
     .from("blogs")
-    .select("title, content, image_url")
+    .select("title, content, image_url, created_at")
     .eq("slug", slug)
     .maybeSingle();
 
   if (!data) {
     return {
-      title: "Blog tidak ditemukan",
+      title: "Artikel Tidak Ditemukan - SMP Negeri 04 Muncar Satu Atap",
+      robots: {
+        index: false,
+        follow: false,
+      },
     };
   }
 
+  const description = data.content.slice(0, 160);
+  const imageUrl = data.image_url || "og-image.png";
+  const fullImageUrl = imageUrl.startsWith("http")
+    ? imageUrl
+    : `https://smpn4muncarsatuatap.sch.id/${imageUrl}`;
+
   return {
     title: data.title,
-    description: data.content.slice(0, 150),
+    description: description,
+    keywords: [
+      data.title,
+      "blog pendidikan",
+      "artikel sekolah",
+      "SMP Negeri 4 Muncar",
+      "sekolah Banyuwangi",
+    ],
     openGraph: {
       title: data.title,
-      description: data.content.slice(0, 150) + "...",
+      description: description + "...",
+      type: "article",
+      publishedTime: data.created_at,
+      authors: "SMP Negeri 04 Muncar Satu Atap",
       images: [
         {
-          url: data.image_url || "https://example.com/default-og.png",
+          url: fullImageUrl,
           width: 1200,
           height: 630,
+          alt: data.title,
         },
       ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: data.title,
+      description: description + "...",
+      images: [fullImageUrl],
+    },
+    alternates: {
+      canonical: `https://smpn4muncarsatuatap.sch.id/article/${slug}`,
     },
   };
 }
@@ -97,7 +128,6 @@ const formatDate = (date: Date): string => {
 export default async function Page({ params }: Props) {
   const { slug } = await params;
   const blog = await getBlogBySlug(slug);
-
   if (!blog) {
     notFound();
   }
@@ -106,102 +136,107 @@ export default async function Page({ params }: Props) {
   const formattedDate = formatDate(date);
 
   return (
-    <div className="min-h-screen bg-background relative mt-16  sm:mt-28">
-      <div className="absolute top-0 left-0 z-0 w-full h-[200px] [mask-image:linear-gradient(to_top,transparent_25%,black_95%)]">
-        <FlickeringGrid
-          className="absolute top-0 left-0 size-full"
-          squareSize={4}
-          gridGap={6}
-          color="#6B7280"
-          maxOpacity={0.2}
-          flickerChance={0.05}
-        />
-      </div>
-      <div className="space-y-4 border-b border-border relative z-20">
-        <div className="max-w-7xl mx-auto flex flex-col gap-6 p-6">
-          <div className="flex flex-wrap items-center gap-3 gap-y-5 text-sm text-muted-foreground">
-            <Button size="icon" variant="outline" asChild className="h-6 w-6">
-              <Link href="/">
-                <ArrowLeft className="w-4 h-4" />
-                <span className="sr-only">Back to all articles</span>
-              </Link>
-            </Button>
-            {blog.category && (
-              <div className="flex flex-wrap gap-3 text-muted-foreground">
-                {blog.category.map((item: string) => (
-                  <span
-                    key={item}
-                    className="h-6 w-fit px-3 text-sm font-medium bg-muted text-muted-foreground rounded-md border flex items-center justify-center"
-                  >
-                    {item}
-                  </span>
-                ))}
+    <>
+      <ArticleStructuredData data={blog} />
+      <div className="min-h-screen bg-background relative mt-16  sm:mt-28">
+        <div className="absolute top-0 left-0 z-0 w-full h-[200px] [mask-image:linear-gradient(to_top,transparent_25%,black_95%)]">
+          <FlickeringGrid
+            className="absolute top-0 left-0 size-full"
+            squareSize={4}
+            gridGap={6}
+            color="#6B7280"
+            maxOpacity={0.2}
+            flickerChance={0.05}
+          />
+        </div>
+        <div className="space-y-4 border-b border-border relative z-20">
+          <div className="max-w-7xl mx-auto flex flex-col gap-6 p-6">
+            <div className="flex flex-wrap items-center gap-3 gap-y-5 text-sm text-muted-foreground">
+              <Button size="icon" variant="outline" asChild className="h-6 w-6">
+                <Link href="/">
+                  <ArrowLeft className="w-4 h-4" />
+                  <span className="sr-only">Back to all articles</span>
+                </Link>
+              </Button>
+              {blog.category && (
+                <div className="flex flex-wrap gap-3 text-muted-foreground">
+                  {blog.category.map((item: string) => (
+                    <span
+                      key={item}
+                      className="h-6 w-fit px-3 text-sm font-medium bg-muted text-muted-foreground rounded-md border flex items-center justify-center"
+                    >
+                      {item}
+                    </span>
+                  ))}
+                </div>
+              )}
+              <time className="font-medium text-muted-foreground">
+                {formattedDate}
+              </time>
+            </div>
+
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-medium tracking-tighter text-balance">
+              {blog.title}
+            </h1>
+          </div>
+        </div>
+        <div className="flex divide-x divide-border relative max-w-7xl mx-auto px-4 md:px-0 z-10">
+          <div className="absolute max-w-7xl mx-auto left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] lg:w-full h-full border-x border-border p-0 pointer-events-none" />
+          <main className="w-full p-0 overflow-hidden">
+            {blog.image_url && (
+              <div className="relative w-full h-fit md:h-[500px] overflow-hidden object-cover border border-transparent">
+                <MyImage
+                  src={blog.image_url}
+                  alt={blog.title}
+                  width={1000}
+                  height={500}
+                  className="object-cover"
+                  priority
+                  sizes="100vw"
+                />
               </div>
             )}
-            <time className="font-medium text-muted-foreground">
-              {formattedDate}
-            </time>
-          </div>
-
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-medium tracking-tighter text-balance">
-            {blog.title}
-          </h1>
-        </div>
-      </div>
-      <div className="flex divide-x divide-border relative max-w-7xl mx-auto px-4 md:px-0 z-10">
-        <div className="absolute max-w-7xl mx-auto left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] lg:w-full h-full border-x border-border p-0 pointer-events-none" />
-        <main className="w-full p-0 overflow-hidden">
-          {blog.image_url && (
-            <div className="relative w-full h-fit md:h-[500px] overflow-hidden object-cover border border-transparent">
-              <MyImage
-                src={blog.image_url}
-                alt={blog.title}
-                width={1000}
-                height={500}
-                className="object-cover"
-              />
-            </div>
-          )}
-          <div className="p-6  lg:p-10">
-            <div
-              id="markdown-content"
-              className="prose dark:prose-invert max-w-none prose-headings:scroll-mt-8 prose-headings:font-semibold prose-a:no-underline prose-headings:tracking-tight prose-headings:text-balance prose-p:tracking-tight prose-p:text-balance prose-lg"
-            >
-              <Markdown
-                remarkPlugins={[remarkGfm, remarkSlug]}
-                components={{
-                  img: ({ node, ...props }) => (
-                    <MyImage
-                      src={typeof props.src === "string" ? props.src : ""}
-                      alt={props.alt || ""}
-                      width={800}
-                      height={500}
-                      className="rounded-md md:aspect-video md:object-cover"
-                    />
-                  ),
-                }}
+            <div className="p-6  lg:p-10">
+              <div
+                id="markdown-content"
+                className="prose dark:prose-invert max-w-none prose-headings:scroll-mt-8 prose-headings:font-semibold prose-a:no-underline prose-headings:tracking-tight prose-headings:text-balance prose-p:tracking-tight prose-p:text-balance prose-lg"
               >
-                {blog.content}
-              </Markdown>
+                <Markdown
+                  remarkPlugins={[remarkGfm, remarkSlug]}
+                  components={{
+                    img: ({ node, ...props }) => (
+                      <MyImage
+                        src={typeof props.src === "string" ? props.src : ""}
+                        alt={props.alt || ""}
+                        width={800}
+                        height={500}
+                        className="rounded-md md:aspect-video md:object-cover"
+                      />
+                    ),
+                  }}
+                >
+                  {blog.content}
+                </Markdown>
+              </div>
             </div>
-          </div>
-          <div className="mt-10">
-            <ReadMoreArticles currentSlug={slug} />
-          </div>
-        </main>
-
-        <aside className="hidden lg:block w-[350px] flex-shrink-0 p-6 lg:p-10 bg-muted/60 dark:bg-muted/20">
-          <div className="sticky top-20 space-y-8">
-            <AuthorCard />
-
-            <div className="border border-border rounded-lg p-6 bg-card">
-              <TableOfContents />
+            <div className="mt-10">
+              <ReadMoreArticles currentSlug={slug} />
             </div>
-          </div>
-        </aside>
+          </main>
+
+          <aside className="hidden lg:block w-[350px] flex-shrink-0 p-6 lg:p-10 bg-muted/60 dark:bg-muted/20">
+            <div className="sticky top-20 space-y-8">
+              <AuthorCard />
+
+              <div className="border border-border rounded-lg p-6 bg-card">
+                <TableOfContents />
+              </div>
+            </div>
+          </aside>
+        </div>
+
+        <MobileTableOfContents />
       </div>
-
-      <MobileTableOfContents />
-    </div>
+    </>
   );
 }

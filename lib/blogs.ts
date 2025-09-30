@@ -9,7 +9,7 @@ export async function getBlogs(limit?: number) {
 
   let query = supabase
     .from("blogs")
-    .select("*")
+    .select("id, slug, title, image_url, category, content, created_at")
     .order("created_at", { ascending: false });
 
   if (limit) {
@@ -27,7 +27,7 @@ export async function getGuru(limit?: number) {
 
   let query = supabase
     .from("guru")
-    .select("*")
+    .select("id, nama, role, image_url")
     .order("id", { ascending: true });
 
   if (limit) {

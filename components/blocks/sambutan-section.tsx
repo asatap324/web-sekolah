@@ -4,6 +4,7 @@ import { useState } from "react";
 import LiteYouTubeEmbed from "react-lite-youtube-embed";
 import "react-lite-youtube-embed/dist/LiteYouTubeEmbed.css";
 import { Button } from "@/components/ui/button";
+import OptimizedYouTube from "./lazy-load-yt";
 
 export default function SambutanSection() {
   const [expanded, setExpanded] = useState(false);
@@ -61,12 +62,8 @@ export default function SambutanSection() {
             <h2 className="text-2xl font-bold tracking-tight mb-3.5">
               Video Profile Sekolah
             </h2>
-            <LiteYouTubeEmbed
-              aspectHeight={9}
-              aspectWidth={16}
-              id="5HpHIbxkAV4"
-              title="s,p"
-            />
+
+            <OptimizedYouTube id="5HpHIbxkAV4" title="Video Profile Sekolah" />
           </div>
         </div>
       </div>

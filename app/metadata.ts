@@ -10,10 +10,16 @@ export const metadataKeywords = [
   "sekolah negeri banyuwangi",
   "pendidikan terbaik",
   "smpn4muncarsatuatap",
+  "SMP Negeri 04 Muncar",
+  "sekolah unggulan Banyuwangi",
+  "pendidikan menengah pertama",
 ];
 
 export const metadata: Metadata = {
-  title: siteConfig.name,
+  title: {
+    default: siteConfig.name,
+    template: `%s | ${siteConfig.name}`,
+  },
   description: siteConfig.description,
   keywords: metadataKeywords,
   authors: [
@@ -23,6 +29,11 @@ export const metadata: Metadata = {
     },
   ],
   creator: "SMP Negeri 04 Muncar Satu Atap",
+  publisher: "SMP Negeri 04 Muncar Satu Atap",
+  metadataBase: new URL(siteConfig.url),
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     type: "website",
     locale: "id_ID",
@@ -30,12 +41,28 @@ export const metadata: Metadata = {
     title: siteConfig.name,
     description: siteConfig.description,
     siteName: siteConfig.name,
+    images: [
+      {
+        url: `${siteConfig.url}/og-image.png`, // atau `${siteConfig.url}/og-image.jpg`
+        width: 1200,
+        height: 630,
+        alt: siteConfig.name,
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: siteConfig.name,
     description: siteConfig.description,
     creator: "",
+    images: [
+      {
+        url: `${siteConfig.url}/og-image.png`, // atau `${siteConfig.url}/og-image.jpg`
+        width: 1200,
+        height: 630,
+        alt: siteConfig.name,
+      },
+    ],
   },
   robots: {
     index: true,
@@ -47,5 +74,13 @@ export const metadata: Metadata = {
       "max-image-preview": "large",
       "max-snippet": -1,
     },
+  },
+  verification: {
+    google: "bfIK865Bf-YRPKO-JnBXtEqn1U8XEJlc84IH-vj4CwQ",
+  },
+  category: "Education",
+  other: {
+    "geo.region": "ID-JI",
+    "geo.placename": "Banyuwangi, Jawa Timur",
   },
 };

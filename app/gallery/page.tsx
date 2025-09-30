@@ -25,22 +25,46 @@ type Props = {
 };
 
 export const metadata: Metadata = {
-  title: "Gallery",
-  description: "Gallery SMP Negeri 04 Muncar Satu Atap",
+  title: "Galeri Foto",
+  description:
+    "Lihat koleksi foto kegiatan, fasilitas, dan prestasi SMP Negeri 04 Muncar Satu Atap Banyuwangi.",
+  keywords: [
+    "galeri foto sekolah",
+    "kegiatan sekolah",
+    "foto fasilitas",
+    "prestasi siswa",
+  ],
+
   openGraph: {
-    title: "Gallery",
-    description: "Gallery SMP Negeri 04 Muncar Satu Atap",
-    url: "https://smpn4muncarsatuatap.sch.id/gallery",
-    siteName: "SMP Negeri 04 Muncar Satu Atap",
+    title: "Galeri Foto",
+    description:
+      "Kumpulan foto kegiatan dan fasilitas SMP Negeri 04 Muncar Satu Atap",
+    url: "https://smpn4muncarsatuatap.sch.id/profile",
     images: [
       {
-        url: "https://example.com/og-article.png",
+        url: "https://smpn4muncarsatuatap.sch.id/og-image-galeri.png",
         width: 1200,
         height: 630,
+        alt: "Galeri SMP Negeri 04 Muncar",
       },
     ],
-    locale: "id_ID",
-    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Galeri Foto",
+    description:
+      "Kumpulan foto kegiatan dan fasilitas SMP Negeri 04 Muncar Satu Atap",
+    images: [
+      {
+        url: "https://smpn4muncarsatuatap.sch.id/og-image-galeri.png",
+        width: 1200,
+        height: 630,
+        alt: "Galeri SMP Negeri 04 Muncar",
+      },
+    ],
+  },
+  alternates: {
+    canonical: "https://smpn4muncarsatuatap.sch.i/gallery",
   },
 };
 
@@ -62,7 +86,6 @@ export default async function Page({ searchParams }: Props) {
     .range(offset, offset + perPage - 1);
 
   const totalPages = count ? Math.ceil(count / perPage) : 1;
-  console.log(files);
 
   return (
     <Suspense
@@ -86,17 +109,6 @@ export default async function Page({ searchParams }: Props) {
         {/* Header */}
         <div className="p-6 border-b border-border flex flex-col gap-6 min-h-[250px] justify-center relative z-10">
           <div className="max-w-7xl mx-auto w-full">
-            <Button
-              size="default"
-              variant="outline"
-              asChild
-              className="h-8 w-fit mb-2"
-            >
-              <Link href="/">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                <span>Home</span>
-              </Link>
-            </Button>
             <h1 className="font-medium text-4xl md:text-5xl tracking-tighter max-w-4xl mb-2">
               Galeri SMP Negeri 04 Muncar Satu Atap
             </h1>
