@@ -29,7 +29,11 @@ export default function HeroSection() {
             className=" font-medium py-2 px-4 rounded transition-all  active:scale-95"
             asChild
           >
-            <Link href="https://spmb.id/" target="_blank">
+            <Link
+              href="https://spmb.id/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               Ayo Daftar Sekarang!
             </Link>
           </Button>

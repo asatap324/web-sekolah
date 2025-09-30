@@ -29,7 +29,6 @@ import { LogoutButton } from "@/components/auth-ui/logout-button";
 import Link from "next/link";
 import SearchBar from "@/components/search/search-bar";
 import { useUser } from "@/hooks/use-user";
-import { Badge } from "../ui/badge";
 
 import { navigationLinks } from "@/types/navigation";
 import type { SimpleLink, NavGroup } from "@/types/navigation";

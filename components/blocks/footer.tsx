@@ -57,6 +57,7 @@ export default function Footer() {
                 <Link
                   href="https://spmb.id/"
                   target="_blank"
+                  rel="noopener noreferrer"
                   className="text-sm text-muted-foreground hover:text-foreground"
                 >
                   PPDB Online {new Date().getFullYear()}

@@ -20,6 +20,19 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  headers: async () => {
+    return [
+      {
+        source: "https://smpn4muncarsatuatap.sch.id/sitemap.xml",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=3600, stale-while-revalidate=86400", // Cache 1 jam, stale 1 hari
+          },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;
