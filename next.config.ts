@@ -2,12 +2,11 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
-  output: "standalone",
-  trailingSlash: false,
   reactStrictMode: false,
   images: {
     formats: ["image/avif", "image/webp"], // serve modern format
-    unoptimized: true,
+    deviceSizes: [320, 480, 768, 1024, 1200],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     remotePatterns: [
       {
         protocol: "https",
@@ -20,6 +19,19 @@ const nextConfig: NextConfig = {
         pathname: "/public/**",
       },
     ],
+  },
+  headers: async () => {
+    return [
+      {
+        source: "/sitemap.xml",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=3600, stale-while-revalidate=86400", // Cache 1 jam, stale 1 hari
+          },
+        ],
+      },
+    ];
   },
 };
 
