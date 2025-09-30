@@ -23,7 +23,7 @@ const nextConfig: NextConfig = {
   headers: async () => {
     return [
       {
-        source: "https://smpn4muncarsatuatap.sch.id/sitemap.xml",
+        source: "/sitemap.xml",
         headers: [
           {
             key: "Cache-Control",
