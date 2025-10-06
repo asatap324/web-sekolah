@@ -1,8 +1,6 @@
 "use client";
 import MyImage from "@/components/ui/image";
 import { useState } from "react";
-import LiteYouTubeEmbed from "react-lite-youtube-embed";
-import "react-lite-youtube-embed/dist/LiteYouTubeEmbed.css";
 import { Button } from "@/components/ui/button";
 import OptimizedYouTube from "./lazy-load-yt";
 

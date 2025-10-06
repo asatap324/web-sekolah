@@ -106,8 +106,8 @@ export default function CreateBlogForm() {
         className="container space-y-6 max-w-full mx-auto h-full"
       >
         <div className="space-y-3.5">
-          <div className="flex items-start justify-center gap-4">
-            <div className="grid gap-6 flex-1">
+          <div className="w-full flex flex-col md:flex-row items-start justify-center gap-4">
+            <div className="grid gap-6 md:flex-1 w-full md:w-fit">
               <FormField
                 control={form.control}
                 name="image"
@@ -151,7 +151,7 @@ export default function CreateBlogForm() {
               control={form.control}
               name="content"
               render={({ field }) => (
-                <FormItem className="flex-1">
+                <FormItem className="md:flex-1">
                   <FormLabel>Konten</FormLabel>
                   <FormControl>
                     <Editor
@@ -165,7 +165,7 @@ export default function CreateBlogForm() {
             />
           </div>
         </div>
-        <div className="fixed bottom-10 w-1/4">
+        <div className="md:fixed bottom-10 w-full md:w-1/4">
           <Button
             type="submit"
             disabled={createBlog.isPending}

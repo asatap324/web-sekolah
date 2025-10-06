@@ -20,14 +20,14 @@ export default async function DashboardLayout({
           "--header-height": "calc(var(--spacing) * 12)",
         } as React.CSSProperties
       }
-      defaultOpen={false}
+      defaultOpen={true}
     >
       <AppSidebar />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2">
           <div className="flex items-center w-full justify-between gap-2 px-4">
             <div className="flex items-center">
-              <SidebarTrigger className="-ml-1" />
+              <SidebarTrigger className="-ml-1 size-5" />
               <Separator
                 orientation="vertical"
                 className="mr-3.5 data-[orientation=vertical]:h-4"

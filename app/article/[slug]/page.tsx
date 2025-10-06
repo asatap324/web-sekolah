@@ -17,8 +17,9 @@ import remarkSlug from "remark-slug";
 import { FlickeringGrid } from "@/components/blocks/flickering-grid";
 
 import { createServer } from "@/utils/supabase/server";
-import { createServerClientSimple } from "@/utils/supabase/server-simple";
+import { createServerClientSimple } from "@/utils/supabase/static-props";
 import { ArticleStructuredData } from "@/components/structured-data";
+import { SocialShareButtons } from "@/components/blocks/share-button";
 
 export const revalidate = 3600;
 
@@ -217,6 +218,12 @@ export default async function Page({ params }: Props) {
                 >
                   {blog.content}
                 </Markdown>
+              </div>
+              <div className="mt-5">
+                <h3 className="text-2xl font-bold tracking-tight mb-3.5">
+                  Bagikan Artikel Ini
+                </h3>
+                <SocialShareButtons />
               </div>
             </div>
             <div className="mt-10">

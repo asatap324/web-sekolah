@@ -1,11 +1,20 @@
 import { Badge } from "@/components/ui/badge";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
+// import Image from "next/image";
 
 export default function HeroSection() {
   return (
-    <>
-      <section className="w-full py-12 grid grid-cols-1 md:grid-cols-2 items-center gap-8 max-w-7xl px-4 mx-auto">
+    <div className="py-12 relative">
+      {/*<Image
+        className="w-full h-full absolute inset-0 -z-10 dark:invert brightness-0 hidden md:block"
+        src="/assets/1-1.png"
+        alt="hero-image"
+        priority
+        fill
+        sizes="100vw"
+      />*/}
+      <section className="w-full h-full grid grid-cols-1 md:grid-cols-2 items-center gap-8 max-w-7xl px-4 mx-auto">
         <div className="space-y-3.5">
           <Badge variant="outline" className="gap-1.5">
             <span
@@ -45,9 +54,11 @@ export default function HeroSection() {
             muted
             loop
             autoPlay
+            preload="metadata"
+            playsInline
           />
         </div>
       </section>
-    </>
+    </div>
   );
 }

@@ -2,7 +2,8 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/utils/supabase/client";
-import { useUserStore } from "@/store/use-store";
+// import { useUserStore } from "@/store/use-store";
+import { useUser } from "@/hooks/use-user";
 
 function slugify(title: string): string {
   return title
@@ -23,7 +24,7 @@ interface BlogInput {
 
 export function useCreateBlog() {
   const queryClient = useQueryClient();
-  const { user } = useUserStore();
+  const { user } = useUser();
 
   return useMutation({
     mutationFn: async (blog: BlogInput) => {

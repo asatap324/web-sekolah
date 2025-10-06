@@ -41,6 +41,8 @@ export function useBlogsQuery(limit?: number) {
   return useQuery({
     queryKey: ["blogs", limit],
     queryFn: () => fetchBlogs(limit),
+    staleTime: 1000 * 60 * 60,
+    gcTime: 1000 * 60 * 60 * 24,
   });
 }
 
@@ -48,6 +50,8 @@ export function useBlogQueryById(id: string) {
   return useQuery({
     queryKey: ["blogs", id],
     queryFn: () => fetchBlogById(id),
+    staleTime: 1000 * 60 * 60,
+    gcTime: 1000 * 60 * 60 * 24,
     enabled: !!id,
   });
 }

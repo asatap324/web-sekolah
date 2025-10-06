@@ -1,115 +1,88 @@
+// components/search-bar.tsx
 "use client";
-
-import * as React from "react";
-import { ArrowUpRightIcon, History, SearchIcon } from "lucide-react";
-
-import { useState, useEffect, useRef } from "react";
-
-import {
-  CommandDialog,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-
-import { searchBlogs } from "@/app/actions/search-blogs";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-
-type BlogResult = {
-  id: string;
-  title: string;
-  slug: string;
-};
+import {
+  CommandDialog,
+  CommandInput,
+  CommandList,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+} from "@/components/ui/command";
+import { useSearch } from "@/hooks/use-search";
+import { useSearchHistory } from "@/hooks/use-search-history";
+import {
+  SearchIcon,
+  History,
+  ArrowUpRightIcon,
+  FileText,
+  Loader2,
+} from "lucide-react";
 
 export default function SearchBar() {
   const [open, setOpen] = useState(false);
-  const [query, setQuery] = useState("");
-  const [results, setResults] = useState<any[]>([]);
-  const [cache, setCache] = useState<Map<string, BlogResult[]>>(new Map());
-  const [history, setHistory] = useState<string[]>([]);
-  const abortControllerRef = useRef<AbortController | null>(null);
+  const { query, setQuery, results, loading, error, reset } = useSearch();
+  const { history, addToHistory } = useSearchHistory();
   const router = useRouter();
 
+  // Keyboard shortcut
   useEffect(() => {
-    const stored = localStorage.getItem("search-history");
-    if (stored) {
-      setHistory(JSON.parse(stored));
-    }
-  }, []);
-
-  useEffect(() => {
-    const down = (e: KeyboardEvent) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         setOpen((open) => !open);
       }
+
+      if (e.key === "Escape" && open) {
+        e.preventDefault();
+        setOpen(false);
+      }
     };
 
-    document.addEventListener("keydown", down);
-    return () => document.removeEventListener("keydown", down);
-  }, []);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [open]);
 
-  // 🔎 Fetch blogs tiap kali query berubah
+  // Reset search when dialog closes - FIXED
   useEffect(() => {
-    const handler = setTimeout(async () => {
-      const q = query.trim();
-      if (q.length < 2) {
-        setResults([]);
-        return;
-      }
+    if (!open) {
+      // Use setTimeout to avoid state update during render
+      const timer = setTimeout(() => {
+        reset();
+      }, 100);
 
-      // 🔹 cek cache dulu
-      if (cache.has(q)) {
-        setResults(cache.get(q)!);
-        return;
-      }
+      return () => clearTimeout(timer);
+    }
+  }, [open, reset]);
 
-      // 🔹 abort request sebelumnya kalau ada
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
-      const controller = new AbortController();
-      abortControllerRef.current = controller;
+  // Handle dialog open state changes
+  const handleOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen);
+    if (!isOpen) {
+      // Reset immediately when manually closing
+      reset();
+    }
+  };
 
-      try {
-        const data = await searchBlogs(q, { signal: controller.signal });
-        setResults(data);
+  const handleResultSelect = (blog: any) => {
+    setOpen(false);
+    addToHistory(query);
+    router.push(`/article/${blog.slug}`);
+  };
 
-        // simpan ke cache
-        setCache((prev) => {
-          const newCache = new Map(prev);
-          newCache.set(q, data);
-          return newCache;
-        });
-      } catch (err: any) {
-        if (err.name === "AbortError") {
-          // request dibatalkan → aman diabaikan
-          return;
-        }
-        console.error("Search error:", err.message);
-      }
-    }, 500);
-
-    return () => clearTimeout(handler);
-  }, [query, cache]);
-
-  const addToHistory = (q: string) => {
-    if (!q.trim()) return;
-    setHistory((prev) => {
-      const updated = [q, ...prev.filter((h) => h !== q)].slice(0, 5); // max 5
-      localStorage.setItem("search-history", JSON.stringify(updated));
-      return updated;
-    });
+  const handleHistorySelect = (historyQuery: string) => {
+    setQuery(historyQuery);
   };
 
   return (
     <>
+      {/* Search Trigger Button */}
       <button
-        className="border-input  max-w-xs mx-auto w-full  bg-background text-foreground placeholder:text-muted-foreground/70 focus-visible:border-ring focus-visible:ring-ring/50 inline-flex h-8  rounded-md border px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px]"
+        className="border-input max-w-xs mx-auto w-full bg-background text-foreground placeholder:text-muted-foreground/70 focus-visible:border-ring focus-visible:ring-ring/50 inline-flex h-8 rounded-md border px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] hover:border-muted-foreground/30"
         onClick={() => setOpen(true)}
+        aria-label="Open search"
       >
         <span className="flex grow items-center">
           <SearchIcon
@@ -117,79 +90,119 @@ export default function SearchBar() {
             size={16}
             aria-hidden="true"
           />
-          <span className="text-muted-foreground font-normal">Search...</span>
+          <span className="text-muted-foreground font-normal truncate">
+            Search
+          </span>
         </span>
-        <kbd className="bg-background text-muted-foreground ms-12 -me-1 inline-flex h-6 max-h-full items-center rounded border px-1 font-[inherit] text-[0.625rem] font-medium">
+        <kbd className="bg-muted/50 text-muted-foreground ms-12 -me-1 inline-flex h-6 max-h-full items-center rounded border px-1.5 font-[inherit] text-[0.625rem] font-medium">
           ⌘K
         </kbd>
       </button>
-      <CommandDialog open={open} onOpenChange={setOpen}>
+
+      {/* Search Dialog */}
+      <CommandDialog open={open} onOpenChange={handleOpenChange}>
         <CommandInput
           value={query}
           onValueChange={setQuery}
-          placeholder="Type a command or search..."
+          placeholder="Search blog posts..."
+          className="focus:ring-0 focus:outline-none border-0"
         />
-        <CommandList>
-          {results.length === 0 && query.length >= 2 && (
-            <CommandEmpty>No results found.</CommandEmpty>
+
+        <CommandList className="max-h-[400px]">
+          {/* Loading State */}
+          {loading && (
+            <div className="flex h-[200px] items-center justify-center py-8 text-sm text-muted-foreground">
+              <Loader2 className="animate-spin mr-2 h-4 w-4" />
+              Searching...
+            </div>
           )}
-          <CommandGroup>
-            {results.map((blog) => (
-              <CommandItem
-                key={blog.id}
-                onSelect={() => {
-                  setOpen(false);
-                  addToHistory(query);
-                  router.push(`/article/${blog.slug}`);
-                }}
-              >
-                {blog.title}
-              </CommandItem>
-            ))}
-          </CommandGroup>
-          {history.length > 0 && query.length < 2 && (
-            <CommandGroup heading="Recent Searches">
-              {history.map((h) => (
+
+          {/* Error State */}
+          {error && !loading && (
+            <div className="py-6 text-center">
+              <div className="text-sm text-muted-foreground mb-2">{error}</div>
+              <div className="text-xs text-muted-foreground/70">
+                Please try again later
+              </div>
+            </div>
+          )}
+
+          {/* No Results */}
+          {!loading && !error && results.length === 0 && query.length >= 2 && (
+            <CommandEmpty className="py-6 text-center">
+              <div className="text-sm text-muted-foreground mb-1">
+                No results found for "{query}"
+              </div>
+              <div className="text-xs text-muted-foreground/70">
+                Try different keywords
+              </div>
+            </CommandEmpty>
+          )}
+
+          {/* Search Results */}
+          {!loading && results.length > 0 && (
+            <CommandGroup heading="Blog Posts">
+              {results.map((blog) => (
                 <CommandItem
-                  key={h}
-                  onSelect={() => {
-                    setQuery(h);
-                  }}
+                  key={blog.id}
+                  value={blog.title}
+                  onSelect={() => handleResultSelect(blog)}
+                  className="flex flex-col items-start py-3 min-w-0 line-clamp-1" // Tambah min-w-0
                 >
-                  <History size={16} className="opacity-60 me-2" />
-                  {h}
+                  <div className="flex items-center">
+                    <FileText size={16} className="opacity-60 me-2" />
+                    <span className="truncate">{blog.title}</span>
+                  </div>
                 </CommandItem>
               ))}
             </CommandGroup>
           )}
+
+          {/* Search History */}
+          {!loading && history.length > 0 && query.length < 2 && (
+            <CommandGroup heading="Recent Searches">
+              {history.map((item, index) => (
+                <CommandItem
+                  key={index}
+                  onSelect={() => handleHistorySelect(item)}
+                  className="flex items-center"
+                >
+                  <History size={16} className="opacity-60 me-3" />
+                  <span className="truncate">{item}</span>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          )}
+
+          {/* Navigation Links */}
           <CommandGroup heading="Navigation">
             <CommandItem asChild>
-              <Link className="flex items-center" href="/">
-                <ArrowUpRightIcon
-                  size={16}
-                  className="opacity-60"
-                  aria-hidden="true"
-                />
+              <Link
+                href="/"
+                className="flex items-center w-full"
+                onClick={() => setOpen(false)}
+              >
+                <ArrowUpRightIcon size={16} className="opacity-60 me-3" />
                 <span>Go to Home</span>
               </Link>
             </CommandItem>
             <CommandItem asChild>
-              <Link className="flex items-center" href="/articles">
-                <ArrowUpRightIcon
-                  size={16}
-                  className="opacity-60"
-                  aria-hidden="true"
-                />
-                <span>Go to Article</span>
+              <Link
+                href="/articles"
+                className="flex items-center w-full"
+                onClick={() => setOpen(false)}
+              >
+                <ArrowUpRightIcon size={16} className="opacity-60 me-3" />
+                <span>Browse All Articles</span>
               </Link>
             </CommandItem>
             <CommandItem asChild>
-              <Link className="flex items-center" href="/profile">
-                <ArrowUpRightIcon
-                  size={16}
-                  className="opacity-60"
-                  aria-hidden="true"
-                />
+              <Link
+                href="/profile"
+                className="flex items-center w-full"
+                onClick={() => setOpen(false)}
+              >
+                <ArrowUpRightIcon size={16} className="opacity-60 me-3" />
                 <span>Go to Profile</span>
               </Link>
             </CommandItem>

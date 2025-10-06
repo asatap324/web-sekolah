@@ -13,6 +13,7 @@ export default function ThemeToggle() {
     <Button
       variant="outline"
       size="icon"
+      aria-label="toggle theme"
       onClick={() => setTheme(theme === "light" ? "dark" : "light")}
       className="relative cursor-pointer size-8"
     >

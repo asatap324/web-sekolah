@@ -41,9 +41,9 @@ export function BlogCard({
         )}
 
         <div className="p-6 flex flex-col gap-2">
-          <h3 className="text-xl font-semibold text-card-foreground group-hover:underline underline-offset-4">
+          <h2 className="text-xl font-semibold text-card-foreground group-hover:underline underline-offset-4">
             {title}
-          </h3>
+          </h2>
           <p className="text-muted-foreground text-sm">{description}</p>
           <time className="block text-sm font-medium text-muted-foreground">
             {date}

@@ -2,10 +2,13 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { createClient } from "@/utils/supabase/client";
-
+import {
+  useActionState,
+  useState,
+  useEffect,
+  useOptimistic,
+  startTransition,
+} from "react";
 import { toast } from "sonner";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 
@@ -21,20 +24,36 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { loginSchema } from "@/types/form-schema";
-import { useUserStore } from "@/store/use-store";
 import Link from "next/link";
+import { loginAction } from "@/app/actions";
+import { useRouter } from "next/navigation";
+
+// Type untuk optimistic state
+type OptimisticState = {
+  isLoggingIn: boolean;
+  remainingAttempts: number;
+  error: string | null;
+};
 
 type FormValues = z.infer<typeof loginSchema>;
 
-export default function LoginForm({
-  className,
-  ...props
-}: React.ComponentProps<"form">) {
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
+// const initialState = {
+//   error: null,
+//   success: false,
+//   redirectTo: undefined,
+//   remainingAttempts: 5,
+// };
+
+export default function LoginForm() {
   const router = useRouter();
-  const supabase = createClient();
+  const [isVisible, setIsVisible] = useState(false);
+
+  // ✅ Optimistic state
+  const [optimisticState, setOptimisticState] = useOptimistic<OptimisticState>({
+    isLoggingIn: false,
+    remainingAttempts: 5,
+    error: null,
+  });
 
   const form = useForm<FormValues>({
     resolver: zodResolver(loginSchema),
@@ -44,82 +63,85 @@ export default function LoginForm({
     },
   });
 
-  const handleLogin = async (values: FormValues) => {
-    setIsLoading(true);
-    setError(null);
+  const toggleVisible = () => setIsVisible((prev) => !prev);
 
-    try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email: values.email,
-        password: values.password,
-      });
-      if (error) throw error;
-      // Update this route to redirect to an authenticated route. The user already has an active session.
-      // ✅ biarkan Zustand update user via onAuthStateChange
-      const { user } = useUserStore.getState();
+  // ✅ Form submission dengan optimistic updates
+  const handleSubmit = async (formData: FormData) => {
+    // ✅ Immediate optimistic update
+    setOptimisticState({
+      isLoggingIn: true,
+      remainingAttempts: optimisticState.remainingAttempts,
+      error: null,
+    });
 
-      // tunggu sebentar kalau user belum langsung keisi
-      if (!user) {
-        // bisa polling dikit / tunggu event dari zustand
-        return;
+    startTransition(async () => {
+      try {
+        const result = await loginAction(optimisticState, formData);
+
+        // Handle result berdasarkan state dari server action
+        if (result.error) {
+          // Update optimistic state dengan result dari server
+          setOptimisticState({
+            isLoggingIn: false,
+            remainingAttempts:
+              result.remainingAttempts || optimisticState.remainingAttempts,
+            error: result.error,
+          });
+
+          // Show appropriate toast
+          if (result.remainingAttempts === 0) {
+            toast.error(
+              result.error || "Akun terkunci! Coba lagi dalam 1 jam.",
+            );
+          } else if (result.remainingAttempts === 1) {
+            toast.warning(
+              result.error ||
+                "Percobaan terakhir! Jika gagal, akun akan dikunci sementara.",
+            );
+          } else if (result.remainingAttempts && result.remainingAttempts < 5) {
+            toast.warning(
+              result.error ||
+                `Login gagal! ${result.remainingAttempts} percobaan tersisa.`,
+            );
+          } else {
+            toast.error(result.error);
+          }
+        } else if (result.success) {
+          // ✅ Success - show success message
+          toast.success("Login berhasil! Mengarahkan...");
+
+          // Redirect setelah delay kecil
+          setTimeout(() => {
+            if (result.redirectTo) {
+              window.location.href = result.redirectTo;
+            } else {
+              window.location.href = "/";
+            }
+          }, 500);
+        }
+      } catch (error) {
+        // Fallback error handling
+        setOptimisticState({
+          isLoggingIn: false,
+          remainingAttempts: optimisticState.remainingAttempts,
+          error: "Terjadi kesalahan sistem",
+        });
+        toast.error("Terjadi kesalahan sistem");
       }
-
-      if (user.role === "admin") {
-        router.push("/dashboard");
-      } else {
-        router.push("/");
-      }
-    } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "An error occurred");
-      toast.error(error instanceof Error ? error.message : "An error occurred");
-    } finally {
-      setIsLoading(false);
-    }
+    });
   };
-
-  // const handleLoginWithGoogle = async () => {
-  //   const { error } = await supabase.auth.signInWithOAuth({
-  //     provider: "google",
-  //     options: {
-  //       redirectTo: "/", // halaman redirect setelah login
-  //     },
-  //   });
-
-  //   if (error) {
-  //     console.error("Login with Google failed:", error.message);
-  //   }
-  // };
-
-  const forgotPassword = async (values: FormValues) => {
-    try {
-      const { error } = await supabase.auth.resetPasswordForEmail(
-        values.email,
-        {
-          redirectTo: `${window.location.origin}/auth/reset-password`,
-        },
-      );
-      if (error) throw error;
-      toast.success("Password reset email sent");
-    } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "An error occurred");
-    }
-  };
-
-  const toggleVisible = () => setIsVisible((prevState) => !prevState);
 
   return (
     <>
       <Form {...form}>
-        <form
-          className="flex flex-col gap-6"
-          onSubmit={form.handleSubmit(handleLogin)}
-        >
+        <form className="flex flex-col gap-6" action={handleSubmit}>
           <div className="flex flex-col items-center gap-2 text-center">
             <h1 className="text-2xl font-bold">Login to your account</h1>
             <p className="text-foreground text-sm text-balance">
               Enter your email below to login to your account
             </p>
           </div>
+
           <div className="grid gap-6">
             <FormField
               control={form.control}
@@ -128,12 +150,17 @@ export default function LoginForm({
                 <FormItem className="grid gap-3">
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input type="email" {...field} />
+                    <Input
+                      type="email"
+                      {...field}
+                      disabled={optimisticState.isLoggingIn}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="password"
@@ -143,19 +170,15 @@ export default function LoginForm({
                     <div className="flex justify-between items-center">
                       <span>Password</span>
                       <Button
-                        type="button"
+                        className="cursor-pointer"
                         size="sm"
                         variant="link"
-                        onClick={() => {
-                          const email = form.getValues("email");
-                          if (!email) {
-                            toast.error("Please enter your email first");
-                            return;
-                          }
-                          forgotPassword({ email, password: "" });
-                        }}
+                        type="button"
+                        disabled={optimisticState.isLoggingIn}
                       >
-                        Forgot your password?
+                        <Link href="/auth/forgot-password">
+                          Forgot your password?
+                        </Link>
                       </Button>
                     </div>
                   </FormLabel>
@@ -164,11 +187,13 @@ export default function LoginForm({
                       <Input
                         type={isVisible ? "text" : "password"}
                         {...field}
+                        disabled={optimisticState.isLoggingIn}
                       />
                       <button
-                        className="text-muted-foreground/80 hover:text-foreground focus-visible:border-ring focus-visible:ring-ring/50 absolute inset-y-0 end-0 flex h-full w-9 items-center justify-center rounded-e-md transition-[color,box-shadow] outline-none focus:z-10 focus-visible:ring-[3px] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
+                        className="text-muted-foreground/80 cursor-pointer hover:text-foreground focus-visible:border-ring focus-visible:ring-ring/50 absolute inset-y-0 end-0 flex h-full w-9 items-center justify-center rounded-e-md transition-[color,box-shadow] outline-none focus:z-10 focus-visible:ring-[3px] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
                         type="button"
                         onClick={toggleVisible}
+                        disabled={optimisticState.isLoggingIn}
                         aria-label={
                           isVisible ? "Hide password" : "Show password"
                         }
@@ -187,15 +212,29 @@ export default function LoginForm({
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Logging in..." : "Login"}
+
+            {/* ✅ Optimistic Loading State */}
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={optimisticState.isLoggingIn}
+            >
+              {optimisticState.isLoggingIn ? (
+                <div className="flex items-center gap-2">
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                  Logging in...
+                </div>
+              ) : (
+                "Login"
+              )}
             </Button>
           </div>
         </form>
       </Form>
+
       <div className="grid gap-6 mt-5">
         <div className="text-center text-sm">
-          Don&apos;t have an account?{" "}
+          Don't have an account?{" "}
           <Link href="/auth/register" className="underline underline-offset-4">
             Sign up
           </Link>

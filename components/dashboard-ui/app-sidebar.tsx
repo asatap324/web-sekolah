@@ -10,6 +10,7 @@ import {
   HouseIcon,
   LifeBuoy,
   Newspaper,
+  PenIcon,
   Send,
   Settings,
   UserSquare2,
@@ -46,6 +47,11 @@ const data = {
         {
           title: "Buat Berita",
           icon: Newspaper,
+          url: "/dashboard/create-blog",
+        },
+        {
+          title: "Tutorial Buat Berita",
+          icon: PenIcon,
           url: "/dashboard/create-blog",
         },
       ],

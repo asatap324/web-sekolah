@@ -40,12 +40,6 @@ export function BlogPostCard({
       <CardFooter className="mt-auto">
         <div className="text-muted-foreground flex items-center gap-2 text-sm">
           <Avatar className="h-6 w-6">
-            <AvatarImage
-              alt="avatar-admin"
-              src="https://avatar.iran.liara.run/public/45"
-              width={24}
-              height={24}
-            />
             <AvatarFallback>
               {authorName
                 .split(" ")

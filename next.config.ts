@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactStrictMode: false,
   images: {
-    formats: ["image/avif", "image/webp"], // serve modern format
+    formats: ["image/webp"], // serve modern format
     deviceSizes: [320, 480, 768, 1024, 1200],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     remotePatterns: [
@@ -16,7 +16,7 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "avatar.iran.liara.run",
-        pathname: "/public/**",
+        pathname: "/public/45",
       },
     ],
   },
@@ -28,6 +28,15 @@ const nextConfig: NextConfig = {
           {
             key: "Cache-Control",
             value: "public, max-age=3600, stale-while-revalidate=86400", // Cache 1 jam, stale 1 hari
+          },
+        ],
+      },
+      {
+        source: "/_next/static/(.*)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
           },
         ],
       },

@@ -2,11 +2,14 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/dark-mode/theme-provider";
-import Providers from "./providers";
 import { Toaster } from "@/components/ui/sonner";
 import { siteConfig } from "@/lib/site";
 import { metadataKeywords } from "./metadata";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { getServerUser } from "@/utils/auth-server";
+import AuthProvider from "@/components/providers/auth-provider";
+import MainProvider from "@/components/providers/main-provider";
+import LayoutWrapper from "@/components/providers/layout-wrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,8 +40,9 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const initialUser = await getServerUser();
   return (
-    <html lang="en" suppressHydrationWarning={true}>
+    <html lang="id" suppressHydrationWarning>
       <head>
         <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
       </head>
@@ -46,13 +50,21 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <main>
-            <Toaster richColors />
-
-            <Providers>
-              <TooltipProvider delayDuration={0}>{children}</TooltipProvider>
-            </Providers>
-          </main>
+          <MainProvider>
+            <AuthProvider initialUser={initialUser}>
+              <Toaster
+                richColors
+                position="top-right"
+                expand={true}
+                toastOptions={{
+                  className: "font-sans",
+                }}
+              />
+              <TooltipProvider delayDuration={0}>
+                <LayoutWrapper>{children}</LayoutWrapper>
+              </TooltipProvider>
+            </AuthProvider>
+          </MainProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -1,6 +1,7 @@
-import { IconBrandInstagram, IconMail, IconPhone } from "@tabler/icons-react";
+import { IconPhone } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
+import { Gmail, Instagram } from "@/components/social-icons/icons";
 
 export default function Footer() {
   return (
@@ -34,10 +35,10 @@ export default function Footer() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 mt-3 gap-6">
             <div className="flex flex-col">
-              <h3 className="font-bold text-2xl tracking-tight">Quick Links</h3>
+              <h2 className="font-bold text-2xl tracking-tight">Quick Links</h2>
               <div className="flex flex-col gap-2 mt-2">
                 <Link
-                  href="/about"
+                  href="/"
                   className="text-sm text-muted-foreground hover:text-foreground"
                 >
                   Home
@@ -60,27 +61,31 @@ export default function Footer() {
                   rel="noopener noreferrer"
                   className="text-sm text-muted-foreground hover:text-foreground"
                 >
-                  PPDB Online {new Date().getFullYear()}
+                  SPMB {new Date().getFullYear()}
                 </Link>
               </div>
             </div>
             <div className="flex flex-col">
-              <h3 className="font-bold text-2xl tracking-tight">
+              <h2 className="font-bold text-2xl tracking-tight">
                 Hubungi Kami
-              </h3>
+              </h2>
               <div className="flex flex-col gap-2 mt-2">
                 <Link
                   href="https://www.instagram.com/smpn4muncar_satuatap?utm_source=ig_web_button_share_sheet&igsh=NXRpZ280b2xoeTJv"
                   className="text-sm flex items-center text-muted-foreground hover:text-foreground"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
-                  <IconBrandInstagram className="w-4 h-4 mr-2" />
+                  <Instagram className="w-4 h-4 mr-2" />
                   <span>Instagram</span>
                 </Link>
                 <Link
                   href="mailto:smpn4muncar_satuatap@yahoo.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-sm flex items-center text-muted-foreground hover:text-foreground"
                 >
-                  <IconMail className="w-4 h-4 mr-2" />
+                  <Gmail className="w-4 h-4 mr-2" />
                   <span>Email</span>
                 </Link>
                 <Link
@@ -88,7 +93,7 @@ export default function Footer() {
                   className="text-sm flex items-center text-muted-foreground hover:text-foreground"
                 >
                   <IconPhone className="w-4 h-4 mr-2" />
-                  <span>Phone</span>
+                  <span>(0333) 590094</span>
                 </Link>
               </div>
             </div>

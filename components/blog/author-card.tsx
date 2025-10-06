@@ -1,15 +1,10 @@
-import Image from "next/image";
-
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 export function AuthorCard() {
   return (
     <div className="flex items-center gap-2">
-      <Image
-        src="https://avatar.iran.liara.run/public/45"
-        alt="Admin"
-        className="rounded-full w-8 h-8 border border-border object-cover"
-        width={24}
-        height={24}
-      />
+      <Avatar>
+        <AvatarFallback className="text-xs">AD</AvatarFallback>
+      </Avatar>
       <div className="flex-1">
         <h3 className="text-sm  tracking-tight text-balance font-semibold">
           Admin

@@ -120,8 +120,8 @@ export default function EditBlogForm({ blog, onSuccess }: UpdateBlogFormProps) {
         className="container space-y-6 max-w-full mx-auto h-full"
       >
         <div className="space-y-3.5">
-          <div className="flex items-start justify-center gap-4">
-            <div className="grid gap-6 flex-1">
+          <div className="flex flex-col md:flex-row items-start justify-center gap-4">
+            <div className="grid gap-6 w-full md:w-fit md:flex-1">
               <FormField
                 control={form.control}
                 name="image"
@@ -187,7 +187,7 @@ export default function EditBlogForm({ blog, onSuccess }: UpdateBlogFormProps) {
           </div>
         </div>
 
-        <div className="fixed bottom-10 w-1/4">
+        <div className="md:fixed w-full bottom-10 md:w-1/4">
           <Button
             type="submit"
             disabled={updateBlog.isPending}

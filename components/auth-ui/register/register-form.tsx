@@ -3,9 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 import { useRouter } from "next/navigation";
-import { createClient } from "@/utils/supabase/client";
 
-import { useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,20 +19,25 @@ import {
 } from "@/components/ui/form";
 import { registerSchema } from "@/types/form-schema";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { signupAction } from "@/app/actions";
 import { toast } from "sonner";
 
 type FormValues = z.infer<typeof registerSchema>;
 
-export default function RegisterForm({
-  className,
-  ...props
-}: React.ComponentProps<"form">) {
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
+const initialState = {
+  error: null as string | null,
+  success: false,
+  redirectTo: undefined as string | undefined,
+};
+
+export default function RegisterForm() {
   const router = useRouter();
-  const supabase = createClient();
+  const [isVisible, setIsVisible] = useState(false);
+  const toggleVisible = () => setIsVisible((prevState) => !prevState);
+  const [state, formAction, isPending] = useActionState(
+    signupAction,
+    initialState,
+  );
 
   const form = useForm<FormValues>({
     resolver: zodResolver(registerSchema),
@@ -44,62 +48,26 @@ export default function RegisterForm({
     },
   });
 
-  // const handleLoginWithGoogle = async () => {
-  //   const { error } = await supabase.auth.signInWithOAuth({
-  //     provider: "google",
-  //     options: {
-  //       redirectTo: `${window.location.origin}/auth/callback`, // halaman redirect setelah login
-  //     },
-  //   });
-
-  //   if (error) {
-  //     console.error("Login with Google failed:", error.message);
-  //   }
-  // };
-
-  const handleRegister = async (values: FormValues) => {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const { data, error } = await supabase.auth.signUp({
-        email: values.email,
-        password: values.password,
-        options: {
-          data: {
-            username: values.username,
-          },
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-        },
-      });
-      if (error) throw error;
-      if (data.user) {
-        const { error: profileError } = await supabase.from("profiles").insert([
-          {
-            id: data.user.id, // foreign key ke auth.users.id
-            username: values.username,
-          },
-        ]);
-
-        if (profileError) throw profileError;
-      }
-      router.push("/auth/login");
-    } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "An error occurred");
-    } finally {
-      setIsLoading(false);
+  useEffect(() => {
+    if (state.success && state.redirectTo) {
+      router.push(state.redirectTo);
     }
-  };
+  }, [state, router]);
 
-  const toggleVisible = () => setIsVisible((prevState) => !prevState);
+  useEffect(() => {
+    if (state.error) {
+      toast.error(<p className="text-sm">An error occurred!</p>);
+    }
+
+    if (state.success) {
+      toast.success(<p className="text-sm">{state.message}</p>);
+    }
+  }, [state.error, state.success, state.message]);
 
   return (
     <>
       <Form {...form}>
-        <form
-          className="flex flex-col gap-6"
-          onSubmit={form.handleSubmit(handleRegister)}
-        >
+        <form className="flex flex-col gap-6" action={formAction}>
           <div className="flex flex-col items-center gap-2 text-center">
             <h1 className="text-2xl font-bold">Signup your account</h1>
             <p className="text-foreground text-sm text-balance">
@@ -167,8 +135,9 @@ export default function RegisterForm({
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Signup in..." : "Sign up"}
+
+            <Button type="submit" className="w-full" disabled={isPending}>
+              {isPending ? "Signup in..." : "Sign up"}
             </Button>
           </div>
         </form>

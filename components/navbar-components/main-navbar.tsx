@@ -1,11 +1,9 @@
 "use client";
-import { BookOpenIcon, InfoIcon } from "lucide-react";
+import { BookOpenIcon, InfoIcon, Phone } from "lucide-react";
 import {
   IconUsers,
   IconLibraryPhoto,
   IconPlayHandball,
-  IconBrandInstagram,
-  IconMail,
 } from "@tabler/icons-react";
 
 import { cn } from "@/lib/utils";
@@ -32,12 +30,15 @@ import { useUser } from "@/hooks/use-user";
 
 import { navigationLinks } from "@/types/navigation";
 import type { SimpleLink, NavGroup } from "@/types/navigation";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { Gmail, Instagram } from "@/components/social-icons/icons";
+import UserDropdown from "@/components/blocks/user-dropdown";
+import { Avatar, AvatarFallback } from "../ui/avatar";
+import { useAuth } from "../providers/auth-provider";
 
 export default function MainNavbar() {
-  const { user } = useUser();
+  const { user } = useAuth();
   return (
-    <header className="border-b px-4 md:px-6 fixed top-0 left-0 right-0 z-[9999] bg-background">
+    <header className="border-b px-4 md:px-6 fixed top-0 left-0 right-0 z-50 bg-background">
       <div className="flex max-w-8xl mx-auto h-16 items-center  justify-between gap-4">
         {/* Left side */}
         <div className="flex flex-1 items-center">
@@ -65,9 +66,14 @@ export default function MainNavbar() {
         {/* Right side */}
         <div className="flex flex-1 items-center justify-end gap-2">
           <div className="hidden md:flex">
-            {user?.role === "admin" ? (
-              <div>
+            {user ? (
+              <div className="flex items-center gap-3.5">
                 <LogoutButton variant="outline" />
+                <UserDropdown
+                  username={user.username}
+                  email={user.email}
+                  role={user.role}
+                />
               </div>
             ) : (
               <Button variant="outline" className="cursor-pointer h-8" asChild>
@@ -116,8 +122,41 @@ export default function MainNavbar() {
               align="start"
               className="w-64 mt-3.5  p-1 md:hidden"
             >
-              <NavigationMenu className="max-w-none *:w-full">
+              <NavigationMenu className="max-w-none *:w-full pb-2">
                 <NavigationMenuList className="flex-col items-start gap-0 md:gap-2">
+                  {user ? (
+                    <>
+                      <NavigationMenuItem className="flex items-center gap-3 py-1.5 px-2">
+                        <Avatar className="shrink-0">
+                          <AvatarFallback>
+                            {user.username
+                              ?.split(" ")
+                              .map((n: string) => n[0])
+                              .join("")}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex min-w-0 flex-col">
+                          <div className="items-center flex gap-3">
+                            <span className="text-foreground truncate text-sm font-medium">
+                              {user.username}
+                            </span>
+                            <span className="h-4 w-fit px-4 capitalize text-xs font-medium bg-muted text-muted-foreground rounded-md border flex items-center justify-center">
+                              {user.role}
+                            </span>
+                          </div>
+
+                          <span className="text-muted-foreground truncate text-xs font-normal">
+                            {user.email}
+                          </span>
+                        </div>
+                      </NavigationMenuItem>
+                      <div
+                        role="separator"
+                        aria-orientation="horizontal"
+                        className="bg-border -mx-1 my-1 h-px w-full"
+                      />
+                    </>
+                  ) : null}
                   {navigationLinks.map((link, index) => (
                     <NavigationMenuItem key={index} className="w-full">
                       {"submenu" in link && link.submenu ? (
@@ -364,18 +403,27 @@ export default function MainNavbar() {
               <Link
                 href="https://www.instagram.com/smpn4muncar_satuatap?utm_source=ig_web_button_share_sheet&igsh=NXRpZ280b2xoeTJv"
                 target="_blank"
+                rel="noopener noreferrer"
                 className="h-6  w-fit px-3 text-sm font-medium bg-muted text-muted-foreground rounded-md border flex items-center justify-center gap-2"
               >
-                <IconBrandInstagram className="w-4 h-4" />
+                <Instagram className="w-4 h-4" />
                 <span>Instagram</span>
               </Link>
               <Link
                 href="mailto:smpn4muncar_satuatap@yahoo.com"
                 target="_blank"
+                rel="noopener noreferrer"
                 className="h-6  w-fit px-3 text-sm font-medium bg-muted text-muted-foreground rounded-md border flex items-center justify-center gap-2"
               >
-                <IconMail className="w-4 h-4" />
+                <Gmail className="w-4 h-4" />
                 <span>Email</span>
+              </Link>
+              <Link
+                href="#!"
+                className="h-6  w-fit px-3 text-sm font-medium bg-muted text-muted-foreground rounded-md border flex items-center justify-center gap-2"
+              >
+                <Phone className="w-4 h-4" />
+                <span className="font-sans">(0333) 590094</span>
               </Link>
             </div>
           </div>
