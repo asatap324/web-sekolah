@@ -2,7 +2,7 @@
 
 import { useFileUpload } from "@/hooks/use-file-upload";
 
-import { AlertCircleIcon, ImageUpIcon } from "lucide-react";
+import { ImageUpIcon } from "lucide-react";
 import { useState } from "react";
 
 type Props = {
@@ -15,9 +15,7 @@ export default function UploadThumbnails({ onFileSelect, initialUrl }: Props) {
   const maxSize = maxSizeMB * 1024 * 1024;
   const [previewUrl, setPreviewUrl] = useState<string | null>(
     initialUrl || null,
-  ); // 👈 pakai initialUrl
-  const [uploading, setUploading] = useState(false);
-
+  );
   const [
     { files, isDragging, errors },
     {

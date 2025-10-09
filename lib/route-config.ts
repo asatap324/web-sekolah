@@ -13,7 +13,7 @@ export const routeConfig = {
   ],
 
   // Routes yang butuh role admin
-  admin: ["/dashboard"],
+  admin: ["/dashboard/(.*)"],
 
   // Routes auth (redirect jika sudah login)
   auth: ["/auth/login", "/auth/register"],

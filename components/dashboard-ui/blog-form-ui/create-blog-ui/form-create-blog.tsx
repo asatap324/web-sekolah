@@ -87,15 +87,15 @@ export default function CreateBlogForm() {
           onSuccess: () => {
             form.reset();
             setFile(null);
-            toast.success("✅ Blog berhasil dibuat!");
+            toast.success("Blog berhasil dibuat!");
           },
           onError: (err: any) => {
-            toast.error(err.message || "❌ Gagal membuat blog");
+            toast.error(err.message || "Gagal membuat blog");
           },
         },
       );
     } catch (error: any) {
-      toast.error(error.message || "❌ Gagal membuat blog");
+      toast.error(error.message || "Gagal membuat blog");
     }
   };
 

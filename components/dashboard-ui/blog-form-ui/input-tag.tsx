@@ -29,7 +29,11 @@ export function CategoryInput({
           }
           placeholder="Tambah kategori lalu Enter"
         />
-        <Button type="button" onClick={addCategory}>
+        <Button
+          className="h-9 cursor-pointer"
+          type="button"
+          onClick={addCategory}
+        >
           Add
         </Button>
       </div>

@@ -42,7 +42,7 @@ export default async function RootLayout({
 }>) {
   const initialUser = await getServerUser();
   return (
-    <html lang="id" suppressHydrationWarning>
+    <html lang="id" suppressHydrationWarning={true}>
       <head>
         <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
       </head>

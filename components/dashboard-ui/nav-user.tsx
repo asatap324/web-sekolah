@@ -26,6 +26,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { useUser } from "@/hooks/use-user";
+import { LogoutButton } from "../auth-ui/logout-button";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
@@ -90,6 +91,10 @@ export function NavUser() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              <LogOut />
+              <LogoutButton className="h-4 pl-0" variant="ghost" />
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>

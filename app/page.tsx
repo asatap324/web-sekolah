@@ -10,6 +10,9 @@ import { Suspense } from "react";
 import TemplateCarousel from "@/components/blocks/template-carousel";
 import { HomepageStructuredData } from "@/components/homepage-structured-data";
 
+import { getActiveAnnouncements } from "@/app/actions/announcements/announcement";
+import { AnnouncementProvider } from "@/components/providers/announcement-provider";
+
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
@@ -106,6 +109,7 @@ const ekstrakulikuler = [
 export default async function Home() {
   const dataGuru = await getGuru(7);
   const dataBlog = await getBlogs(9);
+  const announcements = await getActiveAnnouncements();
 
   return (
     <>
@@ -141,6 +145,7 @@ export default async function Home() {
           </div>
         </div>
       </div>
+      <AnnouncementProvider announcements={announcements} />
     </>
   );
 }
