@@ -1,6 +1,17 @@
 import { UpdatePasswordForm } from "@/components/auth-ui/update-password";
 
-export default async function ResetPasswordConfirmPage() {
+interface PageProps {
+  searchParams: Promise<{
+    token?: string;
+  }>;
+}
+
+export default async function ResetPasswordConfirmPage({
+  searchParams,
+}: PageProps) {
+  const params = await searchParams;
+  const token = params.token;
+
   return (
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
@@ -13,7 +24,7 @@ export default async function ResetPasswordConfirmPage() {
           </p>
         </div>
 
-        <UpdatePasswordForm />
+        <UpdatePasswordForm token={token} />
       </div>
     </div>
   );

@@ -10,7 +10,11 @@ import { toast } from "sonner";
 import { Button } from "../ui/button";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 
-export function UpdatePasswordForm() {
+interface UpdatePasswordFormProps {
+  token?: string;
+}
+
+export function UpdatePasswordForm({ token }: UpdatePasswordFormProps) {
   const [state, formAction, isPending] = useActionState(updatePasswordAction, {
     error: null,
     success: false,
@@ -81,6 +85,7 @@ export function UpdatePasswordForm() {
 
   return (
     <form action={formAction} className="mt-8 space-y-6">
+      <input type="hidden" name="token" value={token || ""} />
       <div className="space-y-4 ">
         <div className=":not-first:mt-2">
           <Label htmlFor="password">Password Baru</Label>
