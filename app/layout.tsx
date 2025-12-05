@@ -45,6 +45,10 @@ export default async function RootLayout({
     <html lang="id" suppressHydrationWarning>
       <head>
         <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+        <meta
+          name="google-site-verification"
+          content="bfIK865Bf-YRPKO-JnBXtEqn1U8XEJlc84IH-vj4CwQ"
+        />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-sidebar`}

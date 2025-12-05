@@ -75,9 +75,6 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  verification: {
-    google: "bfIK865Bf-YRPKO-JnBXtEqn1U8XEJlc84IH-vj4CwQ",
-  },
   category: "Education",
   other: {
     "geo.region": "ID-JI",
