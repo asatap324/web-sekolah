@@ -1,4 +1,4 @@
-import { DataTable } from "@/components/dashboard-ui/data-table";
+import { DataTable } from "@/components/layout/sidebar/dashboard/shared";
 
 export default function MainDashboard({ blogs }: { blogs: any[] }) {
   return (

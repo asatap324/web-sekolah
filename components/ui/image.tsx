@@ -29,6 +29,7 @@ type Props = {
   fill?: boolean;
   priority?: boolean;
   sizes?: string;
+  fetchPriority?: "high" | "low" | "auto" | undefined;
 };
 
 export default function MyImage({
@@ -40,6 +41,7 @@ export default function MyImage({
   fill,
   sizes,
   priority,
+  fetchPriority,
 }: Props) {
   return (
     <>
@@ -51,6 +53,7 @@ export default function MyImage({
         width={width}
         height={height}
         priority={priority}
+        fetchPriority={fetchPriority}
         placeholder={`data:image/svg+xml;base64,${toBase64(shimmer(700, 475))}`}
       />
     </>

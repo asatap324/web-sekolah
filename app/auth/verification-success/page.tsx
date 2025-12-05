@@ -4,7 +4,7 @@ import Link from "next/link";
 export default function VerificationSuccess() {
   return (
     <div className="min-h-screen flex items-center justify-center">
-      <div className="max-w-md w-full space-y-8 p-8">
+      <div className="max-w-sm w-full space-y-8 p-8">
         <div className="text-center">
           <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-foreground">
             <svg
@@ -21,14 +21,14 @@ export default function VerificationSuccess() {
               />
             </svg>
           </div>
-          <h2 className="mt-6 text-3xl font-extrabold">Email Terverifikasi!</h2>
-          <p className="mt-2 text-sm text-muted-foreground">
+          <h1 className="mt-3 text-3xl font-semibold">Email Terverifikasi!</h1>
+          <p className="text-sm text-muted-foreground text-pretty mt-1">
             Akun Anda telah berhasil diverifikasi. Sekarang Anda bisa login ke
             akun Anda.
           </p>
           <div className="mt-6">
-            <Button asChild size="sm" className="w-full px-4 py-2 text-sm">
-              <Link href="/auth/login">Login Sekarang</Link>
+            <Button className="w-full " render={<Link href="/auth/login" />}>
+              Login Sekarang
             </Button>
           </div>
         </div>

@@ -1,5 +1,5 @@
-import LoginForm from "@/components/auth-ui/login/login-form";
-import ThemeToggle from "@/components/dark-mode/theme-toggle-button";
+import { LoginForm } from "@/components/auth";
+import { ThemeToggle } from "@/components/layout/header/shared";
 import { GridPattern } from "@/components/ui/grid-pattern";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
@@ -54,9 +54,7 @@ export default function LoginPage() {
           <ThemeToggle />
         </div>
         <div className="flex flex-1 items-center justify-center">
-          <div className="w-full max-w-xs">
-            <LoginForm />
-          </div>
+          <LoginForm />
         </div>
       </div>
     </div>

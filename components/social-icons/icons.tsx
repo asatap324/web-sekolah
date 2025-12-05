@@ -1,12 +1,32 @@
 import type { SVGProps } from "react";
 
 const Facebook = (props: SVGProps<SVGSVGElement>) => (
-  <svg {...props} viewBox="0 0 36 36" fill="url(#facebook__a)">
-    <path d="M15 35.8C6.5 34.3 0 26.9 0 18 0 8.1 8.1 0 18 0s18 8.1 18 18c0 8.9-6.5 16.3-15 17.8l-1-.8h-4l-1 .8z" />
-    <path
-      fill="#FFF"
-      d="m25 23 .8-5H21v-3.5c0-1.4.5-2.5 2.7-2.5H26V7.4c-1.3-.2-2.7-.4-4-.4-4.1 0-7 2.5-7 7v4h-4.5v5H15v12.7c1 .2 2 .3 3 .3s2-.1 3-.3V23h4z"
-    />
+  <svg {...props} viewBox="0 0 666.667 666.667">
+    <g
+      clipPath="url(#facebook_icon__a)"
+      transform="matrix(1.33333 0 0 -1.33333 -133.333 800)"
+    >
+      <path
+        d="M0 0c0 138.071-111.929 250-250 250S-500 138.071-500 0c0-117.245 80.715-215.622 189.606-242.638v166.242h-51.552V0h51.552v32.919c0 85.092 38.508 124.532 122.048 124.532 15.838 0 43.167-3.105 54.347-6.211V81.986c-5.901.621-16.149.932-28.882.932-40.993 0-56.832-15.528-56.832-55.9V0h81.659l-14.028-76.396h-67.631v-171.773C-95.927-233.218 0-127.818 0 0"
+        style={{
+          fill: "#0866ff",
+          fillOpacity: 1,
+          fillRule: "nonzero",
+          stroke: "none",
+        }}
+        transform="translate(600 350)"
+      />
+      <path
+        d="m0 0 14.029 76.396H-67.63v27.019c0 40.372 15.838 55.899 56.831 55.899 12.733 0 22.981-.31 28.882-.931v69.253c-11.18 3.106-38.509 6.212-54.347 6.212-83.539 0-122.048-39.441-122.048-124.533V76.396h-51.552V0h51.552v-166.242a250.559 250.559 0 0 1 60.394-7.362c10.254 0 20.358.632 30.288 1.831V0Z"
+        style={{
+          fill: "#fff",
+          fillOpacity: 1,
+          fillRule: "nonzero",
+          stroke: "none",
+        }}
+        transform="translate(447.918 273.604)"
+      />
+    </g>
   </svg>
 );
 
@@ -20,7 +40,12 @@ const LinkedIn = (props: SVGProps<SVGSVGElement>) => (
 );
 
 const XformerlyTwitter = (props: SVGProps<SVGSVGElement>) => (
-  <svg {...props} fill="none" viewBox="0 0 1200 1227">
+  <svg
+    {...props}
+    fill="none"
+    viewBox="0 0 1200 1227"
+    className="dark:invert brightness-0"
+  >
     <path
       fill="#fff"
       d="M714.163 519.284 1160.89 0h-105.86L667.137 450.887 357.328 0H0l468.492 681.821L0 1226.37h105.866l409.625-476.152 327.181 476.152H1200L714.137 519.284h.026ZM569.165 687.828l-47.468-67.894-377.686-540.24h162.604l304.797 435.991 47.468 67.894 396.2 566.721H892.476L569.165 687.854v-.026Z"
@@ -41,7 +66,12 @@ const WhatsApp = (props: SVGProps<SVGSVGElement>) => (
 );
 
 const Telegram = (props: SVGProps<SVGSVGElement>) => (
-  <svg {...props} viewBox="0 0 256 256" preserveAspectRatio="xMidYMid">
+  <svg
+    {...props}
+    viewBox="0 0 256 256"
+    preserveAspectRatio="xMidYMid"
+    className="dark:invert brightness-0"
+  >
     <path
       fill="url(#telegram__a)"
       d="M128 0C94.06 0 61.48 13.494 37.5 37.49A128.038 128.038 0 0 0 0 128c0 33.934 13.5 66.514 37.5 90.51C61.48 242.506 94.06 256 128 256s66.52-13.494 90.5-37.49c24-23.996 37.5-56.576 37.5-90.51 0-33.934-13.5-66.514-37.5-90.51C194.52 13.494 161.94 0 128 0Z"
@@ -83,7 +113,7 @@ const Gmail = (props: SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-const Instagram = (props: SVGProps<SVGSVGElement>) => (
+const InstagramIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     width="800px"
     height="800px"
@@ -181,5 +211,5 @@ export {
   WhatsApp,
   Telegram,
   Gmail,
-  Instagram,
+  InstagramIcon,
 };

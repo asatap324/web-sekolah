@@ -1,9 +1,9 @@
 import Image from "next/image";
-import RegisterForm from "@/components/auth-ui/register/register-form";
+import { RegisterForm } from "@/components/auth";
 import { GridPattern } from "@/components/ui/grid-pattern";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import ThemeToggle from "@/components/dark-mode/theme-toggle-button";
+import { ThemeToggle } from "@/components/layout/header/shared";
 
 export default function RegisterPage() {
   return (

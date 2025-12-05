@@ -13,7 +13,7 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { Suspense } from "react";
 import MyImage from "@/components/ui/image";
-import { FlickeringGrid } from "@/components/blocks/flickering-grid";
+import { FlickeringGrid } from "@/components/shared";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
@@ -95,7 +95,7 @@ export default async function Page({ searchParams }: Props) {
         </div>
       }
     >
-      <div className="min-h-screen bg-background relative mt-16 sm:mt-28">
+      <div className="min-h-screen bg-sidebar relative mt-16 sm:mt-28">
         <div className="absolute top-0 left-0 z-0 w-full h-[200px] [mask-image:linear-gradient(to_top,transparent_25%,black_95%)]">
           <FlickeringGrid
             className="absolute top-0 left-0 size-full"
@@ -110,11 +110,11 @@ export default async function Page({ searchParams }: Props) {
         <div className="p-6 border-b border-border flex flex-col gap-6 min-h-[250px] justify-center relative z-10">
           <div className="max-w-7xl mx-auto w-full">
             <h1 className="font-medium text-4xl md:text-5xl tracking-tighter max-w-4xl mb-2">
-              Galeri SMP Negeri 04 Muncar Satu Atap
+              Galeri Kami
             </h1>
-            <p className="text-muted-foreground max-w-2xl text-sm md:text-base lg:text-lg">
-              Mewujudkan pengembangan bakat minat peserta didik sesuai dengan
-              kemampuan dasarnya dalam bidang kegiatan ekstrakurikuler.
+            <p className="text-muted-foreground max-w-xl text-sm md:text-base lg:text-lg text-pretty">
+              Menelusuri Jejak Kenangan, Merayakan Momen Berharga dalam
+              Perjalanan Pendidikan yang Penuh Makna
             </p>
           </div>
         </div>
@@ -190,9 +190,9 @@ export default async function Page({ searchParams }: Props) {
                         className="aria-disabled:pointer-events-none aria-disabled:opacity-50"
                         aria-disabled={page === 1 ? true : undefined}
                         role={page === 1 ? "link" : undefined}
-                        asChild
+                        render={<Link href={`?page=${page - 1}`} />}
                       >
-                        <a href={`?page=${page - 1}`}>Previous</a>
+                        Previous
                       </Button>
                     </PaginationItem>
 
@@ -202,9 +202,9 @@ export default async function Page({ searchParams }: Props) {
                         className="aria-disabled:pointer-events-none aria-disabled:opacity-50"
                         aria-disabled={page === totalPages ? true : undefined}
                         role={page === totalPages ? "link" : undefined}
-                        asChild
+                        render={<Link href={`?page=${page + 1}`} />}
                       >
-                        <a href={`?page=${page + 1}`}>Next</a>
+                        Next
                       </Button>
                     </PaginationItem>
                   </PaginationContent>

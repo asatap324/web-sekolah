@@ -1,4 +1,4 @@
-import { UpdatePasswordForm } from "@/components/auth-ui/update-password";
+import { UpdatePasswordForm } from "@/components/auth";
 
 interface PageProps {
   searchParams: Promise<{
@@ -14,13 +14,13 @@ export default async function ResetPasswordConfirmPage({
 
   return (
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+      <div className="max-w-sm w-full">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-foreground">
-            Buat Password Baru
-          </h2>
-          <p className="mt-2 text-center text-sm text-muted-foreground">
-            Masukkan password baru Anda
+          <h1 className="mt-3 text-center text-3xl font-semibold text-foreground tracking-tight">
+            Change password
+          </h1>
+          <p className="text-center text-sm text-muted-foreground">
+            Update your password to keep your account secure
           </p>
         </div>
 

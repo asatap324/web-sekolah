@@ -60,21 +60,21 @@ export async function updatePasswordAction(
 
     if (!password || !confirmPassword) {
       return {
-        error: "All fields are required",
+        error: "Semua field harus diisi",
         success: false,
       };
     }
 
     if (password !== confirmPassword) {
       return {
-        error: "Passwords do not match",
+        error: "Password tidak cocok",
         success: false,
       };
     }
 
-    if (password.length < 6) {
+    if (password.length < 8) {
       return {
-        error: "Password must be at least 6 characters",
+        error: "Password must be at least 8 characters",
         success: false,
       };
     }

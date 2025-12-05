@@ -1,6 +1,4 @@
 import type { Metadata } from "next";
-
-import { AuthorCard } from "@/components/blog/author-card";
 import { Button } from "@/components/ui/button";
 import MyImage from "@/components/ui/image";
 
@@ -9,23 +7,35 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Markdown from "react-markdown";
 
-import ReadMoreArticles from "@/components/blog/read-more-section";
-import { TableOfContents } from "@/components/blog/table-of-content";
-import { MobileTableOfContents } from "@/components/blog/mobile-toc";
+import {
+  TableOfContents,
+  ReadMoreArticles,
+  MobileTableOfContents,
+  AuthorCard,
+} from "@/components/blog";
+
 import remarkGfm from "remark-gfm";
 import remarkSlug from "remark-slug";
-import { FlickeringGrid } from "@/components/blocks/flickering-grid";
+import { FlickeringGrid, SocialShareButtons } from "@/components/shared";
 
 import { createServer } from "@/utils/supabase/server";
 import { createServerClientSimple } from "@/utils/supabase/static-props";
 import { ArticleStructuredData } from "@/components/structured-data";
-import { SocialShareButtons } from "@/components/blocks/share-button";
 
 export const revalidate = 3600;
 
 type Props = {
   params: Promise<{ slug: string }>;
 };
+
+interface BlogPost {
+  id: string;
+  slug: string;
+  title: string;
+  content: string;
+  created_at: string;
+  image_url?: string;
+}
 
 // Ambil data blog untuk halaman ini (SSG)
 async function getBlogBySlug(slug: string) {
@@ -39,6 +49,27 @@ async function getBlogBySlug(slug: string) {
 
   if (error || !data) return null;
   return data;
+}
+
+async function getRelatedArticles(
+  currentSlug: string,
+  limit: number = 3,
+): Promise<BlogPost[]> {
+  const supabase = await createServer();
+
+  const { data, error } = await supabase
+    .from("blogs")
+    .select("id, title, slug, created_at, image_url, content")
+    .neq("slug", currentSlug)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    console.error("Error fetching related articles:", error);
+    return [];
+  }
+
+  return data || [];
 }
 
 // ✅ Pre-generate semua slug artikel
@@ -128,7 +159,11 @@ const formatDate = (date: Date): string => {
 
 export default async function Page({ params }: Props) {
   const { slug } = await params;
-  const blog = await getBlogBySlug(slug);
+  const [blog, relatedArticles] = await Promise.all([
+    getBlogBySlug(slug),
+    getRelatedArticles(slug, 3),
+  ]);
+
   if (!blog) {
     notFound();
   }
@@ -139,7 +174,7 @@ export default async function Page({ params }: Props) {
   return (
     <>
       <ArticleStructuredData data={blog} />
-      <div className="min-h-screen bg-background relative mt-16  sm:mt-28">
+      <div className="min-h-screen bg-sidebar relative mt-16  sm:mt-28">
         <div className="absolute top-0 left-0 z-0 w-full h-[200px] [mask-image:linear-gradient(to_top,transparent_25%,black_95%)]">
           <FlickeringGrid
             className="absolute top-0 left-0 size-full"
@@ -153,11 +188,14 @@ export default async function Page({ params }: Props) {
         <div className="space-y-4 border-b border-border relative z-20">
           <div className="max-w-7xl mx-auto flex flex-col gap-6 p-6">
             <div className="flex flex-wrap items-center gap-3 gap-y-5 text-sm text-muted-foreground">
-              <Button size="icon" variant="outline" asChild className="h-6 w-6">
-                <Link href="/">
-                  <ArrowLeft className="w-4 h-4" />
-                  <span className="sr-only">Back to all articles</span>
-                </Link>
+              <Button
+                size="icon"
+                variant="outline"
+                className="h-6 w-6"
+                render={<Link href="/" />}
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span className="sr-only">Back to all articles</span>
               </Button>
               {blog.category && (
                 <div className="flex flex-wrap gap-3 text-muted-foreground">
@@ -227,7 +265,7 @@ export default async function Page({ params }: Props) {
               </div>
             </div>
             <div className="mt-10">
-              <ReadMoreArticles currentSlug={slug} />
+              <ReadMoreArticles moreArticles={relatedArticles} />
             </div>
           </main>
 

@@ -8,10 +8,13 @@ interface User {
   email: string;
   username: string | null;
   role: string | null;
+  createdAt: string;
+  emailVerified: boolean;
+  emailVerifiedAt: string | null;
 }
 
 const fetchUser = async (): Promise<User | null> => {
-  const res = await fetch("/api/auth/user");
+  const res = await fetch("/api/auth/me");
   if (!res.ok) return null;
   return res.json();
 };

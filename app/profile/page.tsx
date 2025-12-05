@@ -1,11 +1,12 @@
-import { FlickeringGrid } from "@/components/blocks/flickering-grid";
-import SchoolDataTable from "@/components/blocks/profile-sekolah/school-data-table";
-import TujuanSekolahCard from "@/components/blocks/profile-sekolah/tujuan-sekolah-card";
-import VisiMisiCard from "@/components/blocks/profile-sekolah/visi-misi-card";
+import { FlickeringGrid } from "@/components/shared";
+import {
+  SchoolDataTable,
+  TujuanSekolahCard,
+  VisiMisiCard,
+} from "@/components/profiles";
 import MyImage from "@/components/ui/image";
 
 import { Metadata } from "next";
-
 export const metadata: Metadata = {
   title: "Tentang Kami",
   description:
@@ -53,7 +54,7 @@ export const metadata: Metadata = {
 export default function Page() {
   return (
     <>
-      <div className="min-h-screen bg-background relative mt-16 sm:mt-28">
+      <div className="min-h-screen bg-sidebar relative mt-16 sm:mt-28">
         <div className="absolute top-0 left-0 z-0 w-full h-[200px] [mask-image:linear-gradient(to_top,transparent_25%,black_95%)]">
           <FlickeringGrid
             className="absolute top-0 left-0 size-full"
@@ -67,12 +68,15 @@ export default function Page() {
         {/* Header */}
         <div className="p-6 border-b border-border flex flex-col gap-6 min-h-[250px] justify-center relative z-10">
           <div className="max-w-7xl mx-auto w-full">
-            <h1 className="font-medium text-4xl md:text-5xl tracking-tighter">
-              Profile SMP Negeri 04 Muncar Satu Atap
+            <h1 className="font-medium text-4xl md:text-5xl tracking-tighter max-w-4xl mb-2">
+              Tentang Kami
             </h1>
-            <p className="text-muted-foreground max-w-2xl text-sm md:text-base lg:text-lg">
-              Mewujudkan pengembangan bakat minat peserta didik sesuai dengan
-              kemampuan dasarnya dalam bidang kegiatan ekstrakurikuler.
+            <p className="text-muted-foreground max-w-5xl text-sm md:text-base lg:text-lg text-pretty">
+              Dengan visi untuk melahirkan generasi unggul yang tidak hanya
+              cerdas secara akademis tetapi juga memiliki kreativitas, empati,
+              dan ketrampilan hidup, misi kami adalah memberikan pendidikan
+              menyeluruh yang mempersiapkan siswa menghadapi dinamika masa
+              depan.
             </p>
           </div>
         </div>

@@ -19,7 +19,7 @@ export async function getServerUser() {
     // Get user profile
     const { data: profile, error: profileError } = await supabase
       .from("profiles")
-      .select("username, role")
+      .select("username, role, createdAt, emailVerified, emailVerifiedAt")
       .eq("id", user.id)
       .maybeSingle();
 
@@ -31,6 +31,9 @@ export async function getServerUser() {
         email: user.email ?? "",
         username: null,
         role: null,
+        createdAt: user.created_at ?? "",
+        emailVerified: false,
+        emailVerifiedAt: null,
       };
     }
 
@@ -39,6 +42,9 @@ export async function getServerUser() {
       email: user.email ?? "",
       username: profile?.username ?? null,
       role: profile?.role ?? null,
+      createdAt: user.created_at ?? "",
+      emailVerified: profile?.createdAt ?? false,
+      emailVerifiedAt: profile?.emailVerifiedAt ?? null,
     };
   } catch (error) {
     // console.error("Error in getServerUser:", error);

@@ -17,6 +17,7 @@ export async function signupAction(
   prevState: SignupState,
   formData: FormData,
 ): Promise<SignupState> {
+  // console.log("🚀 Starting signup action...");
   const supabase = await createServer();
 
   const parsed = registerSchema.safeParse({
@@ -26,6 +27,7 @@ export async function signupAction(
   });
 
   if (!parsed.success) {
+    console.error("❌ Schema validation failed:", parsed.error);
     return {
       error:
         "Input tidak valid: " +
@@ -36,6 +38,7 @@ export async function signupAction(
   }
 
   const { email, password, username } = parsed.data;
+  // console.log(`📝 Signup attempt for: ${email} (${username})`);
 
   // Check if username already exists
   const { data: existingUser } = await supabase
@@ -51,6 +54,8 @@ export async function signupAction(
       redirectTo: undefined,
     };
   }
+
+  // console.log("🔐 Attempting Supabase auth signup...");
 
   const { data: authData, error: authError } = await supabase.auth.signUp({
     email,
@@ -71,7 +76,11 @@ export async function signupAction(
     };
   }
 
+  // console.log("✅ Auth user created:", authData.user?.id);
+
   if (authData.user) {
+    // console.log("📊 Creating profile...");
+
     const { error: profileError } = await supabase.from("profiles").insert({
       id: authData.user.id,
       username: username,
@@ -81,6 +90,7 @@ export async function signupAction(
     });
 
     if (profileError) {
+      // console.error("❌ Profile creation error:", profileError);
       // Rollback: delete auth user if profile creation fails
       try {
         await supabase.auth.admin.deleteUser(authData.user.id);
@@ -94,10 +104,13 @@ export async function signupAction(
         redirectTo: undefined,
       };
     }
+    // console.log("✅ Profile created successfully");
   }
 
   revalidatePath("/auth/login");
   revalidatePath("/");
+
+  // console.log("🎉 Signup completed successfully!");
 
   return {
     error: null,
@@ -109,6 +122,8 @@ export async function signupAction(
 // Enhanced error messages for signup
 function getSignupErrorMessage(error: any): string {
   const message = error.message.toLowerCase();
+
+  // console.log("Terjadi kesalahan saat pendaftaran:", message);
 
   if (message.includes("email") && message.includes("already")) {
     return "Email sudah terdaftar";
@@ -123,5 +138,5 @@ function getSignupErrorMessage(error: any): string {
     return "Terlalu banyak percobaan, silakan coba lagi nanti";
   }
 
-  return "Terjadi kesalahan saat pendaftaran";
+  return `Terjadi kesalahan saat pendaftaran: ${message}`;
 }

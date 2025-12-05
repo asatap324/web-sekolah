@@ -1,13 +1,18 @@
-import ThemeToggleButton from "@/components/dark-mode/theme-toggle-button";
-import { AppSidebar } from "@/components/dashboard-ui/app-sidebar";
+import { ThemeToggle } from "@/components/layout/header/shared";
+import { AppSidebar } from "@/components/layout";
 import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-} from "@/components/ui/sidebar";
+} from "@/components/animate-ui/components/radix/sidebar";
 
-export default async function DashboardLayout({
+import {
+  DynamicHeader,
+  NavUser,
+} from "@/components/layout/sidebar/dashboard/shared";
+
+export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -24,19 +29,18 @@ export default async function DashboardLayout({
     >
       <AppSidebar />
       <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2">
-          <div className="flex items-center w-full justify-between gap-2 px-4">
-            <div className="flex items-center">
-              <SidebarTrigger className="-ml-1 size-5" />
-              <Separator
-                orientation="vertical"
-                className="mr-3.5 data-[orientation=vertical]:h-4"
-              />
-              <span className="text-xl font-medium mr-2">Overview</span>
-            </div>
-            <div className="flex items-center gap-4">
-              <ThemeToggleButton />
-            </div>
+        <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b px-4">
+          <div className="flex items-center h-fit justify-center">
+            <SidebarTrigger className="size-5" />
+            <Separator
+              orientation="vertical"
+              className="mx-3.5 data-[orientation=vertical]:h-7"
+            />
+            <DynamicHeader />
+          </div>
+          <div className="flex items-center gap-3.5">
+            <ThemeToggle />
+            <NavUser />
           </div>
         </header>
         {children}

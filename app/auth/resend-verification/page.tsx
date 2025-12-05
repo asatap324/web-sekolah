@@ -1,4 +1,4 @@
-import ResendVerification from "@/components/auth-ui/resend-verification";
+import { ResendVerification } from "@/components/auth";
 
 export default function ResendVerificationPage() {
   return <ResendVerification />;

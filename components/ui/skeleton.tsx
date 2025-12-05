@@ -1,33 +1,16 @@
-import * as React from "react";
-import { cva, type VariantProps } from "class-variance-authority";
-
 import { cn } from "@/lib/utils";
 
-const skeletonVariants = cva("bg-primary/10 rounded-md", {
-  variants: {
-    variant: {
-      pulse: "animate-pulse",
-      shimmer:
-        "before:animate-skeleton-shimmer before:via-primary/10 dark:before:via-primary/5 relative overflow-hidden before:absolute before:inset-0 before:-translate-x-full before:bg-gradient-to-r before:from-transparent before:to-transparent",
-      gradient:
-        "bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 animate-skeleton-gradient bg-[length:400%_100%]",
-    },
-  },
-  defaultVariants: {
-    variant: "shimmer",
-  },
-});
-
-export type SkeletonVariants = VariantProps<typeof skeletonVariants>;
-
-interface SkeletonProps extends React.ComponentProps<"div">, SkeletonVariants {}
-
-export function Skeleton({ className, variant, ...props }: SkeletonProps) {
+function Skeleton({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
+      className={cn(
+        "animate-skeleton rounded-sm [--skeleton-highlight:--alpha(var(--color-white)/64%)] [background:linear-gradient(120deg,transparent_40%,var(--skeleton-highlight),transparent_60%)_var(--color-muted)_0_0_/_200%_100%_fixed] dark:[--skeleton-highlight:--alpha(var(--color-white)/4%)]",
+        className,
+      )}
       data-slot="skeleton"
-      className={cn(skeletonVariants({ className, variant }))}
       {...props}
     />
   );
 }
+
+export { Skeleton };

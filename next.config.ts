@@ -13,11 +13,6 @@ const nextConfig: NextConfig = {
         hostname: "dvwrfhxzfftjxcpxusfd.supabase.co",
         pathname: "/storage/v1/object/public/**",
       },
-      {
-        protocol: "https",
-        hostname: "avatar.iran.liara.run",
-        pathname: "/public/45",
-      },
     ],
   },
   headers: async () => {

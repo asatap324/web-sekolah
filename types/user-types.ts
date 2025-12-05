@@ -3,4 +3,7 @@ export interface User {
   email: string;
   username: string | null;
   role: string | null;
+  createdAt: string;
+  emailVerified: boolean;
+  emailVerifiedAt: string | null;
 }

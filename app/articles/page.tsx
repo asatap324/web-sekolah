@@ -10,10 +10,9 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { BlogCard } from "@/components/blocks/blog-page/blog-card";
-import { CategoryFilter } from "@/components/blocks/blog-page/category-filter";
+import { BlogCard, CategoryFilter } from "@/components/blog";
 import removeMd from "remove-markdown";
-import { FlickeringGrid } from "@/components/blocks/flickering-grid";
+import { FlickeringGrid } from "@/components/shared";
 
 export const revalidate = 3600;
 
@@ -108,7 +107,7 @@ export default async function ArticlePage({ searchParams }: Props) {
   };
 
   return (
-    <div className="min-h-screen bg-background relative mt-16 sm:mt-28">
+    <div className="min-h-screen bg-sidebar relative mt-16 sm:mt-28">
       <div className="absolute top-0 left-0 z-0 w-full h-[200px] [mask-image:linear-gradient(to_top,transparent_25%,black_95%)]">
         <FlickeringGrid
           className="absolute top-0 left-0 size-full"
@@ -123,10 +122,10 @@ export default async function ArticlePage({ searchParams }: Props) {
       <div className="p-6 border-b border-border flex flex-col gap-6 min-h-[250px] justify-center relative z-10">
         <div className="max-w-7xl mx-auto w-full">
           <h1 className="font-medium text-4xl md:text-5xl tracking-tighter">
-            SMP Negeri 04 Muncar Satu Atap
+            Artikel Dan Berita
           </h1>
-          <p className="text-muted-foreground text-sm md:text-base lg:text-lg">
-            Latest news and updates from Our School.
+          <p className="text-muted-foreground max-w-4xl text-sm md:text-base lg:text-lg">
+            Berita dan pembaruan terbaru dari SMP Negeri 04 Muncar Satu Atap.
           </p>
         </div>
         <div className="max-w-7xl w-full mx-auto">

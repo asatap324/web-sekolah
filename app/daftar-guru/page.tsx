@@ -11,8 +11,8 @@ import {
 
 import { Spinner } from "@/components/ui/spinner";
 import { Suspense } from "react";
-import { FlickeringGrid } from "@/components/blocks/flickering-grid";
-import CardGuru from "@/components/blocks/daftar-guru/card-guru";
+import { FlickeringGrid } from "@/components/shared";
+import { CardGuru } from "@/components/profiles";
 
 type Props = {
   searchParams: Promise<{
@@ -91,7 +91,7 @@ export default async function Page({ searchParams }: Props) {
         </div>
       }
     >
-      <div className="min-h-screen bg-background relative mt-16 sm:mt-28">
+      <div className="min-h-screen bg-sidebar relative mt-16 sm:mt-28">
         <div className="absolute top-0 left-0 z-0 w-full h-[200px] [mask-image:linear-gradient(to_top,transparent_25%,black_95%)]">
           <FlickeringGrid
             className="absolute top-0 left-0 size-full"
@@ -106,11 +106,12 @@ export default async function Page({ searchParams }: Props) {
         <div className="p-6 border-b border-border flex flex-col gap-6 min-h-[250px] justify-center relative z-10">
           <div className="max-w-7xl mx-auto w-full">
             <h1 className="font-medium text-4xl md:text-5xl tracking-tighter max-w-4xl mb-2">
-              Daftar Guru dan Staff SMP Negeri 04 Muncar Satu Atap
+              Daftar Guru dan Staff
             </h1>
-            <p className="text-muted-foreground max-w-2xl text-sm md:text-base lg:text-lg">
-              Mewujudkan pengembangan bakat minat peserta didik sesuai dengan
-              kemampuan dasarnya dalam bidang kegiatan ekstrakurikuler.
+            <p className="text-muted-foreground max-w-3xl text-sm md:text-base lg:text-lg">
+              Daftar guru dan staff SMP Negeri 04 Muncar Satu Atap adalah daftar
+              yang berisi informasi tentang guru dan staff yang bekerja di
+              sekolah tersebut.
             </p>
           </div>
         </div>

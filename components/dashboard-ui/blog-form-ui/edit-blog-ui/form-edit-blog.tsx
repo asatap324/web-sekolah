@@ -40,7 +40,7 @@ const blogSchema = z.object({
 });
 
 const Editor = dynamic(
-  () => import("../../../blocks/editor-00/editor").then((m) => m.Editor),
+  () => import("../../../editor/editor").then((m) => m.Editor),
   {
     ssr: false,
   },
@@ -187,7 +187,7 @@ export default function EditBlogForm({ blog, onSuccess }: UpdateBlogFormProps) {
           </div>
         </div>
 
-        <div className="md:fixed w-full bottom-10 md:w-1/4">
+        <div className="md:fixed w-full bottom-10 md:w-[49rem]">
           <Button
             type="submit"
             disabled={updateBlog.isPending}

@@ -28,8 +28,11 @@ export default function UnauthorizedPage() {
             Anda tidak memiliki izin untuk mengakses halaman ini.
           </p>
           <div className="mt-6 space-y-4">
-            <Button asChild className="w-full py-2 px-4 rounded-md">
-              <Link href="/">Kembali ke Home</Link>
+            <Button
+              className="w-full py-2 px-4 rounded-md"
+              render={<Link href="/" />}
+            >
+              Kembali ke Home
             </Button>
           </div>
         </div>

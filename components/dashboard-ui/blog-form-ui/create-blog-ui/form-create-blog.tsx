@@ -25,7 +25,7 @@ import { CategoryInput } from "../input-tag";
 import { useCreateBlog } from "@/hooks/blogs/mutations";
 
 const Editor = dynamic(
-  () => import("../../../blocks/editor-00/editor").then((m) => m.Editor),
+  () => import("../../../editor/editor").then((m) => m.Editor),
   {
     ssr: false,
   },
@@ -165,7 +165,7 @@ export default function CreateBlogForm() {
             />
           </div>
         </div>
-        <div className="md:fixed bottom-10 w-full md:w-1/4">
+        <div className="md:fixed bottom-10 w-full md:w-[49rem]">
           <Button
             type="submit"
             disabled={createBlog.isPending}

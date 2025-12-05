@@ -1,15 +1,15 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/dark-mode/theme-provider";
+import { ThemeProvider } from "@/providers/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { siteConfig } from "@/lib/site";
 import { metadataKeywords } from "./metadata";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import { TooltipProvider } from "@/components/animate-ui/components/animate/tooltip";
 import { getServerUser } from "@/utils/auth-server";
-import AuthProvider from "@/components/providers/auth-provider";
-import MainProvider from "@/components/providers/main-provider";
-import LayoutWrapper from "@/components/providers/layout-wrapper";
+import AuthProvider from "@/providers/auth-provider";
+import MainProvider from "@/providers/main-provider";
+import LayoutWrapper from "@/providers/layout-wrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -47,7 +47,7 @@ export default async function RootLayout({
         <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-sidebar`}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <MainProvider>
@@ -55,12 +55,12 @@ export default async function RootLayout({
               <Toaster
                 richColors
                 position="top-right"
-                expand={true}
+                expand={false}
                 toastOptions={{
                   className: "font-sans",
                 }}
               />
-              <TooltipProvider delayDuration={0}>
+              <TooltipProvider>
                 <LayoutWrapper>{children}</LayoutWrapper>
               </TooltipProvider>
             </AuthProvider>

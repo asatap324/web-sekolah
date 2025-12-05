@@ -1,13 +1,16 @@
 import { Metadata } from "next";
-import HeroSection from "@/components/blocks/hero-section";
-import SambutanSection from "@/components/blocks/sambutan-section";
-import BlogPage from "@/components/blocks/blog-section";
+import {
+  HeroSection,
+  SambutanSection,
+  BlogSection,
+  FaqsSection,
+} from "@/components/sections";
 
 import { Spinner } from "@/components/ui/spinner";
 import { getBlogs, getGuru } from "@/lib/blogs";
 
 import { Suspense } from "react";
-import TemplateCarousel from "@/components/blocks/template-carousel";
+import { TemplateCarousel } from "@/components/shared";
 import { HomepageStructuredData } from "@/components/homepage-structured-data";
 
 export const revalidate = 3600;
@@ -110,7 +113,7 @@ export default async function Home() {
   return (
     <>
       <HomepageStructuredData />
-      <div className="relative min-h-screen bg-background z-10">
+      <div className="relative z-10">
         <div className="space-y-4 border-b border-border relative z-10 mt-12 sm:mt-28">
           <HeroSection />
         </div>
@@ -126,7 +129,7 @@ export default async function Home() {
                 </div>
               }
             >
-              <BlogPage blogs={dataBlog} />
+              <BlogSection blogs={dataBlog} />
             </Suspense>
             <SambutanSection />
             <div className="max-w-7xl mx-auto py-6 md:px-5">
@@ -138,6 +141,12 @@ export default async function Home() {
                 items={ekstrakulikuler}
               />
             </div>
+            <div className="w-full md:px-5 -mt-6">
+              <FaqsSection />
+            </div>
+            {/*<div className="w-full md:px-5 -mt-6">
+              <CallToAction />
+            </div>*/}
           </div>
         </div>
       </div>
