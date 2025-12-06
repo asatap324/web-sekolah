@@ -1,11 +1,9 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { updatePasswordAction } from "@/app/actions/auth/reset-password";
 import { createClient } from "@/utils/supabase/client";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
 import { EyeIcon, EyeOffIcon, Lock, Shield } from "lucide-react";

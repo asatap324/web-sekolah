@@ -28,7 +28,7 @@ export const metadata: Metadata = {
       url: "https://smpn4muncarsatuatap.sch.id/",
     },
   ],
-  creator: "SMP Negeri 04 Muncar Satu Atap",
+  creator: "Rafi Ahsira Prayoga",
   publisher: "SMP Negeri 04 Muncar Satu Atap",
   metadataBase: new URL(siteConfig.url),
   alternates: {

@@ -19,9 +19,11 @@ export async function getServerUser() {
     // Get user profile
     const { data: profile, error: profileError } = await supabase
       .from("profiles")
-      .select("username, role, createdAt, emailVerified, emailVerifiedAt")
+      .select("id, username, role, created_at, email_verified, verified_at")
       .eq("id", user.id)
       .maybeSingle();
+
+    // console.log(profile);
 
     if (profileError) {
       // console.warn("Profile not found:", profileError);
@@ -43,8 +45,8 @@ export async function getServerUser() {
       username: profile?.username ?? null,
       role: profile?.role ?? null,
       createdAt: user.created_at ?? "",
-      emailVerified: profile?.createdAt ?? false,
-      emailVerifiedAt: profile?.emailVerifiedAt ?? null,
+      emailVerified: profile?.email_verified ?? false,
+      emailVerifiedAt: profile?.verified_at ?? null,
     };
   } catch (error) {
     // console.error("Error in getServerUser:", error);

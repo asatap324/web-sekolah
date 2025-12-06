@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
@@ -16,7 +15,6 @@ import MyImage from "@/components/ui/image";
 import { FlickeringGrid } from "@/components/shared";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 
 type Props = {
   searchParams: Promise<{

@@ -1,10 +1,7 @@
 // components/auth/simple-logout-button.tsx
 "use client";
 
-import { useState } from "react";
-import { createClient } from "@/utils/supabase/client";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 import { useLogout } from "@/hooks/use-logout";
@@ -23,8 +20,6 @@ interface LogoutButtonProps {
   redirectPath: string;
   showToast?: boolean;
 }
-
-const supabase = createClient();
 
 export function LogoutButton({
   variant = "outline",

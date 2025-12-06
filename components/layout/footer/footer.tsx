@@ -7,7 +7,7 @@ import { InstagramIcon, Mail } from "lucide-react";
 export function Footer() {
   return (
     <footer className="bg-sidebar border-t border-border">
-      <div className="max-w-7xl mx-auto p-6">
+      <div className="max-w-7xl mx-auto px-6 py-10">
         <div className="grid grid-cols-1 md:grid-cols-3  md:place-items-center gap-6">
           <div className="col-span-1 md:col-span-2">
             <Link

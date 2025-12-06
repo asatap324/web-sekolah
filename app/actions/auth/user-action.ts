@@ -1,7 +1,6 @@
 // app/actions/user-actions.ts
 "use server";
 
-// import { createClient } from "@/utils/supabase/client";
 import { createServer } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 
@@ -103,7 +102,7 @@ export async function updateUserProfile(formData: FormData) {
 
 export async function hardDeleteAccount() {
   try {
-    // console.log("🚨 Starting hard delete process...");
+    // console.log(" Starting hard delete process...");
 
     // 1. Buat client untuk get current user (gunakan anon key)
     const supabaseAnon = await createServer();
@@ -122,8 +121,8 @@ export async function hardDeleteAccount() {
       };
     }
 
-    // console.log(`👤 User ID: ${user.id}`);
-    // console.log(`📧 User Email: ${user.email}`);
+    // console.log(`User ID: ${user.id}`);
+    // console.log(`User Email: ${user.email}`);
 
     // 3. VALIDASI SERVICE ROLE KEY
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -136,7 +135,7 @@ export async function hardDeleteAccount() {
       };
     }
 
-    // console.log("✅ Service Role Key found, length:", serviceRoleKey.length);
+    // console.log("Service Role Key found, length:", serviceRoleKey.length);
 
     // 4. Buat ADMIN CLIENT dengan SERVICE ROLE KEY
     const supabaseAdmin = createClient(
@@ -150,7 +149,7 @@ export async function hardDeleteAccount() {
       },
     );
 
-    // console.log("🔄 Deleting user from auth...");
+    // console.log("Deleting user from auth...");
 
     // 5. HAPUS USER dengan admin client
     const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(
@@ -166,11 +165,11 @@ export async function hardDeleteAccount() {
       });
 
       // Coba alternatif: Delete via direct API call
-      // console.log("🔄 Trying alternative method...");
+      // console.log("Trying alternative method...");
       return;
     }
 
-    // console.log("✅ Auth user deleted successfully");
+    // console.log("Auth user deleted successfully");
 
     // 6. Sign out
     await supabaseAnon.auth.signOut();

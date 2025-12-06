@@ -35,7 +35,7 @@ export async function loginAction(
       };
     }
 
-    // ✅ Cek rate limit (EMAIL-ONLY)
+    // Cek rate limit (EMAIL-ONLY)
     const rateLimit = await checkRateLimit(email);
     if (!rateLimit.allowed) {
       return {
@@ -54,7 +54,7 @@ export async function loginAction(
     });
 
     if (error) {
-      // ✅ Record failed attempt (EMAIL-ONLY)
+      // Record failed attempt (EMAIL-ONLY)
       await recordLoginAttempt(email, false);
       const updatedRateLimit = await checkRateLimit(email);
 
@@ -65,7 +65,7 @@ export async function loginAction(
       };
     }
 
-    // ✅ Record successful attempt (EMAIL-ONLY)
+    // Record successful attempt (EMAIL-ONLY)
     await recordLoginAttempt(email, true);
 
     // Verify user dan get profile
@@ -111,7 +111,7 @@ export async function loginAction(
     return {
       success: true,
       redirectTo,
-      remainingAttempts: 5, // ✅ Reset ke 5 pada success
+      remainingAttempts: 5, // Reset ke 5 pada success
     };
   } catch (error) {
     // console.error("Login error:", error);

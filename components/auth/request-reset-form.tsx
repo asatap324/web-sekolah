@@ -1,6 +1,6 @@
 "use client";
 import z from "zod";
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect } from "react";
 import { requestResetPasswordAction } from "@/app/actions/auth/reset-password";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";

@@ -10,7 +10,7 @@ export function FaqsSection() {
     <div className="mx-auto w-full max-w-7xl">
       <div className="mx-4 grid h-full min-md:h-[calc(100vh-2rem)] grid-cols-1  md:mx-0 md:grid-cols-2 md:border-x-0">
         <div className="space-y-4 px-4 pt-12 pb-4 md:border-r">
-          <h2 className="font-black text-3xl md:text-4xl">
+          <h2 className="font-bold text-3xl md:text-4xl">
             Pertanyaan Paling Populer
           </h2>
           <p className="text-muted-foreground">

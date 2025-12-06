@@ -109,7 +109,7 @@ export const TemplateCarousel = ({ items, nameSection }: Gallery4Props) => {
                           src={item.image_url}
                           alt={item.nama}
                           fill
-                          className="object-cover transition-transform duration-300 rounded-xl"
+                          className="object-cover duration-300 rounded-xl group-hover:opacity-80 transition-opacity"
                           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         />
                       </div>

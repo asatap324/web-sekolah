@@ -17,7 +17,7 @@ export default function NotFoundPage() {
           <div className="absolute inset-x-0 h-px bg-border" />
           <Empty>
             <EmptyHeader>
-              <EmptyTitle className="font-black font-mono text-8xl">
+              <EmptyTitle className="font-bold font-mono text-8xl">
                 404
               </EmptyTitle>
               <EmptyDescription className="text-nowrap">
@@ -28,7 +28,7 @@ export default function NotFoundPage() {
             <EmptyContent>
               <div className="flex gap-2">
                 <Button render={<Link href="/" />}>
-                  <Home /> Go Home
+                  <Home /> Beranda
                 </Button>
 
                 <Button variant="outline" render={<Link href="/articles" />}>

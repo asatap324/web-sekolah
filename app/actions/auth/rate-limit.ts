@@ -13,7 +13,7 @@ export async function checkRateLimit(email: string): Promise<RateLimitResult> {
   try {
     const supabase = await createServer();
 
-    // ✅ EMAIL-ONLY: Cari attempt berdasarkan email
+    // EMAIL-ONLY: Cari attempt berdasarkan email
     const { data: attempt, error } = await supabase
       .from("login_attempts")
       .select("*")
@@ -30,7 +30,7 @@ export async function checkRateLimit(email: string): Promise<RateLimitResult> {
       return { allowed: true, remaining: 5 };
     }
 
-    // ✅ Gunakan is_locked & locked_until dari schema existing
+    // Gunakan is_locked & locked_until dari schema existing
     if (attempt.is_locked && attempt.locked_until) {
       const lockUntil = new Date(attempt.locked_until);
       const now = new Date();
@@ -58,7 +58,7 @@ export async function checkRateLimit(email: string): Promise<RateLimitResult> {
       }
     }
 
-    // ✅ Check attempts count dan auto-lock jika >= 5
+    // Check attempts count dan auto-lock jika >= 5
     if (attempt.attempts >= 5) {
       const lockedUntil = new Date(Date.now() + 60 * 60 * 1000); // 1 jam
 
@@ -98,7 +98,7 @@ export async function recordLoginAttempt(email: string, success: boolean) {
       "unknown";
 
     if (success) {
-      // ✅ Hapus record ketika login sukses
+      // Hapus record ketika login sukses
       await supabase.from("login_attempts").delete().eq("email", email);
     } else {
       const { data: attempt } = await supabase
@@ -110,7 +110,7 @@ export async function recordLoginAttempt(email: string, success: boolean) {
       const now = new Date().toISOString();
 
       if (attempt) {
-        // ✅ Update existing attempt
+        // Update existing attempt
         await supabase
           .from("login_attempts")
           .update({
@@ -121,7 +121,7 @@ export async function recordLoginAttempt(email: string, success: boolean) {
           })
           .eq("id", attempt.id);
       } else {
-        // ✅ Create new attempt
+        // Create new attempt
         await supabase.from("login_attempts").insert({
           ip_address: ipAddress,
           email: email,

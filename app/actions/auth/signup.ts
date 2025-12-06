@@ -38,7 +38,7 @@ export async function signupAction(
   }
 
   const { email, password, username } = parsed.data;
-  // console.log(`📝 Signup attempt for: ${email} (${username})`);
+  // console.log(`Signup attempt for: ${email} (${username})`);
 
   // Check if username already exists
   const { data: existingUser } = await supabase
@@ -55,7 +55,7 @@ export async function signupAction(
     };
   }
 
-  // console.log("🔐 Attempting Supabase auth signup...");
+  // console.log("Attempting Supabase auth signup...");
 
   const { data: authData, error: authError } = await supabase.auth.signUp({
     email,
@@ -76,10 +76,10 @@ export async function signupAction(
     };
   }
 
-  // console.log("✅ Auth user created:", authData.user?.id);
+  // console.log("Auth user created:", authData.user?.id);
 
   if (authData.user) {
-    // console.log("📊 Creating profile...");
+    // console.log("Creating profile...");
 
     const { error: profileError } = await supabase.from("profiles").insert({
       id: authData.user.id,
@@ -104,13 +104,13 @@ export async function signupAction(
         redirectTo: undefined,
       };
     }
-    // console.log("✅ Profile created successfully");
+    // console.log("Profile created successfully");
   }
 
   revalidatePath("/auth/login");
   revalidatePath("/");
 
-  // console.log("🎉 Signup completed successfully!");
+  // console.log("Signup completed successfully!");
 
   return {
     error: null,

@@ -20,9 +20,12 @@ import type {
 import { AuthSection } from "@/components/layout/header/shared";
 // import { useAuth } from "../../providers/auth-provider";
 import { useUser } from "@/hooks/use-user";
+import { ChevronRight } from "lucide-react";
+import Link from "next/link";
 
 export const MobileNavbar = () => {
   const { user } = useUser();
+  // console.log(user);
 
   return (
     <Popover>
@@ -128,28 +131,38 @@ const MobileMenuIcon = () => (
 
 const UserInfo = ({ user }: { user: any }) => (
   <>
-    <NavigationMenuItem className="flex items-center gap-3 py-1.5 px-2">
-      <Avatar className="shrink-0">
-        <AvatarFallback>
-          {user.username
-            ?.split(" ")
-            .map((n: string) => n[0])
-            .join("")}
-        </AvatarFallback>
-      </Avatar>
-      <div className="flex min-w-0 flex-col">
-        <div className="items-center flex gap-3">
-          <span className="text-foreground truncate text-sm font-medium">
-            {user.username}
-          </span>
-          <span className="h-4 w-fit px-4 capitalize text-xs font-medium bg-muted text-muted-foreground rounded-md border flex items-center justify-center">
-            {user.role}
+    <NavigationMenuItem className="w-full flex justify-between items-center py-1.5 px-2">
+      <div className="flex items-center gap-3 py-1.5 px-2 shrink">
+        <Avatar className="shrink">
+          <AvatarFallback>
+            {user.username
+              ?.split(" ")
+              .map((n: string) => n[0])
+              .join("")}
+          </AvatarFallback>
+        </Avatar>
+        <div className="flex min-w-0 flex-col">
+          <div className="items-center flex gap-3">
+            <span className="text-foreground truncate text-sm font-medium">
+              {user.username}
+            </span>
+            {/*<span className="h-4 w-fit px-4 capitalize text-xs font-medium bg-muted text-muted-foreground rounded-md border flex items-center justify-center">
+              {user.role}
+            </span>*/}
+          </div>
+          <span className="text-muted-foreground truncate text-xs font-normal">
+            {user.email}
           </span>
         </div>
-        <span className="text-muted-foreground truncate text-xs font-normal">
-          {user.email}
-        </span>
       </div>
+      <Button
+        variant="ghost"
+        size="icon-sm"
+        render={<Link href={`/user/profile/${user.id}`} />}
+      >
+        <ChevronRight className="size-4" />
+        <span className="sr-only">Profile</span>
+      </Button>
     </NavigationMenuItem>
     <Separator />
   </>
