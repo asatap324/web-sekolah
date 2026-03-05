@@ -9,7 +9,7 @@ export function SambutanSection() {
 
   return (
     <>
-      <div className="mt-3.5 pt-6 px-0 md:px-4 ">
+      <div className="mt-3.5 pt-6 px-0 md:px-4 sambutan-section">
         <div className="flex flex-col-reverse md:flex-row items-start justify-between w-full border-t border-b border-border">
           <div className="p-6">
             <h2 className="text-2xl font-bold tracking-tight">

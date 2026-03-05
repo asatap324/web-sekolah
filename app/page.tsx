@@ -107,8 +107,7 @@ const ekstrakulikuler = [
 ];
 
 export default async function Home() {
-  const dataGuru = await getGuru(7);
-  const dataBlog = await getBlogs(9);
+  const [dataGuru, dataBlog] = await Promise.all([getGuru(7), getBlogs(9)]);
 
   return (
     <>
@@ -132,10 +131,10 @@ export default async function Home() {
               <BlogSection blogs={dataBlog} />
             </Suspense>
             <SambutanSection />
-            <div className="max-w-7xl mx-auto py-6 md:px-5">
+            <div className="max-w-7xl mx-auto py-6 md:px-5 guru-carousel">
               <TemplateCarousel nameSection="Daftar Guru" items={dataGuru} />
             </div>
-            <div className="max-w-7xl mx-auto py-6 md:px-5">
+            <div className="max-w-7xl mx-auto py-6 md:px-5 ekstrakulikuler-section ">
               <TemplateCarousel
                 nameSection="Ekstrakulikuler"
                 items={ekstrakulikuler}

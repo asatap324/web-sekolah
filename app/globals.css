@@ -89,17 +89,19 @@
             background-position: 100% 50%;
         }
     }
-    --animate-skeleton: skeleton 2s -1s infinite linear
-;
+    --animate-skeleton: skeleton 2s -1s infinite linear;
     --color-warning-foreground: var(--warning-foreground);
     --color-warning: var(--warning);
     --color-success-foreground: var(--success-foreground);
     --color-success: var(--success);
     --color-info-foreground: var(--info-foreground);
     --color-info: var(--info);
-  @keyframes skeleton {
-  to {
-    background-position: -200% 0;}}}
+    @keyframes skeleton {
+        to {
+            background-position: -200% 0;
+        }
+    }
+}
 
 :root {
     --radius: 0.5rem;
@@ -267,4 +269,20 @@
 .no-scrollbar {
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
+}
+
+/* Section yang ada di bawah fold */
+.sambutan-section {
+    content-visibility: auto;
+    contain-intrinsic-size: 0 400px;
+}
+
+.guru-carousel {
+    content-visibility: auto;
+    contain-intrinsic-size: 0 350px;
+}
+
+.ekstrakulikuler-section {
+    content-visibility: auto;
+    contain-intrinsic-size: 0 300px;
 }

@@ -131,7 +131,7 @@ export function HeroSection() {
             muted
             loop
             autoPlay
-            preload="metadata"
+            preload="auto"
             playsInline
           />
         </AnimatedGroup>
