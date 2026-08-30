@@ -1,14 +1,13 @@
 "use client";
 
-import { useGreeting } from "../hooks/use-greeting";
-import { useUser } from "@/hooks/use-user";
-import { usePageTitle } from "../hooks/use-page-title";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Separator } from "@/components/ui/separator";
+import { useAuth } from "@/providers/auth-provider";
+import { useGreeting } from "../hooks/use-greeting";
+import { usePageTitle } from "../hooks/use-page-title";
 
 export function DynamicHeader() {
   const greeting = useGreeting();
-  const { user, isLoading } = useUser();
+  const { user, isLoading } = useAuth();
   const pageTitle = usePageTitle();
 
   if (isLoading) {
@@ -17,7 +16,7 @@ export function DynamicHeader() {
 
   return (
     <div className="flex items-center gap-2">
-      <span className="text-xl font-medium mr-2">
+      <span className="text-4xl font-semibold mr-2">
         {greeting}
         {user?.username ? `, ${user.username} 👋` : ""}
       </span>

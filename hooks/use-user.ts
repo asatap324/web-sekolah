@@ -1,17 +1,8 @@
-// hooks/use-auth.ts
+// hooks/use-user.ts
 "use client";
 
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-
-interface User {
-  id: string;
-  email: string;
-  username: string | null;
-  role: string | null;
-  createdAt: string;
-  emailVerified: boolean;
-  emailVerifiedAt: string | null;
-}
+import { useQuery } from "@tanstack/react-query";
+import { User } from "@/types/user-types";
 
 const fetchUser = async (): Promise<User | null> => {
   const res = await fetch("/api/auth/me");
@@ -19,7 +10,7 @@ const fetchUser = async (): Promise<User | null> => {
   return res.json();
 };
 
-export function useUser(initialUser?: User | null, authVersion?: number) {
+export function useUser(initialUser?: User | null) {
   const {
     data: user,
     isLoading,
@@ -33,11 +24,6 @@ export function useUser(initialUser?: User | null, authVersion?: number) {
     retry: 1,
     refetchOnWindowFocus: false, // ✅ Hindari refetch tidak perlu
   });
-
-  //  ✅ Manual refresh jika needed
-  // const refreshUser = () => {
-  //   queryClient.invalidateQueries({ queryKey: ["user"] });
-  // };
 
   return {
     user: user || null,

@@ -1,4 +1,3 @@
-// components/navbar/navbar-items.tsx
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -7,28 +6,27 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-import { BookOpenIcon, InfoIcon } from "lucide-react";
 import {
-  IconUsers,
   IconLibraryPhoto,
   IconPlayHandball,
+  IconUsers,
 } from "@tabler/icons-react";
+import { BookOpenIcon, InfoIcon } from "lucide-react";
 
-import { cn } from "@/lib/utils";
-import { navigationLinks } from "@/components/layout/header/types/navigation";
 import type {
-  SimpleLink,
   NavGroup,
+  SimpleLink,
 } from "@/components/layout/header/types/navigation";
-// import { useAuth } from "@/providers/auth-provider";
-import { useUser } from "@/hooks/use-user";
+import { navigationLinks } from "@/components/layout/header/types/navigation";
+import { cn } from "@/lib/utils";
+import { useAuth } from "@/providers/auth-provider";
 
 interface NavbarItemsProps {
   viewport?: boolean;
 }
 
 export const NavbarItems = ({ viewport = false }: NavbarItemsProps) => {
-  const { user } = useUser();
+  const { user } = useAuth();
 
   const renderIcon = (iconName: string | undefined) => {
     const iconProps = {

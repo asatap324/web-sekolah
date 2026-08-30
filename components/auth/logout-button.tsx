@@ -1,10 +1,9 @@
-// components/auth/simple-logout-button.tsx
 "use client";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-import { useLogout } from "@/hooks/use-logout";
+import { useAuth } from "@/providers/auth-provider";
 
 interface LogoutButtonProps {
   variant?:
@@ -29,10 +28,10 @@ export function LogoutButton({
   redirectPath = "/",
   showToast = true,
 }: LogoutButtonProps) {
-  const { isLoading, handleLogout } = useLogout();
+  const { isLoggingOut, logout } = useAuth();
 
   const onLogout = () => {
-    handleLogout({ redirectPath, showToast });
+    logout({ redirectPath, showToast });
   };
 
   return (
@@ -41,9 +40,9 @@ export function LogoutButton({
       size={size}
       className={cn("h-8 cursor-pointer", className)}
       onClick={onLogout}
-      disabled={isLoading}
+      disabled={isLoggingOut}
     >
-      {isLoading ? (
+      {isLoggingOut ? (
         <div className="flex items-center gap-2">
           <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
           Logging out...

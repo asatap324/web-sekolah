@@ -1,16 +1,14 @@
 "use client";
 
-import React from "react";
-import { List } from "lucide-react";
+import { TableOfContents } from "@/components/blog";
 import {
   Drawer,
-  DrawerTrigger,
-  DrawerContent,
   DrawerHeader,
-  DrawerFooter,
-  DrawerBody,
+  DrawerPopup,
+  DrawerTitle,
+  DrawerTrigger,
 } from "@/components/ui/drawer";
-import { TableOfContents } from "@/components/blog";
+import { List } from "lucide-react";
 
 export function MobileTableOfContents() {
   return (
@@ -22,14 +20,14 @@ export function MobileTableOfContents() {
         <List size={20} />
       </DrawerTrigger>
 
-      <DrawerContent className="lg:hidden">
+      <DrawerPopup className="lg:hidden">
         <DrawerHeader>
-          <h3 className="font-semibold">Table of Contents</h3>
+          <DrawerTitle className="font-semibold">Table of Contents</DrawerTitle>
         </DrawerHeader>
-        <DrawerBody>
+        <div className="px-6 pb-6">
           <TableOfContents />
-        </DrawerBody>
-      </DrawerContent>
+        </div>
+      </DrawerPopup>
     </Drawer>
   );
 }

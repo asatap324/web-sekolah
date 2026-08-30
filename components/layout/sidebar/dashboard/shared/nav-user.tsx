@@ -1,14 +1,5 @@
 "use client";
-import {
-  BoltIcon,
-  BookOpenIcon,
-  ChevronDownIcon,
-  HouseIcon,
-  Layers2Icon,
-  LogOutIcon,
-  PinIcon,
-  UserPenIcon,
-} from "lucide-react";
+import { HouseIcon, LogOutIcon, UserPenIcon } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -22,17 +13,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { useUser } from "@/hooks/use-user";
+import { useAuth } from "@/providers/auth-provider";
 
-import { useLogout } from "@/hooks/use-logout";
 import Link from "next/link";
 
 export function NavUser() {
-  const { user } = useUser();
-  const { isLoading, handleLogout } = useLogout();
+  const { user, isLoggingOut, logout } = useAuth();
 
   const handleUserLogout = async () => {
-    const result = await handleLogout({
+    await logout({
       redirectPath: "/auth/login",
       showToast: true,
     });
@@ -41,21 +30,16 @@ export function NavUser() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
-          variant="ghost"
+          variant="outline"
           className="h-auto p-0 hover:bg-transparent"
-          render={<Avatar className="size-12 rounded-full" />}
+          render={<Avatar className="size-8 rounded-full bg-muted shadow" />}
         >
           <AvatarImage
-            src="https://github.com/shadcn.png"
+            src="/assets/logo-smp.png"
             alt="Profile image"
-            className="rounded-full"
+            className="rounded-full "
           />
           <AvatarFallback>KK</AvatarFallback>
-          <ChevronDownIcon
-            size={16}
-            className="opacity-60"
-            aria-hidden="true"
-          />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="max-w-64" align="end">
@@ -81,9 +65,9 @@ export function NavUser() {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleUserLogout} disabled={isLoading}>
+        <DropdownMenuItem onClick={handleUserLogout} disabled={isLoggingOut}>
           <LogOutIcon size={16} className="opacity-60" aria-hidden="true" />
-          <span>{isLoading ? "Logging out..." : "Logout"}</span>
+          <span>{isLoggingOut ? "Logging out..." : "Logout"}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

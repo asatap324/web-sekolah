@@ -3,8 +3,8 @@ type NavItem = {
   label: string;
   description?: string;
   blank?: boolean;
-  icon?: string; // kalau pakai icon component, ubah tipenya sesuai (React.ComponentType)
-  comingSoon?: boolean; // <= tambahin optional property
+  icon?: string;
+  comingSoon?: boolean;
 };
 
 export type NavGroup = {
@@ -17,14 +17,14 @@ export type NavGroup = {
 export type SimpleLink = {
   href: string;
   label: string;
-  comingSoon?: boolean; // support comingSoon di level atas juga kalau perlu
+  comingSoon?: boolean;
 };
 
 type NavLink = SimpleLink | NavGroup;
 
 // Navigation links array to be used in both desktop and mobile menus
 export const navigationLinks: NavLink[] = [
-  { href: "/", label: "Home" },
+  { href: "/", label: "Beranda" },
   {
     label: "Tentang Sekolah Kami",
     submenu: true,
@@ -42,7 +42,7 @@ export const navigationLinks: NavLink[] = [
         description: "Liat Visi dan Misi sekolah kami",
       },
       {
-        href: "https://spmb.id/",
+        href: "https://spmb.banyuwangikab.go.id/",
         label: "PPDB Online",
         blank: true,
         description: "Daftarkan anak anda di sekolah kami",
@@ -83,10 +83,9 @@ export const navigationLinks: NavLink[] = [
     type: "icon",
     items: [
       {
-        href: "#",
+        href: "#!",
         label: "Pengumuman",
         icon: "InfoIcon",
-        comingSoon: true, // contoh
       },
     ],
   },

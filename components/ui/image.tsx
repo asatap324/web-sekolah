@@ -54,6 +54,7 @@ export default function MyImage({
         height={height}
         priority={priority}
         fetchPriority={fetchPriority}
+        unoptimized={process.env.NODE_ENV === "development"}
         placeholder={`data:image/svg+xml;base64,${toBase64(shimmer(700, 475))}`}
       />
     </>

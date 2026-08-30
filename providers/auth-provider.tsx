@@ -1,20 +1,41 @@
-// components/providers/auth-provider.tsx
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useUser } from "@/hooks/use-user";
 import { useQueryClient } from "@tanstack/react-query";
 import { User } from "@/types/user-types";
+import { toast } from "sonner";
+
+interface AuthContextValue {
+  // User data (dari useUser)
+  user: User | null;
+  isLoading: boolean;
+  isLoggedIn: boolean;
+  isAdmin: boolean;
+  hasProfile: boolean;
+  displayName: string;
+  refreshUser: () => void;
+  // Logout (diserap dari useLogout)
+  logout: (opts?: {
+    redirectPath?: string;
+    showToast?: boolean;
+  }) => Promise<{ success: boolean }>;
+  isLoggingOut: boolean;
+}
 
 interface AuthProviderProps {
   initialUser: User | null;
   children: React.ReactNode;
 }
 
-const AuthContext = createContext<ReturnType<typeof useUser> | undefined>(
-  undefined,
-);
+const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 const supabase = createClient();
 
@@ -24,62 +45,57 @@ export default function AuthProvider({
 }: AuthProviderProps) {
   const queryClient = useQueryClient();
 
-  // ✅ Tambahkan state untuk force re-render
-  const [authVersion, setAuthVersion] = useState(0);
+  // State untuk logout
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  // ✅ Pass authVersion ke useUser untuk trigger refetch
-  const userData = useUser(initialUser, authVersion);
+  // Ambil data user dari React Query (akan otomatis re-render jika data berubah)
+  const userData = useUser(initialUser);
 
-  useEffect(() => {
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      // console.log("Auth state changed:", event);
+  // Logout handler — diserap dari hooks/use-logout.ts
+  const logout = useCallback(
+    async (options?: { redirectPath?: string; showToast?: boolean }) => {
+      const { redirectPath = "/", showToast = true } = options || {};
 
-      if (
-        event === "SIGNED_OUT" ||
-        event === "SIGNED_IN" ||
-        event === "USER_UPDATED"
-      ) {
-        // ✅ 1. Invalidate cache
-        queryClient.invalidateQueries({ queryKey: ["user"] });
+      setIsLoggingOut(true);
 
-        // ✅ 2. Force immediate re-render
-        setAuthVersion((prev) => prev + 1);
+      try {
+        const { error } = await supabase.auth.signOut();
 
-        // ✅ 3. Untuk SIGNED_IN, langsung set user data
-        if (event === "SIGNED_IN" && session?.user) {
-          // Optional: Prefetch user data untuk immediate update
-          queryClient.prefetchQuery({
-            queryKey: ["user"],
-            queryFn: async () => {
-              const { data: profile } = await supabase
-                .from("profiles")
-                .select("username, role")
-                .eq("id", session.user.id)
-                .maybeSingle();
+        if (error) throw error;
 
-              return {
-                id: session.user.id,
-                email: session.user.email ?? "",
-                username: profile?.username ?? null,
-                role: profile?.role ?? null,
-              };
-            },
-          });
+        if (showToast) {
+          toast.success("Logout berhasil");
         }
+
+        // Redirect setelah logout
+        if (redirectPath) {
+          window.location.href = redirectPath;
+        }
+
+        return { success: true };
+      } catch (error) {
+        console.error("Logout error:", error);
+
+        if (showToast) {
+          toast.error("Logout gagal");
+        }
+
+        setIsLoggingOut(false);
+        return { success: false };
       }
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [queryClient]);
-
-  return (
-    <AuthContext.Provider value={userData}>{children}</AuthContext.Provider>
+    },
+    [],
   );
+
+  const value: AuthContextValue = {
+    ...userData,
+    logout,
+    isLoggingOut,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
+
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {

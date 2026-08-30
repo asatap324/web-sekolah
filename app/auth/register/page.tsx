@@ -11,7 +11,7 @@ export default function RegisterPage() {
       <div className="flex flex-col gap-4 p-6 md:p-10 border-r border-border">
         <div className="flex justify-between items-center">
           <Link href="/" className="flex items-center">
-            <Image
+            <img
               src="/assets/logo-smp.png"
               className="w-20"
               alt="Logo"

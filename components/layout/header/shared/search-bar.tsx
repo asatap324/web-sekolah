@@ -1,29 +1,28 @@
-// components/search-bar.tsx
 "use client";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import {
-  CommandInput,
-  CommandList,
+  Command,
   CommandEmpty,
   CommandGroup,
+  CommandInput,
   CommandItem,
-  Command,
+  CommandList,
 } from "@/components/ui/command";
+import { Dialog, DialogPopup, DialogTrigger } from "@/components/ui/dialog";
 import { useSearch } from "@/hooks/use-search";
 import { useSearchHistory } from "@/hooks/use-search-history";
-import {
-  SearchIcon,
-  History,
-  ArrowUpRightIcon,
-  FileText,
-  Loader2,
-  CornerDownLeft,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogPopup, DialogTrigger } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import {
+  ArrowUpRightIcon,
+  CornerDownLeft,
+  FileText,
+  History,
+  Loader2,
+  SearchIcon,
+} from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export function SearchBar() {
   const [open, setOpen] = useState(false);

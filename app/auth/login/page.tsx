@@ -2,7 +2,7 @@ import { LoginForm } from "@/components/auth";
 import { ThemeToggle } from "@/components/layout/header/shared";
 import { GridPattern } from "@/components/ui/grid-pattern";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
+
 import Link from "next/link";
 
 export default function LoginPage() {
@@ -40,7 +40,7 @@ export default function LoginPage() {
       <div className="flex flex-col gap-4 p-6 md:p-10 border-l border-border">
         <div className="flex justify-between  items-center">
           <Link href="/" className="flex items-center">
-            <Image
+            <img
               src="/assets/logo-smp.png"
               className="w-20"
               alt="Logo"

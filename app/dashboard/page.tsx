@@ -1,19 +1,13 @@
-import { DataTable } from "@/components/layout/sidebar/dashboard/shared";
-// import MainDashboard from "@/components/dashboard-ui/main-dashboard";
-import { getBlogs } from "@/lib/blogs";
+import MainDashboard from "@/components/dashboard/main-dashboard";
+import { getBlogs, getRedaksiImageCount } from "@/lib/content";
 
 export default async function Page() {
-  const blogs = await getBlogs();
+  const blogs = await getBlogs(undefined, true);
+  const redaksiCount = await getRedaksiImageCount();
 
   return (
     <>
-      <div className="flex flex-1 flex-col">
-        <div className="@container/main flex flex-1 flex-col gap-2">
-          <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-            <DataTable data={blogs} />
-          </div>
-        </div>
-      </div>
+      <MainDashboard blogs={blogs} redaksiCount={redaksiCount} />
     </>
   );
 }

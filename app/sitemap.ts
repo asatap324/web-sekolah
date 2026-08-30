@@ -15,10 +15,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   try {
     // Fetch blogs published
-    const { data: blogs, error: blogsError } = await supabase
-      .from("blogs")
-      .select("slug, created_at")
-      .order("created_at", { ascending: false });
+      const { data: blogs, error: blogsError } = await supabase
+        .from("blogs")
+        .select("slug, created_at")
+        .eq("is_archived", false)
+        .order("created_at", { ascending: false });
 
     if (blogsError) throw blogsError;
     // Static pages

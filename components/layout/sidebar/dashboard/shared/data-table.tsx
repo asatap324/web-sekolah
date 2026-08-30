@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import {
   closestCenter,
   DndContext,
@@ -21,6 +20,8 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import {
+  IconArchive,
+  IconArchiveOff,
   IconChevronLeft,
   IconChevronRight,
   IconChevronsLeft,
@@ -28,6 +29,7 @@ import {
   IconDotsVertical,
   IconEdit,
   IconGripVertical,
+  IconSearch,
   IconTrash,
 } from "@tabler/icons-react";
 import {
@@ -45,6 +47,7 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table";
+import * as React from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -54,8 +57,16 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 
 import {
+  AlertDialog,
+  AlertDialogClose,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
@@ -70,6 +81,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import { useDebounce } from "@/components/editor/editor-hooks/use-debounce";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group";
 import {
   Table,
   TableBody,
@@ -79,14 +96,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useDeleteBlog, useToggleArchiveBlog } from "@/hooks/use-content";
 import Link from "next/link";
-import { useDeleteBlog } from "@/hooks/blogs/mutations";
 import { useRouter } from "next/navigation";
 
-export const schema = z.object({
+const schema = z.object({
   id: z.string(),
   title: z.string(),
   category: z.array(z.string()),
+  is_archived: z.boolean().optional(),
   created_at: z.preprocess(
     (val) => (val == null ? null : new Date(String(val))),
     z.date().nullable(),
@@ -150,9 +168,16 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     accessorKey: "title",
     header: "Title",
     cell: ({ row }) => (
-      <Button variant="link" className="text-foreground w-fit px-0 text-left">
-        {row.original.title}
-      </Button>
+      <div className="flex items-center gap-2">
+        <Button variant="link" className="text-foreground w-fit px-0 text-left">
+          {row.original.title}
+        </Button>
+        {row.original.is_archived && (
+          <Badge variant="secondary" className="px-1.5 py-0">
+            Archived
+          </Badge>
+        )}
+      </div>
     ),
     enableHiding: false,
   },
@@ -208,55 +233,117 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => {
-      const deleteBlog = useDeleteBlog();
-      const blog = row.original;
-      const router = useRouter();
-
-      const handleDelete = () => {
-        if (!confirm(`Yakin ingin menghapus blog "${blog.title}"?`)) return;
-        try {
-          deleteBlog.mutate(blog.id);
-          router.refresh(); // reload data tabel setelah delete
-        } catch (err: any) {
-          console.error(err);
-          toast.error(err.message);
-        }
-      };
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-              size="icon"
-            >
-              <IconDotsVertical />
-              <span className="sr-only">Open menu</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-32">
-            <DropdownMenuItem asChild>
-              <Link
-                className="flex items-center"
-                href={`/dashboard/articles/${blog.id}/edit`}
-              >
-                <IconEdit size={16} aria-hidden="true" />
-                <span>Edit</span>
-              </Link>
-            </DropdownMenuItem>
-
-            <DropdownMenuSeparator />
-            <DropdownMenuItem variant="destructive" onClick={handleDelete}>
-              <IconTrash size={16} aria-hidden="true" />
-              <span>Delete</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
+    cell: ({ row }) => <ActionCell blog={row.original} />,
   },
 ];
+
+function ActionCell({ blog }: { blog: z.infer<typeof schema> }) {
+  const deleteBlog = useDeleteBlog();
+  const toggleArchive = useToggleArchiveBlog();
+  const router = useRouter();
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
+
+  const handleDelete = () => {
+    try {
+      deleteBlog.mutate(blog.id);
+      router.refresh();
+      setIsDeleteDialogOpen(false);
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.message);
+    }
+  };
+
+  const handleToggleArchive = async () => {
+    try {
+      await toggleArchive.mutateAsync({
+        id: blog.id,
+        is_archived: !blog.is_archived,
+      });
+      router.refresh();
+      toast.success(
+        blog.is_archived ? "Blog dikembalikan (Restore)" : "Blog diarsipkan",
+      );
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.message);
+    }
+  };
+
+  return (
+    <>
+      <AlertDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Konfirmasi Hapus</AlertDialogTitle>
+            <AlertDialogDescription>
+              Yakin ingin menghapus blog "{blog.title}"? Tindakan ini akan
+              menghapus data secara permanen.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogClose render={<Button variant="outline" />}>
+              Batal
+            </AlertDialogClose>
+            <Button variant="destructive" onClick={handleDelete}>
+              Ya, Hapus
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
+            size="icon"
+          >
+            <IconDotsVertical />
+            <span className="sr-only">Open menu</span>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-32">
+          <DropdownMenuItem asChild>
+            <Link
+              className="flex items-center"
+              href={`/dashboard/articles/${blog.id}/edit`}
+            >
+              <IconEdit size={16} aria-hidden="true" />
+              <span>Edit</span>
+            </Link>
+          </DropdownMenuItem>
+
+          <DropdownMenuItem onClick={handleToggleArchive}>
+            {blog.is_archived ? (
+              <>
+                <IconArchiveOff size={16} aria-hidden="true" />
+                <span>Kembalikan</span>
+              </>
+            ) : (
+              <>
+                <IconArchive size={16} aria-hidden="true" />
+                <span>Arsipkan</span>
+              </>
+            )}
+          </DropdownMenuItem>
+
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            variant="destructive"
+            onClick={() => setIsDeleteDialogOpen(true)}
+          >
+            <IconTrash size={16} aria-hidden="true" />
+            <span>Hapus</span>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
+  );
+}
 
 function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
   const { transform, transition, setNodeRef, isDragging } = useSortable({
@@ -301,6 +388,9 @@ export function DataTable({
     pageSize: 10,
   });
   const [activeFilter, setActiveFilter] = React.useState("all");
+  const [globalFilter, setGlobalFilter] = React.useState("");
+  const [inputValue, setInputValue] = React.useState("");
+  const debouncedSetGlobalFilter = useDebounce(setGlobalFilter, 300);
   const sortableId = React.useId();
   const sensors = useSensors(
     useSensor(MouseSensor, {}),
@@ -313,9 +403,15 @@ export function DataTable({
     [data],
   );
 
-  // Filter data based on created_at
+  // Filter data based on created_at and is_archived
   const filteredData = React.useMemo(() => {
-    if (activeFilter === "all") return data;
+    const archivedData = data.filter((item) => item.is_archived);
+    const nonArchivedData = data.filter((item) => !item.is_archived);
+
+    if (activeFilter === "archived") return archivedData;
+
+    const baseData = nonArchivedData;
+    if (activeFilter === "all") return baseData;
 
     const now = new Date();
     const startOfDay = new Date(
@@ -324,7 +420,7 @@ export function DataTable({
       now.getDate(),
     );
 
-    return data.filter((item) => {
+    return baseData.filter((item) => {
       if (!item.created_at) return false;
 
       const itemDate = new Date(item.created_at);
@@ -360,6 +456,7 @@ export function DataTable({
       rowSelection,
       columnFilters,
       pagination,
+      globalFilter,
     },
     getRowId: (row) => row.id.toString(),
     enableRowSelection: true,
@@ -368,6 +465,7 @@ export function DataTable({
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
     onPaginationChange: setPagination,
+    onGlobalFilterChange: setGlobalFilter,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -394,39 +492,58 @@ export function DataTable({
 
   return (
     <Tabs
-      className="w-full flex-col justify-start gap-6"
+      className="w-full flex flex-col gap-6"
       value={activeFilter}
       onValueChange={setActiveFilter}
     >
-      <div className="flex items-center justify-between px-4 lg:px-6">
-        <Label htmlFor="view-selector" className="sr-only">
-          View
-        </Label>
-        <Select value={activeFilter} onValueChange={setActiveFilter}>
-          <SelectTrigger
-            className="flex w-fit @4xl/main:hidden"
-            id="view-selector"
-          >
-            <SelectValue placeholder="Select a view" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All</SelectItem>
-            <SelectItem value="today">Today</SelectItem>
-            <SelectItem value="yesterday">Yesterday</SelectItem>
-            <SelectItem value="last7days">Last 7 Days</SelectItem>
-            <SelectItem value="last30days">Last 30 Days</SelectItem>
-          </SelectContent>
-        </Select>
-        <TabsList className="**:data-[slot=badge]:bg-muted-foreground/30 hidden **:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:px-1 @4xl/main:flex">
-          <TabsTrigger value="all">All</TabsTrigger>
-          <TabsTrigger value="today">Today</TabsTrigger>
-          <TabsTrigger value="yesterday">Yesterday</TabsTrigger>
-          <TabsTrigger value="last7days">Last 7 Days</TabsTrigger>
-          <TabsTrigger value="last30days">Last 30 Days</TabsTrigger>
-        </TabsList>
+      <div className="flex gap-4 sm:flex-row sm:items-center justify-between px-4 lg:px-6">
+        <InputGroup>
+          <InputGroupInput
+            placeholder="Cari..."
+            value={inputValue}
+            onChange={(e) => {
+              setInputValue(e.target.value);
+              debouncedSetGlobalFilter(e.target.value);
+            }}
+            className="w-full sm:max-w-xs"
+          />
+          <InputGroupAddon align="inline-start">
+            <IconSearch aria-hidden="true" />
+          </InputGroupAddon>
+        </InputGroup>
+
+        <div className="flex items-center gap-2">
+          <Label htmlFor="view-selector" className="sr-only">
+            View
+          </Label>
+          <Select value={activeFilter} onValueChange={setActiveFilter}>
+            <SelectTrigger
+              className="flex w-fit @4xl/main:hidden"
+              id="view-selector"
+            >
+              <SelectValue placeholder="Pilih tampilan" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Semua</SelectItem>
+              <SelectItem value="today">Hari Ini</SelectItem>
+              <SelectItem value="yesterday">Kemarin</SelectItem>
+              <SelectItem value="last7days">7 Hari Terakhir</SelectItem>
+              <SelectItem value="last30days">30 Hari Terakhir</SelectItem>
+              <SelectItem value="archived">Diarsipkan</SelectItem>
+            </SelectContent>
+          </Select>
+          <TabsList className="hidden @4xl/main:flex">
+            <TabsTrigger value="all">Semua</TabsTrigger>
+            <TabsTrigger value="today">Hari Ini</TabsTrigger>
+            <TabsTrigger value="yesterday">Kemarin</TabsTrigger>
+            <TabsTrigger value="last7days">7 Hari Terakhir</TabsTrigger>
+            <TabsTrigger value="last30days">30 Hari Terakhir</TabsTrigger>
+            <TabsTrigger value="archived">Diarsipkan</TabsTrigger>
+          </TabsList>
+        </div>
       </div>
 
-      {["all", "today", "yesterday", "last7days", "last30days"].map(
+      {["all", "today", "yesterday", "last7days", "last30days", "archived"].map(
         (filterValue) => (
           <TabsContent
             key={filterValue}

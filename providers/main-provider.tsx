@@ -1,4 +1,3 @@
-// components/providers/main-provider.tsx
 "use client";
 
 import { useState } from "react";
@@ -9,20 +8,19 @@ export default function MainProvider({
 }: {
   children: React.ReactNode;
 }) {
-  // ✅ QueryClient harus dibuat di sini
   const [queryClient] = useState(
     () =>
       new QueryClient({
         defaultOptions: {
           queries: {
-            staleTime: 1000 * 60 * 5, // 5 menit
+            staleTime: 1000 * 60 * 5,
+            refetchOnWindowFocus: false,
           },
         },
       }),
   );
 
   return (
-    // ✅ Hanya provide QueryClient, tidak ada layout logic
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
 }

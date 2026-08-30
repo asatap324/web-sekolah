@@ -1,5 +1,4 @@
 import { StyledCard } from "@/components/shared";
-import { Card, CardPanel, CardHeader } from "@/components/ui/card";
 
 interface PropsTujuan {
   id: number;

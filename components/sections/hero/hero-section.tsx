@@ -1,9 +1,9 @@
 "use client";
+import { AnimatedGroup } from "@/components/shared/effects/animated-group";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import Link from "next/link";
 import { Variants } from "motion/react";
-import { AnimatedGroup } from "@/components/shared/effects/animated-group";
+import Link from "next/link";
 
 const transitionVariants: Variants = {
   hidden: {
@@ -16,7 +16,7 @@ const transitionVariants: Variants = {
     filter: "blur(0px)",
     y: 0,
     transition: {
-      type: "spring", // TypeScript sekarang mengenali ini sebagai nilai yang valid
+      type: "spring",
       bounce: 0.3,
       duration: 1.5,
     },
@@ -33,7 +33,7 @@ export function HeroSection() {
         fill
         sizes="100vw"
       />*/}
-      <section className="w-full h-full grid grid-cols-1 md:grid-cols-2 items-center gap-8 max-w-7xl px-4 mx-auto">
+      <section className="w-full h-full grid grid-cols-1 md:grid-cols-2 items-center gap-8 max-w-8xl px-4 mx-auto">
         <div className="space-y-3.5">
           <AnimatedGroup variants={transitionVariants}>
             <div className="hover:bg-background dark:hover:border-t-border bg-muted group flex w-fit items-center gap-4 rounded-full border p-1 pl-4 shadow-md shadow-zinc-950/5 transition-colors duration-300 dark:border-t-white/5 dark:shadow-zinc-950">
@@ -99,13 +99,14 @@ export function HeroSection() {
             }}
           >
             <Button
-              className=" font-medium py-2 px-4 rounded transition-all  active:scale-95"
+              variant="default"
+              className="font-medium py-2 px-4 rounded transition-all  active:scale-95  "
               render={
                 <Link
                   // href="https://spmb.id/"
-                  // target="_blank"
-                  // rel="noopener noreferrer"
-                  href="/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href="https://spmb.banyuwangikab.go.id/"
                 />
               }
             >
@@ -126,7 +127,7 @@ export function HeroSection() {
           }}
         >
           <video
-            className="w-full h-full sm:aspect-video object-cover brightness-75 rounded-md"
+            className="w-full h-full sm:aspect-video object-cover rounded-2xl"
             src="/Homepage1.mp4"
             muted
             loop

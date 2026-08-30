@@ -5,6 +5,8 @@ import { motion, Variants, HTMLMotionProps } from "motion/react";
 export type PresetType =
   | "fade"
   | "slide"
+  | "slide-left"
+  | "slide-right"
   | "scale"
   | "blur"
   | "blur-slide"
@@ -21,6 +23,7 @@ export type AnimatedGroupBaseProps = {
   preset?: PresetType;
   as?: MotionTag;
   asChild?: MotionTag;
+  inView?: boolean;
 };
 
 const defaultContainerVariants: Variants = {
@@ -35,6 +38,20 @@ const defaultItemVariants: Variants = {
 const presetVariants: Record<PresetType, Variants> = {
   fade: {},
   slide: { hidden: { y: 20 }, visible: { y: 0 } },
+  "slide-left": {
+    hidden: { x: 150 },
+    visible: {
+      x: 0,
+      transition: { type: "spring", stiffness: 70, damping: 20, mass: 1 },
+    },
+  },
+  "slide-right": {
+    hidden: { x: -150 },
+    visible: {
+      x: 0,
+      transition: { type: "spring", stiffness: 70, damping: 20, mass: 1 },
+    },
+  },
   scale: { hidden: { scale: 0.8 }, visible: { scale: 1 } },
   blur: { hidden: { filter: "blur(4px)" }, visible: { filter: "blur(0px)" } },
   "blur-slide": {
@@ -78,10 +95,13 @@ const presetVariants: Record<PresetType, Variants> = {
   },
 };
 
-const addDefaultVariants = (variants: Variants): Variants => ({
-  hidden: { ...defaultItemVariants.hidden, ...variants.hidden },
-  visible: { ...defaultItemVariants.visible, ...variants.visible },
-});
+const addDefaultVariants = (variants?: Variants): Variants => {
+  const v = variants || {};
+  return {
+    hidden: { ...defaultItemVariants.hidden, ...(v.hidden || {}) },
+    visible: { ...defaultItemVariants.visible, ...(v.visible || {}) },
+  };
+};
 
 const motionComponents = {
   div: motion.div,
@@ -135,6 +155,7 @@ function AnimatedGroup<T extends MotionTag = "div">({
   preset,
   as = "div" as T,
   asChild = "div",
+  inView = false,
   ...props
 }: AnimatedGroupProps<T>): JSX.Element {
   const MotionComponent = useMemo(
@@ -154,7 +175,9 @@ function AnimatedGroup<T extends MotionTag = "div">({
   return (
     <MotionComponent
       initial="hidden"
-      animate="visible"
+      animate={inView ? undefined : "visible"}
+      whileInView={inView ? "visible" : undefined}
+      viewport={inView ? { once: true, amount: 0.2 } : undefined}
       variants={containerVariants}
       className={className}
       {...(props as HTMLMotionProps<T>)}

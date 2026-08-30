@@ -1,7 +1,6 @@
-// components/blog/content/read-more-section.tsx
+import MyImage from "@/components/ui/image";
 import Link from "next/link";
 import removeMd from "remove-markdown";
-import MyImage from "@/components/ui/image";
 
 interface BlogPost {
   id: string;

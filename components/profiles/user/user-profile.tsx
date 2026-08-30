@@ -1,20 +1,20 @@
-// app/users/[id]/user-profile-client.tsx
 "use client";
 
+import { updateUserProfile } from "@/app/actions/auth/user-action";
 import { FlickeringGrid, StyledCard } from "@/components/shared";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
-import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/ui/tabs";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import { useUser } from "@/hooks/use-user";
+import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/ui/tabs";
+import { useAuth } from "@/providers/auth-provider";
 import {
   AlertTriangleIcon,
   CheckIcon,
-  IdCardLanyardIcon,
   MailIcon,
   PenIcon,
   SaveIcon,
@@ -22,12 +22,10 @@ import {
   XIcon,
 } from "lucide-react";
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
-import { DeleteAccount } from "./delete-account";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { updateUserProfile } from "@/app/actions/auth/user-action";
 import { toast } from "sonner";
+import { DeleteAccount } from "./delete-account";
 
 interface UserProfileClientProps {
   user: {
@@ -47,7 +45,7 @@ export function UserProfile({
   isOwnProfile,
   currentUser,
 }: UserProfileClientProps) {
-  const { user: currentUserClient } = useUser();
+  const { user: currentUserClient } = useAuth();
   const router = useRouter();
 
   const [isEditing, setIsEditing] = useState(false);

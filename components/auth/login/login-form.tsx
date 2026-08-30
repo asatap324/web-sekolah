@@ -1,30 +1,30 @@
 "use client";
 import { Button } from "@/components/ui/button";
 
-import { useState, useOptimistic, startTransition } from "react";
-import { toast } from "sonner";
 import { EyeIcon, EyeOffIcon, Lock, Mail } from "lucide-react";
+import { startTransition, useOptimistic, useState } from "react";
+import { toast } from "sonner";
 
-import * as z from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { loginAction } from "@/app/actions";
 import {
   Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
 } from "@/components/ui/form";
-import { loginSchema } from "@/types/form-schema";
-import Link from "next/link";
-import { loginAction } from "@/app/actions";
-import { useRouter } from "next/navigation";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
+import { loginSchema } from "@/types/form-schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 
 // Type untuk optimistic state
 type OptimisticState = {
@@ -46,7 +46,7 @@ export function LoginForm() {
   const router = useRouter();
   const [isVisible, setIsVisible] = useState(false);
 
-  // ✅ Optimistic state
+  //  Optimistic state
   const [optimisticState, setOptimisticState] = useOptimistic<OptimisticState>({
     isLoggingIn: false,
     remainingAttempts: 5,
@@ -63,9 +63,9 @@ export function LoginForm() {
 
   const toggleVisible = () => setIsVisible((prev) => !prev);
 
-  // ✅ Form submission dengan optimistic updates
+  // Form submission dengan optimistic updates
   const handleSubmit = async (formData: FormData) => {
-    // ✅ Immediate optimistic update
+    // Immediate optimistic update
     setOptimisticState({
       isLoggingIn: true,
       remainingAttempts: optimisticState.remainingAttempts,
@@ -105,7 +105,7 @@ export function LoginForm() {
             toast.error(result.error);
           }
         } else if (result.success) {
-          // ✅ Success - show success message
+          // Success - show success message
           toast.success("Login berhasil! Mengarahkan...");
 
           // Redirect setelah delay kecil
@@ -222,7 +222,7 @@ export function LoginForm() {
               )}
             />
 
-            {/* ✅ Optimistic Loading State */}
+            {/* Optimistic Loading State */}
             <Button
               type="submit"
               className="w-full"

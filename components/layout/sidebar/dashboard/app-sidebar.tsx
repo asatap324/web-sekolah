@@ -1,25 +1,11 @@
 "use client";
 
+import { Command, Globe, HouseIcon, Newspaper, PenIcon } from "lucide-react";
 import * as React from "react";
-import { useState, useEffect } from "react";
-import {
-  CalendarCheck,
-  Command,
-  CreditCard,
-  FolderOpen,
-  HouseIcon,
-  LifeBuoy,
-  Newspaper,
-  PenIcon,
-  Send,
-  Settings,
-  UserSquare2,
-} from "lucide-react";
 
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -27,10 +13,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar,
 } from "@/components/animate-ui/components/radix/sidebar";
-import { NavUser } from "@/components/layout/sidebar/dashboard/shared";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const data = {
   navMain: [
@@ -42,7 +27,11 @@ const data = {
           title: "Overview",
           url: "/dashboard",
           icon: HouseIcon,
-          isActive: true,
+        },
+        {
+          title: "Kembali ke Halaman Utama",
+          icon: Globe,
+          url: "/",
         },
         {
           title: "Buat Berita",
@@ -50,15 +39,17 @@ const data = {
           url: "/dashboard/create-blog",
         },
         {
-          title: "Tutorial Buat Berita",
+          title: "Tutorial",
           icon: PenIcon,
-          url: "/dashboard/create-blog",
+          url: "/dashboard/tutorial",
         },
       ],
     },
   ],
 };
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const pathname = usePathname();
+
   return (
     <Sidebar variant="inset" collapsible="icon" {...props}>
       <SidebarHeader>
@@ -86,21 +77,28 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                {item.items.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton
-                      size="default"
-                      asChild
-                      isActive={item.isActive}
-                      tooltip={item.title}
-                    >
-                      <a href={item.url}>
-                        {item.icon && <item.icon />}
-                        <span>{item.title}</span>
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
+                {item.items.map((subItem) => {
+                  const isActive =
+                    subItem.url === "/dashboard" || subItem.url === "/"
+                      ? pathname === subItem.url
+                      : pathname.startsWith(subItem.url);
+
+                  return (
+                    <SidebarMenuItem key={subItem.title}>
+                      <SidebarMenuButton
+                        size="default"
+                        asChild
+                        isActive={isActive}
+                        tooltip={subItem.title}
+                      >
+                        <Link href={subItem.url}>
+                          {subItem.icon && <subItem.icon />}
+                          <span>{subItem.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>

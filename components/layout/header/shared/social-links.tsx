@@ -1,7 +1,6 @@
-// components/navbar/social-links.tsx
-import Link from "next/link";
+import { Gmail, InstagramIcon } from "@/components/social-icons/icons";
 import { Phone } from "lucide-react";
-import { InstagramIcon, Gmail } from "@/components/social-icons/icons";
+import Link from "next/link";
 
 export const SocialLinks = () => {
   const socialLinks = [

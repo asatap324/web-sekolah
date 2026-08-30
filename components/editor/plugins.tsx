@@ -46,12 +46,7 @@ import { ImagesPlugin } from "@/components/editor/plugins/images-plugin";
 import { BlockInsertPlugin } from "@/components/editor/plugins/toolbar/block-insert-plugin";
 import { InsertImage } from "@/components/editor/plugins/toolbar/block-insert/insert-image";
 
-import { IMAGE } from "@/components/editor/transformers/markdown-image-transformer";
-import { EMOJI } from "@/components/editor/transformers/markdown-emoji-transformer";
-import { EQUATION } from "@/components/editor/transformers/markdown-equation-transformer";
-import { HR } from "@/components/editor/transformers/markdown-hr-transformer";
-import { TABLE } from "@/components/editor/transformers/markdown-table-transformer";
-import { TWEET } from "@/components/editor/transformers/markdown-tweet-transformer";
+import { CUSTOM_TRANSFORMERS } from "@/components/editor/transformers/custom-transformers";
 import { EmojisPlugin } from "@/components/editor/plugins/emojis-plugin";
 import { EmojiPickerPlugin } from "@/components/editor/plugins/emoji-picker-plugin";
 import { EquationsPlugin } from "@/components/editor/plugins/equations-plugin";
@@ -85,7 +80,7 @@ export function Plugins() {
       {/* toolbar plugins */}
       <ToolbarPlugin>
         {({ blockType }) => (
-          <div className="vertical-align-middle sticky top-0 z-10 flex items-center gap-2 overflow-auto border-b p-1">
+          <div className="vertical-align-middle sticky top-0 z-10 flex flex-wrap items-center gap-2 border-b p-2 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <HistoryToolbarPlugin />
             <BlockFormatDropDown>
               <FormatParagraph />
@@ -151,20 +146,7 @@ export function Plugins() {
           ]}
         />
 
-        <MarkdownShortcutPlugin
-          transformers={[
-            IMAGE,
-            EMOJI,
-            EQUATION,
-            HR,
-            TABLE,
-            TWEET,
-            ...ELEMENT_TRANSFORMERS,
-            ...MULTILINE_ELEMENT_TRANSFORMERS,
-            ...TEXT_FORMAT_TRANSFORMERS,
-            ...TEXT_MATCH_TRANSFORMERS,
-          ]}
-        />
+        <MarkdownShortcutPlugin transformers={CUSTOM_TRANSFORMERS} />
       </div>
       {/* actions plugins */}
       <ActionsPlugin>

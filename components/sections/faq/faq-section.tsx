@@ -19,7 +19,7 @@ export function FaqsSection() {
           </p>
         </div>
         <div className="place-content-center">
-          <Accordion collapsible defaultValue="item-2" type="single">
+          <Accordion collapsible type="single">
             {questions.map((item) => (
               <AccordionItem
                 className="first:border-t last:border-b data-[state=open]:bg-sidebar"
@@ -61,7 +61,14 @@ const questions = [
   {
     id: "item-2",
     title: "Kapan biasanya pelaksanaan PPDB SMP Negeri 04 Muncar Satu Atap?",
-    content:
-      "PPDB biasanya dilaksanakan setelah pengumuman kelulusan SD/sederajat, sekitar bulan Juni-Juli. Jadwal dan tahapan resmi akan diumumkan melalui website sekolah, papan pengumuman, dan media sosial resmi sekolah.",
+    content: (
+      <img
+        src="/assets/spmb-satap.webp"
+        alt="spmb-satap"
+        width={800}
+        height={500}
+        className="w-full h-auto object-cover"
+      />
+    ),
   },
 ];

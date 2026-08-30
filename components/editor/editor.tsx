@@ -27,8 +27,8 @@ import { TweetNode } from "@/components/editor/nodes/embeds/tweet-node";
 import {
   $convertFromMarkdownString,
   $convertToMarkdownString,
-  TRANSFORMERS,
 } from "@lexical/markdown";
+import { CUSTOM_TRANSFORMERS } from "@/components/editor/transformers/custom-transformers";
 
 const editorConfig: InitialConfigType = {
   namespace: "Editor",
@@ -81,7 +81,7 @@ export function Editor({
           editorState(editor) {
             if (initialMarkdown) {
               editor.update(() => {
-                $convertFromMarkdownString(initialMarkdown, TRANSFORMERS);
+                $convertFromMarkdownString(initialMarkdown, CUSTOM_TRANSFORMERS);
               });
             }
           },
@@ -95,7 +95,7 @@ export function Editor({
               ignoreSelectionChange
               onChange={(editorState: EditorState) => {
                 editorState.read(() => {
-                  const markdown = $convertToMarkdownString(TRANSFORMERS);
+                  const markdown = $convertToMarkdownString(CUSTOM_TRANSFORMERS);
                   onMarkdownChange?.(markdown);
                 });
               }}

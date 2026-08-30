@@ -15,8 +15,8 @@ export const IMAGE: TextMatchTransformer = {
 
     return `![${node.getAltText()}](${node.getSrc()})`
   },
-  importRegExp: /!(?:\[([^[]*)\])(?:\(([^(]+)\))/,
-  regExp: /!(?:\[([^[]*)\])(?:\(([^(]+)\))$/,
+  importRegExp: /!(?:\[([^[]*)\])(?:\((.*)\))/,
+  regExp: /!(?:\[([^[]*)\])(?:\((.*)\))$/,
   replace: (textNode, match) => {
     const [, altText, src] = match
     const imageNode = $createImageNode({

@@ -1,14 +1,16 @@
 "use client";
 
-import { useRouter, usePathname } from "next/navigation";
-import { ChevronDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Drawer,
-  DrawerTrigger,
-  DrawerContent,
+  DrawerDescription,
   DrawerHeader,
-  DrawerBody,
+  DrawerPanel,
+  DrawerPopup,
+  DrawerTitle,
+  DrawerTrigger,
 } from "@/components/ui/drawer";
+import { usePathname, useRouter } from "next/navigation";
 
 interface CategoryFilterProps {
   tags: string[];
@@ -47,38 +49,39 @@ export function CategoryFilter({ tags, selectedTag }: CategoryFilterProps) {
 
   const MobileTagFilter = () => (
     <Drawer>
-      <DrawerTrigger className="md:hidden w-full flex items-center justify-between px-4 py-2 border border-border rounded-lg hover:bg-muted transition-colors">
+      <DrawerTrigger
+        className="md:hidden w-full flex items-center"
+        render={<Button variant="outline" />}
+      >
         <span className="capitalize text-sm font-medium">{selectedTag}</span>
-        <ChevronDown className="h-4 w-4" />
       </DrawerTrigger>
 
-      <DrawerContent className="md:hidden">
+      <DrawerPopup className="md:hidden pb-4" showBar>
         <DrawerHeader>
-          <h3 className="font-semibold text-sm">Select Category</h3>
+          <DrawerTitle>Pilih Kategoti Berita</DrawerTitle>
+          <DrawerDescription>
+            Silahkan pilih kategori yang ingin difilter
+          </DrawerDescription>
         </DrawerHeader>
 
-        <DrawerBody>
-          <div className="space-y-2">
+        <DrawerPanel className="max-h-[300px] ">
+          <div className="flex flex-wrap gap-2">
             {tags.map((tag) => (
               <button
                 key={tag}
                 onClick={() => handleTagClick(tag)}
-                className="w-full flex items-center justify-between font-medium cursor-pointer text-sm transition-colors"
+                className={`h-8 flex items-center px-3 rounded-lg cursor-pointer border text-sm transition-colors ${
+                  selectedTag === tag
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "border-border hover:bg-muted"
+                }`}
               >
-                <span
-                  className={`w-full flex items-center justify-between font-medium cursor-pointer  text-sm transition-colors ${
-                    selectedTag === tag
-                      ? "underline underline-offset-4 text-primary"
-                      : "text-muted-foreground"
-                  }`}
-                >
-                  {tag}
-                </span>
+                <span>{tag}</span>
               </button>
             ))}
           </div>
-        </DrawerBody>
-      </DrawerContent>
+        </DrawerPanel>
+      </DrawerPopup>
     </Drawer>
   );
 

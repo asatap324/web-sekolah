@@ -14,6 +14,7 @@ export async function searchBlogs(
     const { data, error } = await supabase
       .from("blogs")
       .select("id, title, slug")
+      .eq("is_archived", false)
       .ilike("title", `%${query}%`)
       .limit(5);
 

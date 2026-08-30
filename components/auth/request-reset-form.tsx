@@ -1,29 +1,28 @@
 "use client";
-import z from "zod";
-import { useActionState, useEffect } from "react";
 import { requestResetPasswordAction } from "@/app/actions/auth/reset-password";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { toast } from "sonner";
 import { ArrowLeftIcon } from "@/components/animate-ui/icons/arrow-left";
 import { AnimateIcon } from "@/components/animate-ui/icons/icon";
+import { Button } from "@/components/ui/button";
 import {
   Field,
   FieldDescription,
   FieldError,
   FieldLabel,
-  FieldValidity,
 } from "@/components/ui/field";
+import { Form } from "@/components/ui/form";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import { Mail } from "lucide-react";
 import { requestResetPasswordSchema } from "@/types/form-schema";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Form } from "@/components/ui/form";
+import { Mail } from "lucide-react";
+import Link from "next/link";
+import { useActionState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import z from "zod";
 
 type FormValues = z.infer<typeof requestResetPasswordSchema>;
 

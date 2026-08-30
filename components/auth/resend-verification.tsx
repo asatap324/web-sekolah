@@ -1,15 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { resendVerificationAction } from "@/app/actions";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
-import Link from "next/link";
 import { Loader2, Mail, TriangleAlert } from "lucide-react";
-import { AnimateIcon } from "../animate-ui/icons/icon";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { ArrowLeftIcon } from "../animate-ui/icons/arrow-left";
+import { AnimateIcon } from "../animate-ui/icons/icon";
 
 export function ResendVerification() {
   const [email, setEmail] = useState("");

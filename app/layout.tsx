@@ -1,15 +1,15 @@
+import { TooltipProvider } from "@/components/animate-ui/components/animate/tooltip";
+import { Toaster } from "@/components/ui/sonner";
+import { siteConfig } from "@/lib/site";
+import AuthProvider from "@/providers/auth-provider";
+import MainProvider from "@/providers/main-provider";
+import { ThemeProvider } from "@/providers/theme-provider";
+import { getServerUser } from "@/utils/auth-server";
+
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/providers/theme-provider";
-import { Toaster } from "@/components/ui/sonner";
-import { siteConfig } from "@/lib/site";
 import { metadataKeywords } from "./metadata";
-import { TooltipProvider } from "@/components/animate-ui/components/animate/tooltip";
-import { getServerUser } from "@/utils/auth-server";
-import AuthProvider from "@/providers/auth-provider";
-import MainProvider from "@/providers/main-provider";
-import LayoutWrapper from "@/providers/layout-wrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -58,7 +58,7 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-sidebar`}
       >
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <ThemeProvider attribute="class" defaultTheme="light">
           <MainProvider>
             <AuthProvider initialUser={initialUser}>
               <Toaster
@@ -69,9 +69,7 @@ export default async function RootLayout({
                   className: "font-sans",
                 }}
               />
-              <TooltipProvider>
-                <LayoutWrapper>{children}</LayoutWrapper>
-              </TooltipProvider>
+              <TooltipProvider>{children}</TooltipProvider>
             </AuthProvider>
           </MainProvider>
         </ThemeProvider>

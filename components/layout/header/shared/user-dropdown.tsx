@@ -1,4 +1,4 @@
-import { CircleUserRoundIcon, HouseIcon, UserPenIcon } from "lucide-react";
+import { CircleUserRoundIcon, UserPenIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {

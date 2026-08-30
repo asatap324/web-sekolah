@@ -1,4 +1,3 @@
-// components/navbar/navbar-content.tsx
 import { NavbarItems, SocialLinks } from "@/components/layout/header/shared";
 
 export const NavbarContent = () => {

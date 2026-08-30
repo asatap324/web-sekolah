@@ -147,11 +147,8 @@ export function InsertImageUploadedDialogBody({
     try {
       const publicUrl = await uploadImage(file);
 
-      // sisipkan langsung sintaks markdown ![](url)
-      editor.update(() => {
-        const textNode = $createTextNode(`![](${publicUrl})`);
-        $insertNodes([textNode]);
-      });
+      // sisipkan langsung menggunakan onClick (yang men-dispatch INSERT_IMAGE_COMMAND)
+      onClick({ src: publicUrl, altText: altText || "Uploaded image" });
 
       // reset state
       setFile(null);

@@ -1,19 +1,17 @@
-import { isRouteMatch, routeConfig } from "@/lib/route-config";
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { isRouteMatch, routeConfig } from "@/lib/route-config";
+import { SUPABASE_URL, SUPABASE_KEY } from "./config";
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  if (!supabaseUrl || !supabaseKey) {
+  if (!SUPABASE_URL || !SUPABASE_KEY) {
     console.error("Missing Supabase environment variables");
     return supabaseResponse;
   }
 
-  const supabase = createServerClient(supabaseUrl, supabaseKey, {
+  const supabase = createServerClient(SUPABASE_URL, SUPABASE_KEY, {
     cookies: {
       getAll() {
         return request.cookies.getAll();
@@ -36,7 +34,7 @@ export async function updateSession(request: NextRequest) {
   const isAdmin = isRouteMatch(pathname, routeConfig.admin);
   const isAuth = isRouteMatch(pathname, routeConfig.auth);
 
-  // Skip auth check untuk public routes (homepage, dll)
+  // Skip auth check untuk public routes
   if (isPublic && !isAdmin && !isAuth) {
     return supabaseResponse;
   }

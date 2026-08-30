@@ -1,17 +1,15 @@
-// components/navbar/auth-section.tsx
-import { Button } from "@/components/ui/button";
 import { LogoutButton } from "@/components/auth";
-import { UserDropdown } from "@/components/layout/header/shared";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/providers/auth-provider";
 import Link from "next/link";
-// import { useAuth } from "@/providers/auth-provider";
-import { useUser } from "@/hooks/use-user";
+import { UserDropdown } from "./user-dropdown";
 
 interface AuthSectionProps {
   variant?: "desktop" | "mobile";
 }
 
 export const AuthSection = ({ variant = "desktop" }: AuthSectionProps) => {
-  const { user } = useUser();
+  const { user } = useAuth();
 
   if (variant === "mobile") {
     return user ? (
@@ -29,7 +27,7 @@ export const AuthSection = ({ variant = "desktop" }: AuthSectionProps) => {
 
   return user ? (
     <div className="flex items-center gap-3.5">
-      <LogoutButton variant="outline" redirectPath="/" />
+      <LogoutButton variant="ghost" redirectPath="/" />
       <UserDropdown
         username={user.username}
         email={user.email}
@@ -37,7 +35,7 @@ export const AuthSection = ({ variant = "desktop" }: AuthSectionProps) => {
       />
     </div>
   ) : (
-    <Button variant="outline" render={<Link href="/auth/login" />}>
+    <Button variant="default" render={<Link href="/auth/login" />}>
       Login
     </Button>
   );
