@@ -10,8 +10,8 @@ import { getBlogs, getGuru } from "@/lib/content";
 
 import { HomepageStructuredData } from "@/components/homepage-structured-data";
 import { OptimizedYouTube, TemplateCarousel } from "@/components/shared";
-import { AnimatedGroup } from "@/components/shared/effects/animated-group";
 import { FullWidthDivider } from "@/components/ui/full-width-divider";
+import { SectionWrapper } from "@/components/ui/section-wrapper";
 
 export const revalidate = 3600;
 
@@ -121,57 +121,36 @@ export default async function Home() {
           {/* Border kiri & kanan sepanjang layar */}
           <div className="absolute inset-y-0 left-1/2 w-[calc(100%-2rem)] -translate-x-1/2  max-w-7xl border-x border-border" />
           <div className="w-full z-10">
-            <div className="relative py-6 overflow-hidden">
-              <FullWidthDivider position="top" className="mt-6" />
-              <AnimatedGroup
-                preset="slide-left"
-                inView={true}
-                className="absolute top-1/4 -right-46 hidden md:block -rotate-30"
-              >
-                <img
-                  className="w-full h-full dark:invert"
-                  src="/assets/gajah-oling.png"
-                  alt="gajah oling"
-                  loading="lazy"
-                />
-              </AnimatedGroup>
+            <SectionWrapper
+              ornaments={[
+                {
+                  preset: "slide-left",
+                  positionClasses: "top-1/4 -right-46 -rotate-30",
+                  imageClasses: "w-[400px] h-[400px]",
+                },
+              ]}
+            >
               <BlogSection blogs={dataBlog} />
-              <FullWidthDivider position="bottom" />
-            </div>
+            </SectionWrapper>
 
-            <div className="relative pt-6 overflow-hidden">
-              <FullWidthDivider position="top" className="mt-6" />
-              <AnimatedGroup
-                preset="slide-left"
-                inView={true}
-                className="absolute top-10 -right-30 hidden md:block rotate-12"
-              >
-                <img
-                  className="w-72 dark:invert"
-                  src="/assets/gajah-oling.png"
-                  alt="gajah oling"
-                  loading="lazy"
-                />
-              </AnimatedGroup>
+            <SectionWrapper
+              ornaments={[
+                {
+                  preset: "slide-left",
+                  positionClasses: "top-10 -right-30 rotate-12",
+                },
+                {
+                  preset: "slide-right",
+                  positionClasses: "top-10 -left-30 -rotate-12",
+                  imageClasses: "w-72 h-72 -scale-x-100",
+                },
+              ]}
+            >
               <SambutanSection />
-              <AnimatedGroup
-                preset="slide-right"
-                inView={true}
-                className="absolute top-10 -left-30 hidden md:block -rotate-12"
-              >
-                <img
-                  className="w-72 dark:invert -scale-x-100"
-                  src="/assets/gajah-oling.png"
-                  alt="gajah oling"
-                  loading="lazy"
-                />
-              </AnimatedGroup>
-              <FullWidthDivider position="bottom" />
-            </div>
+            </SectionWrapper>
 
-            <div className="relative pt-6">
-              <FullWidthDivider position="top" className="mt-6" />
-              <div className="px-0 video-section max-w-7xl mx-auto">
+            <SectionWrapper>
+              <div className="px-0 video-section max-w-7xl mx-auto mt-5">
                 <div className="w-full h-full p-3">
                   <OptimizedYouTube
                     id="5HpHIbxkAV4"
@@ -179,66 +158,49 @@ export default async function Home() {
                   />
                 </div>
               </div>
-              <FullWidthDivider position="bottom" />
-            </div>
+            </SectionWrapper>
 
-            <div className="guru-carousel relative pt-6 overflow-hidden">
-              <FullWidthDivider position="top" className="mt-6" />
-              <AnimatedGroup
-                preset="slide-right"
-                inView={true}
-                className="absolute top-1/4 -left-16 hidden md:block rotate-20"
-              >
-                <img
-                  className="w-72 dark:invert -scale-x-100"
-                  src="/assets/gajah-oling.png"
-                  alt="gajah oling"
-                  loading="lazy"
-                />
-              </AnimatedGroup>
+            <SectionWrapper
+              className="guru-carousel"
+              ornaments={[
+                {
+                  preset: "slide-right",
+                  positionClasses: "top-1/4 -left-16 rotate-20",
+                  imageClasses: "w-72 h-72 -scale-x-100",
+                },
+              ]}
+            >
               <TemplateCarousel nameSection="Daftar Guru" items={dataGuru} />
-              <FullWidthDivider position="bottom" />
-            </div>
+            </SectionWrapper>
 
-            <div className="ekstrakulikuler-section relative pt-6 overflow-hidden">
-              <FullWidthDivider position="top" className="mt-6" />
+            <SectionWrapper
+              className="ekstrakulikuler-section"
+              ornaments={[
+                {
+                  preset: "slide-right",
+                  positionClasses: "top-1/6 -right-10 rotate-180",
+                  imageClasses: "w-80 h-80",
+                },
+              ]}
+            >
               <TemplateCarousel
                 nameSection="Ekstrakulikuler"
                 items={ekstrakulikuler}
                 isStaticImage={true}
               />
-              <AnimatedGroup
-                preset="slide-right"
-                inView={true}
-                className="absolute top-1/6 -right-10 hidden md:block rotate-180"
-              >
-                <img
-                  className="w-80 dark:invert"
-                  src="/assets/gajah-oling.png"
-                  alt="gajah oling"
-                  loading="lazy"
-                />
-              </AnimatedGroup>
-              <FullWidthDivider position="bottom" />
-            </div>
+            </SectionWrapper>
 
-            <div className="relative">
-              <FullWidthDivider position="top" className="mt-6" />
-              <AnimatedGroup
-                preset="slide-right"
-                inView={true}
-                className="absolute top-1/4 -left-20 hidden md:block -rotate-30"
-              >
-                <img
-                  className="w-full h-full dark:invert"
-                  src="/assets/gajah-oling.png"
-                  alt="gajah oling"
-                  loading="lazy"
-                />
-              </AnimatedGroup>
+            <SectionWrapper
+              ornaments={[
+                {
+                  preset: "slide-right",
+                  positionClasses: "top-1/4 -left-20 -rotate-30",
+                  imageClasses: "w-[400px] h-[400px]",
+                },
+              ]}
+            >
               <FaqsSection />
-              <FullWidthDivider position="bottom" />
-            </div>
+            </SectionWrapper>
           </div>
         </div>
       </div>

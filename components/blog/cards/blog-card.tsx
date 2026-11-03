@@ -23,7 +23,7 @@ export function BlogCard({
     <Link
       href={`/article/${slug}`}
       className={cn(
-        "group block relative before:absolute before:-left-0.5 before:top-0 before:z-10 before:h-screen before:w-px before:bg-border before:content-[''] after:absolute after:-top-0.5 after:left-0 after:z-0 after:h-px after:w-screen after:bg-border after:content-['']",
+        "group block relative transition-colors duration-500 hover:bg-accent/40 before:absolute before:-left-0.5 before:top-0 before:z-10 before:h-screen before:w-px before:bg-border before:content-[''] after:absolute after:-top-0.5 after:left-0 after:z-0 after:h-px after:w-screen after:bg-border after:content-['']",
         showRightBorder && "md:border-r border-border border-b-0",
       )}
     >
@@ -34,14 +34,14 @@ export function BlogCard({
               src={thumbnail}
               alt={title}
               fill
-              className="object-cover transition-transform duration-300 group-hover:scale-105"
+              className="object-cover transition-transform duration-700 ease-in-out group-hover:scale-110"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
           </div>
         )}
 
         <div className="p-6 flex flex-col gap-2">
-          <h2 className="text-xl font-semibold text-card-foreground group-hover:underline underline-offset-4">
+          <h2 className="text-xl font-semibold text-card-foreground transition-colors duration-300 group-hover:text-primary">
             {title}
           </h2>
           <p className="text-muted-foreground text-sm">{description}</p>

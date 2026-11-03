@@ -62,7 +62,6 @@ export async function getRedaksiImageCount() {
     return 0;
   }
 
-  // Exclude empty folder placeholder if any (biasanya placeholder berupa .emptyFolderPlaceholder)
   return data
     ? data.filter((file) => file.name !== ".emptyFolderPlaceholder").length
     : 0;

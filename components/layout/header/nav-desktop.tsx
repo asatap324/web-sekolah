@@ -1,4 +1,4 @@
-import { NavbarItems, SocialLinks } from "@/components/layout/header/shared";
+import { NavbarItems } from "@/components/layout/header/shared";
 
 export const NavbarContent = () => {
   return (
@@ -6,7 +6,6 @@ export const NavbarContent = () => {
       <div className="max-w-8xl mx-auto">
         <div className="flex items-center justify-between">
           <NavbarItems />
-          <SocialLinks />
         </div>
       </div>
     </div>

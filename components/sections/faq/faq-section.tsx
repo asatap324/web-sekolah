@@ -4,6 +4,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/animate-ui/components/radix/accordion";
+import MyImage from "@/components/ui/image";
 
 export function FaqsSection() {
   return (
@@ -62,7 +63,7 @@ const questions = [
     id: "item-2",
     title: "Kapan biasanya pelaksanaan PPDB SMP Negeri 04 Muncar Satu Atap?",
     content: (
-      <img
+      <MyImage
         src="/assets/spmb-satap.webp"
         alt="spmb-satap"
         width={800}

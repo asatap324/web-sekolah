@@ -8,7 +8,7 @@ export function SambutanSection() {
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <div className="px-0 sambutan-section max-w-7xl mx-auto">
+    <div className="px-0 sambutan-section max-w-7xl mx-auto py-6">
       <div className="flex flex-col-reverse md:flex-row items-start justify-between w-full relative ">
         <div className="p-6 border-b">
           <div className="flex items-center gap-2">
@@ -36,7 +36,7 @@ export function SambutanSection() {
             Terima kasih atas kepercayaan Anda kepada SMPN 4 MUNCAR SATU ATAP.
             Mari kita bersama-sama mengukir jejak gemilang di dunia pendidikan.{" "}
             <br />
-            <span className="italic">H. Imam Najeh, M.Pd</span>
+            <span className="italic">Munawar Cholil, S. Pd, M. Pd</span>
           </p>
           <Button
             className="mt-3.5 md:hidden"
@@ -51,7 +51,7 @@ export function SambutanSection() {
         </div>
 
         <MyImage
-          src="https://dvwrfhxzfftjxcpxusfd.supabase.co/storage/v1/object/public/blog-images/guru/kepalasekolah.webp"
+          src="https://dvwrfhxzfftjxcpxusfd.supabase.co/storage/v1/object/public/blog-images/guru/kepalasekolahbaru.webp"
           alt="Foto Kepala Sekolah"
           width={400}
           height={600}

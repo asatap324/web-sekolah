@@ -59,7 +59,7 @@ export const TemplateCarousel = ({
   }, [carouselApi]);
 
   return (
-    <section className="max-w-7xl mx-auto pb-4 py-6">
+    <section className="max-w-7xl mx-auto mt-4 py-6">
       <div className="">
         <div className="flex items-end justify-between md:mb-14 lg:mb-16 px-4">
           <div className="flex items-start gap-x-2">

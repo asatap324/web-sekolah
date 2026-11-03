@@ -12,7 +12,7 @@ import removeMd from "remove-markdown";
 
 export function BlogSection({ blogs }: { blogs?: any[] }) {
   return (
-    <div className="relative max-w-7xl mx-auto z-10">
+    <div className="relative max-w-7xl mx-auto z-10 py-6">
       <div className="w-full p-0">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3  p-6">
           {blogs?.slice(0, 1).map((item) => (
@@ -24,12 +24,12 @@ export function BlogSection({ blogs }: { blogs?: any[] }) {
               <MyImage
                 src={item.image_url}
                 alt={item.title.slice(0, 20)}
-                width={700}
-                height={475}
+                width={800}
+                height={600}
                 priority={true}
                 fetchPriority="high"
                 className="aspect-square rounded-md w-full object-cover group-hover:opacity-80 transition-opacity"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 66vw, 66vw "
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 800px"
               />
               <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/70 to-transparent p-6 text-white">
                 <div className="flex items-center gap-2">
@@ -71,10 +71,9 @@ export function BlogSection({ blogs }: { blogs?: any[] }) {
                       <MyImage
                         src={item.image_url}
                         alt={item.title.slice(0, 20)}
-                        width={700}
-                        height={475}
+                        width={150}
+                        height={150}
                         className="aspect-square rounded-md object-cover w-24 group-hover:opacity-80 transition-opacity"
-                        sizes="(max-width: 768px) 20vw, (max-width: 1200px) 15vw, 10vw"
                       />
                       <h4 className="text-sm leading-snug line-clamp-3 font-medium">
                         {item.title}

@@ -1,5 +1,6 @@
 import { IconPhone } from "@tabler/icons-react";
 import Link from "next/link";
+import Image from "next/image";
 
 import { FullWidthDivider } from "@/components/ui/full-width-divider";
 import { cn } from "@/lib/utils";
@@ -22,12 +23,12 @@ export function Footer() {
                 href="/"
                 className="flex items-center text-primary hover:text-primary/90"
               >
-                <img
+                <Image
                   src="/assets/logo-smp.png"
-                  className="w-[80px] h-auto shrink-0"
-                  alt="Logo"
-                  width={100}
-                  height={100}
+                  alt="Logo SMPN 4 Muncar Satu Atap"
+                  width={150}
+                  height={150}
+                  className="w-24 md:w-32 h-auto"
                 />
                 <span className="text-xs font-semibold text-foreground">
                   SMP Negeri 04 Muncar Satu Atap <br /> Muncar Banyuwangi
